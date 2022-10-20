@@ -1,26 +1,27 @@
-import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, Route, Routes, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import { loginSelector } from './store/reducers/loginReducer/loginSlice';
+import { useEffect } from 'react';
+import { checkAuth, login, loginSelector } from './store/reducers/loginReducer/loginSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import Login from './pages/login/Login';
+import Home from './pages/Home';
+import Register from './pages/register/Register';
 
 function App() {
-    const { isLogin, isRegister } = useSelector(loginSelector);
-
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     useEffect(() => {
-        if (!isLogin && !isRegister) {
-            navigate('login');
-        } else if (!isLogin && isRegister) {
-            navigate('register');
-        } else {
-            navigate('chat');
-        }
-    }, [isLogin, navigate, isRegister]);
+        dispatch(checkAuth());
+        if (!Boolean(localStorage.getItem('isLogin') === 'true')) navigate('login');
+    }, []);
     return (
         <div className="App">
-            <Outlet />
+            <Routes>
+                <Route path="/" element={<Home />}></Route>
+                <Route path="login" element={<Login />}></Route>
+                <Route path="register" element={<Register />}></Route>
+            </Routes>
         </div>
     );
 }

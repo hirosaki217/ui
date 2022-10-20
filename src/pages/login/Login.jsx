@@ -2,7 +2,7 @@ import './login.css';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { isRegister } from '../../store/reducers/loginReducer/loginSlice';
+import { isRegister, login } from '../../store/reducers/loginReducer/loginSlice';
 
 const Login = () => {
     const dispatch = useDispatch();
@@ -13,11 +13,16 @@ const Login = () => {
     const clickToFormRegister = (e) => {
         e.preventDefault();
         dispatch(isRegister(true));
+        if (!Boolean(localStorage.getItem('isLogin') === 'true')) navigate('../register');
+    };
+    const onLogin = (e) => {
+        e.preventDefault();
+        dispatch(login({ username, password }));
         navigate('..');
     };
     return (
         <div className="Auth-form-container loginContainer ">
-            <form className="Auth-form">
+            <form className="Auth-form" onSubmit={onLogin}>
                 <div className="Auth-form-content">
                     <h3 className="Auth-form-title">Olaz</h3>
                     <div className="form-group mt-3">
@@ -25,7 +30,7 @@ const Login = () => {
                         <input
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            type="email"
+                            type="text"
                             className="form-control mt-1"
                             placeholder="Enter phone number"
                         />
