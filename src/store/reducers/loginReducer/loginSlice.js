@@ -23,12 +23,12 @@ export const checkAuth = createAsyncThunk('login/checkAuth', async () => {
 export const login = createAsyncThunk('login', async (data) => {
     try {
         const response = await axios.post('auth/login', data, { withCredentials: true });
-        jwt.setToken(response.data.token);
-        console.log(response.data);
-        return true;
-    } catch (error) {
-        return false;
-    }
+        if (response.data.token) {
+            jwt.setToken(response.data.token);
+            return true;
+        }
+    } catch (error) {}
+    return false;
 });
 
 const loginSlice = createSlice({
@@ -56,7 +56,7 @@ const loginSlice = createSlice({
             console.log('pending data to server ...');
         },
         [login.fulfilled]: (state, action) => {
-            state.user.isLogin = true;
+            state.user.isLogin = action.payload;
             state.user.isRegister = false;
             console.log('done');
         },

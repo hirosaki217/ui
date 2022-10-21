@@ -43,3 +43,12 @@ label {
     justify-content: space-between;
     align-items: center;
 }
+.notifyError {
+    font-style: italic;
+    color: red;
+    display: none;
+}
+
+.error.notifyError {
+    display: block;
+}

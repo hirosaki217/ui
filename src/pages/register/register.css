@@ -43,3 +43,27 @@ label {
     justify-content: space-between;
     align-items: center;
 }
+
+.zone-error {
+    background-color: rgb(255, 255, 255);
+    border-radius: 5px;
+    margin: 5px 0;
+    padding-left: 5px;
+}
+
+.zone-error p {
+    font-size: small;
+    font-style: italic;
+}
+
+.catchError.active {
+    color: rgb(0, 255, 0);
+}
+
+.catchError.hide {
+    display: none;
+}
+
+.catchError.error {
+    color: red;
+}

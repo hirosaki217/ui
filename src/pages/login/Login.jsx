@@ -1,15 +1,19 @@
 import './login.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { isRegister, login } from '../../store/reducers/loginReducer/loginSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { isRegister, login, loginSelector } from '../../store/reducers/loginReducer/loginSlice';
 
 const Login = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-
+    const { isLogin } = useSelector(loginSelector);
+    const [isError, setIsError] = useState(false);
+    useEffect(() => {
+        if (isLogin) navigate('..');
+    }, [isLogin]);
     const clickToFormRegister = (e) => {
         e.preventDefault();
         dispatch(isRegister(true));
@@ -18,13 +22,15 @@ const Login = () => {
     const onLogin = (e) => {
         e.preventDefault();
         dispatch(login({ username, password }));
-        navigate('..');
+        setIsError(!isLogin);
+        if (isLogin) navigate('..');
     };
     return (
         <div className="Auth-form-container loginContainer ">
             <form className="Auth-form" onSubmit={onLogin}>
                 <div className="Auth-form-content">
                     <h3 className="Auth-form-title">Olaz</h3>
+
                     <div className="form-group mt-3">
                         <label>Số điện thoại</label>
                         <input
@@ -45,7 +51,9 @@ const Login = () => {
                             placeholder="Enter password"
                         />
                     </div>
-
+                    <p className={isError ? 'error notifyError' : 'notifyError'}>
+                        * thông tin tài khoản hoặc mật khẩu không chính xác
+                    </p>
                     <div className="d-grid gap-2 mt-3">
                         <button type="submit" className="btn btn-primary">
                             Submit
