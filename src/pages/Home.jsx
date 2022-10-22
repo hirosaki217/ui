@@ -26,7 +26,7 @@ const Home = () => {
     useEffect(() => {
         dispatch(checkAuth());
         if (!Boolean(localStorage.getItem('isLogin') === 'true')) navigate('login');
-        if (!jwt.getUserId()) return;
+        if (!user._id) return;
         dispatch(getList({}));
     }, [user]);
 
@@ -41,6 +41,7 @@ const Home = () => {
     // }, []);
     useEffect(() => {
         const userId = user._id;
+        // if (userId) dispatch(getProfiler());
         if (userId) socket.emit('join', userId);
     }, [user]);
 

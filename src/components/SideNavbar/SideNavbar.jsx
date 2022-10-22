@@ -4,12 +4,18 @@ import styled from 'styled-components';
 import ChatRoundedIcon from '@material-ui/icons/ChatRounded';
 import PermContactCalendarOutlinedIcon from '@material-ui/icons/PermContactCalendarOutlined';
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
+// import { userSelector } from '../../store/reducers/userReducer/userSlice';
 const SideNavbar = () => {
+    // const user = userSelector(userSelector);
+    // console.log(user === undefined);
     return (
         <div className="sideNavbar">
             <div style={{ padding: '25px 0' }}>
-                <LightTooltip placement="right" title="tài khoản">
-                    <Avatar />
+                <LightTooltip placement="right">
+                    <Avatar
+                    // style={!user.avatar && { color: `${user.avatarColor}` }}
+                    // src={user?.avatar ? user.avatar : ''}
+                    />
                 </LightTooltip>
             </div>
             <div className="mid-icon">

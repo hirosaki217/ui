@@ -20,7 +20,7 @@ export const checkAuth = createAsyncThunk('login/checkAuth', async () => {
     }
 
     localStorage.setItem('isLogin', false);
-    return { token, id };
+    return null;
 });
 
 export const login = createAsyncThunk('login', async (data) => {
