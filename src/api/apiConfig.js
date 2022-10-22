@@ -2,7 +2,9 @@ import axios from 'axios';
 import jwt from '../utils/jwt';
 
 const instance = axios.create({
-    baseURL: 'http://localhost:4000',
+    // baseURL: 'http://localhost:4000',
+    baseURL: String(process.env.REACT_APP_API_URL),
+
     headers: {
         'content-type': 'application/json',
     },
@@ -26,7 +28,12 @@ instance.interceptors.response.use(
         axios.interceptors.response.eject(instance.interceptors);
 
         return axios
-            .get('/refresh_token')
+            .get('http://localhost:4000/refresh_token', {
+                headers: {
+                    Authorization: `Bearer ${jwt.getToken()}`,
+                },
+                withCredentials: true,
+            })
             .then((response) => jwt.setToken(response.data.accessToken))
             .catch((error) => {
                 jwt.deleteToken();

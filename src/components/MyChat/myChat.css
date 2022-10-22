@@ -1,0 +1,17 @@
+.myChat {
+    border-right: 1px solid #ccc;
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+}
+
+.myChatHeader {
+    flex: 1;
+    min-height: 97px;
+    min-width: 400px;
+    border-bottom: 1px solid #ccc;
+}
+
+.myChatList {
+    flex: 9;
+}

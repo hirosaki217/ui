@@ -4,20 +4,23 @@ import jwt from '../../../utils/jwt';
 
 export const checkAuth = createAsyncThunk('login/checkAuth', async () => {
     const token = jwt.getToken();
+    let id = jwt.getUserId();
     if (token) {
         localStorage.setItem('isLogin', true);
-        return true;
+        return { token, id };
     }
 
     if (!token) {
         const success = await jwt.getRefreshToken();
+        id = jwt.getUserId();
         if (success) {
             localStorage.setItem('isLogin', true);
-            return true;
+            return { token: jwt.getToken(), id };
         }
     }
+
     localStorage.setItem('isLogin', false);
-    return false;
+    return { token, id };
 });
 
 export const login = createAsyncThunk('login', async (data) => {
@@ -37,44 +40,39 @@ const loginSlice = createSlice({
         user: {
             username: '',
             password: '',
+            _id: '',
             isLogin: false,
             token: '',
             isRegister: false,
         },
     },
     reducers: {
-        // login(state, action) {
-        //     state.user.isLogin = action.payload.isLogin;
-        //     state.user.isRegister = action.payload.isRegister;
-        // },
+        checkLogin(state, action) {
+            state.user.isLogin = true;
+            state.user._id = action.payload;
+        },
         isRegister(state, action) {
             state.user.isRegister = action.payload;
         },
     },
     extraReducers: {
-        [login.pending]: (state, action) => {
-            console.log('pending data to server ...');
-        },
+        [login.pending]: (state, action) => {},
         [login.fulfilled]: (state, action) => {
             state.user.isLogin = action.payload;
             state.user.isRegister = false;
-            console.log('done');
         },
         [login.rejected]: (state, action) => {
             state.user.isLogin = false;
             state.user.isRegister = false;
-            console.log('failed');
         },
-        [checkAuth.pending]: (state, action) => {
-            console.log('checking login...');
-        },
+        [checkAuth.pending]: (state, action) => {},
         [checkAuth.fulfilled]: (state, action) => {
-            state.user.isLogin = action.payload;
-            console.log(state.user.isLogin);
+            state.user.isLogin = action.payload ? true : false;
+            state.user.token = action.payload.token;
+            state.user._id = action.payload.id;
         },
         [checkAuth.rejected]: (state, action) => {
-            console.log('user is logout');
-            state.user.isLogin = action.payload;
+            state.user.isLogin = false;
         },
     },
 });
@@ -83,6 +81,6 @@ const loginReducer = loginSlice.reducer;
 
 export const loginSelector = (state) => state.loginReducer.user;
 
-export const { isRegister } = loginSlice.actions;
+export const { isRegister, checkLogin } = loginSlice.actions;
 
 export default loginReducer;
