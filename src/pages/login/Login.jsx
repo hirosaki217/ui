@@ -3,17 +3,24 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { isRegister, login, loginSelector } from '../../store/reducers/loginReducer/loginSlice';
+import { useAuthContext } from '../../contexts/AuthContext';
+import jwt from '../../utils/jwt';
 
 const Login = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { isAuthenticated } = useAuthContext();
+
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const { isLogin } = useSelector(loginSelector);
     const [isError, setIsError] = useState(false);
+    jwt.getUserId();
     useEffect(() => {
-        if (isLogin) navigate('..');
-    }, [isLogin]);
+        console.log(jwt.getUserId());
+        if (jwt.getUserId()) navigate('..');
+    }, [jwt.getUserId()]);
+
     const clickToFormRegister = (e) => {
         e.preventDefault();
         dispatch(isRegister(true));

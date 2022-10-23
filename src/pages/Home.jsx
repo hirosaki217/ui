@@ -11,12 +11,17 @@ import { rerenderMessage } from '../store/reducers/messageReducer/messageSlice';
 import useWindowUnloadEffect from '../hooks/useWindowUnloadEffect';
 import { useAuthContext } from '../contexts/AuthContext';
 import jwt from '../utils/jwt';
+import { useNavigate } from 'react-router-dom';
 init();
 const Home = () => {
     const dispatch = useDispatch();
-    const { isAuthenticated } = useAuthContext();
+    const { isLogin } = useSelector(loginSelector);
     const conversations = useSelector(conversationSelector);
     const user = { _id: jwt.getUserId() };
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (!jwt.getUserId()) navigate('login');
+    }, [jwt.getUserId()]);
 
     useEffect(() => {
         if (!user._id) return;

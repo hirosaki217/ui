@@ -2,16 +2,21 @@ import './chatting.css';
 
 import { Avatar } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { currentConversationSelector } from '../../store/reducers/conversationReducer/conversationSlice';
+import {
+    currentAConverSelector,
+    currentConversationSelector,
+} from '../../store/reducers/conversationReducer/conversationSlice';
 import { messagesSelector } from '../../store/reducers/messageReducer/messageSlice';
 import { loginSelector } from '../../store/reducers/loginReducer/loginSlice';
 import dateUtils from '../../utils/dateUtils';
 import CustomizedInputBase from '../../components/CustomizedInputBase/CustomizedInputBase';
 import jwt from '../../utils/jwt';
 import { useEffect, useRef } from 'react';
+import HeaderUser from '../../components/ChatHeaderUser/HeaderUser';
 
 const ChattingPage = ({ socket }) => {
     const currentConversation = useSelector(currentConversationSelector);
+    const conversation = useSelector(currentAConverSelector);
     const messages = useSelector(messagesSelector);
     const user = { _id: jwt.getUserId() };
     const scroll = useRef();
@@ -25,7 +30,7 @@ const ChattingPage = ({ socket }) => {
 
     return (
         <div className="chatting">
-            <div className="headerUser">Action</div>
+            <div className="headerUser">{messages.data && <HeaderUser conversation={conversation} />}</div>
             <div ref={scroll} className="roomChat scrollbar" id="style-scroll">
                 {messages.data &&
                     messages.data.map((msg) => (

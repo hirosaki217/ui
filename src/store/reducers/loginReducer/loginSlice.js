@@ -1,12 +1,14 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from '../../../api/apiConfig';
-import jwt from '../../../utils/jwt';
 
+import jwt from '../../../utils/jwt';
 export const login = createAsyncThunk('login', async (data) => {
     try {
         const response = await axios.post('auth/login', data, { withCredentials: true });
         if (response.data.token) {
             jwt.setToken(response.data.token);
+            localStorage.setItem('isLogin', true);
+            // console.log(response);
             return true;
         }
     } catch (error) {}

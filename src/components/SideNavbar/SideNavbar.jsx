@@ -4,17 +4,30 @@ import styled from 'styled-components';
 import ChatRoundedIcon from '@material-ui/icons/ChatRounded';
 import PermContactCalendarOutlinedIcon from '@material-ui/icons/PermContactCalendarOutlined';
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
+import React from 'react';
+import { Menu, MenuItem } from '@material-ui/core';
 // import { userSelector } from '../../store/reducers/userReducer/userSlice';
 const SideNavbar = () => {
     // const user = userSelector(userSelector);
     // console.log(user === undefined);
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
     return (
         <div className="sideNavbar">
             <div style={{ padding: '25px 0' }}>
                 <LightTooltip placement="right">
                     <Avatar
-                    // style={!user.avatar && { color: `${user.avatarColor}` }}
-                    // src={user?.avatar ? user.avatar : ''}
+                        onClick={handleClick}
+                        // style={!user.avatar && { color: `${user.avatarColor}` }}
+                        // src={user?.avatar ? user.avatar : ''}
                     />
                 </LightTooltip>
             </div>
@@ -28,10 +41,15 @@ const SideNavbar = () => {
                 </LightTooltip>
             </div>
             <div className="bottom-icon">
-                <LightTooltip placement="right" title="cài đặt">
+                <LightTooltip placement="right" title="cài đặt" onClick={handleClick}>
                     <SettingsOutlinedIcon className="icon" />
                 </LightTooltip>
             </div>
+            <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
+                <MenuItem onClick={handleClose}>Profile</MenuItem>
+                <MenuItem onClick={handleClose}>My account</MenuItem>
+                <MenuItem onClick={handleClose}>Logout</MenuItem>
+            </Menu>
         </div>
     );
 };

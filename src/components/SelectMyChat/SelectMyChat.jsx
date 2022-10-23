@@ -109,7 +109,8 @@ export default function SelectMyChat() {
                     aria-label="full width tabs example"
                 >
                     <Tab style={{ textTransform: 'unset', color: 'blue' }} label="Tất cả" {...a11yProps(0)} />
-                    <Tab style={{ textTransform: 'unset', color: 'blue' }} label="Test" {...a11yProps(1)} />
+                    <Tab style={{ textTransform: 'unset', color: 'blue' }} label="Bạn bè" {...a11yProps(1)} />
+                    <Tab style={{ textTransform: 'unset', color: 'blue' }} label="Lời mời" {...a11yProps(2)} />
                 </Tabs>
                 {/* <div>
                     <Button
@@ -163,7 +164,10 @@ export default function SelectMyChat() {
                     <ListConversation />
                 </div>
                 <div role="tabpanel" value={value} index={1} dir={theme.direction}>
-                    Item Two
+                    trống
+                </div>
+                <div role="tabpanel" value={value} index={1} dir={theme.direction}>
+                    trống
                 </div>
             </SwipeableViews>
         </div>

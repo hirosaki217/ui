@@ -4,8 +4,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { login, loginSelector } from '../../store/reducers/loginReducer/loginSlice';
 import { checkPhone } from '../../utils/checkPhoneValid';
+import { useAuthContext } from '../../contexts/AuthContext';
+import jwt from '../../utils/jwt';
 
 const Register = () => {
+    const { isAuthenticated } = useAuthContext();
+
     const char = "!@#$&*%^&().?<>'";
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -24,6 +28,11 @@ const Register = () => {
     const check6 = useRef();
     const checkPass = /^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).{8,16}$/;
     let conditional = false;
+
+    useEffect(() => {
+        if (jwt.getUserId()) navigate('..');
+    }, [jwt.getUserId()]);
+
     useEffect(() => {
         check0.current.className = 'catchError hide';
         if (!/^(0[3|5|7|8|9])+([0-9]{8})\b/.test(username)) {
@@ -74,9 +83,6 @@ const Register = () => {
         }
     }, [username, password, confirmPassword]);
 
-    useEffect(() => {
-        if (isLogin) navigate('..');
-    }, [isLogin]);
     const onSubmit = (e) => {
         e.preventDefault();
         if (step === 'FORM_REGISTER') {

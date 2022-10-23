@@ -14,7 +14,7 @@ import { useAuthContext } from './contexts/AuthContext';
 
 function App() {
     const [loading, setLoading] = useState(true);
-    const { checkAuth, isAuthenticated } = useAuthContext();
+    const { checkAuth } = useAuthContext();
 
     useEffect(() => {
         const authenticate = async () => {
