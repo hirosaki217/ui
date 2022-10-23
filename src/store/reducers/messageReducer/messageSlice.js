@@ -43,6 +43,7 @@ const messageSlice = createSlice({
         [sendMessage.fulfilled]: (state, action) => {
             state.loading = false;
             state.error = false;
+            state.messages.data = [...state.messages.data, action.payload];
         },
     },
 });

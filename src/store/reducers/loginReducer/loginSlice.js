@@ -2,27 +2,6 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from '../../../api/apiConfig';
 import jwt from '../../../utils/jwt';
 
-export const checkAuth = createAsyncThunk('login/checkAuth', async () => {
-    const token = jwt.getToken();
-    let id = jwt.getUserId();
-    if (token) {
-        localStorage.setItem('isLogin', true);
-        return { token, id };
-    }
-
-    if (!token) {
-        const success = await jwt.getRefreshToken();
-        id = jwt.getUserId();
-        if (success) {
-            localStorage.setItem('isLogin', true);
-            return { token: jwt.getToken(), id };
-        }
-    }
-
-    localStorage.setItem('isLogin', false);
-    return null;
-});
-
 export const login = createAsyncThunk('login', async (data) => {
     try {
         const response = await axios.post('auth/login', data, { withCredentials: true });
@@ -64,15 +43,6 @@ const loginSlice = createSlice({
         [login.rejected]: (state, action) => {
             state.user.isLogin = false;
             state.user.isRegister = false;
-        },
-        [checkAuth.pending]: (state, action) => {},
-        [checkAuth.fulfilled]: (state, action) => {
-            state.user.isLogin = action.payload ? true : false;
-            state.user.token = action.payload.token;
-            state.user._id = action.payload.id;
-        },
-        [checkAuth.rejected]: (state, action) => {
-            state.user.isLogin = false;
         },
     },
 });

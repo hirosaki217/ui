@@ -1,12 +1,17 @@
+import SearchInput from '../SearchInput/SearchInput';
+import SelectMyChat from '../SelectMyChat/SelectMyChat';
 import ListConversation from './List/ListConversation';
 import './myChat.css';
 
 const MyChat = () => {
     return (
         <div className="myChat">
-            <div className="myChatHeader">Action</div>
+            <div className="myChatHeader">
+                <SearchInput />
+                {/* <div style={{ flex: '1' }}>tag</div> */}
+            </div>
             <div className="myChatList scrollbar" id="style-scroll">
-                <ListConversation />
+                <SelectMyChat />
             </div>
         </div>
     );

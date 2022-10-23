@@ -7,16 +7,26 @@ import { messagesSelector } from '../../store/reducers/messageReducer/messageSli
 import { loginSelector } from '../../store/reducers/loginReducer/loginSlice';
 import dateUtils from '../../utils/dateUtils';
 import CustomizedInputBase from '../../components/CustomizedInputBase/CustomizedInputBase';
+import jwt from '../../utils/jwt';
+import { useEffect, useRef } from 'react';
 
 const ChattingPage = ({ socket }) => {
     const currentConversation = useSelector(currentConversationSelector);
     const messages = useSelector(messagesSelector);
-    const user = useSelector(loginSelector);
+    const user = { _id: jwt.getUserId() };
+    const scroll = useRef();
+    useEffect(() => {
+        const scrollToBottom = (node) => {
+            node.scrollTop = node.scrollHeight;
+        };
+        scrollToBottom(scroll.current);
+        scroll.current.scrollIntoView({ behavior: 'smooth' });
+    });
 
     return (
         <div className="chatting">
             <div className="headerUser">Action</div>
-            <div className="roomChat scrollbar" id="style-scroll">
+            <div ref={scroll} className="roomChat scrollbar" id="style-scroll">
                 {messages.data &&
                     messages.data.map((msg) => (
                         <div key={msg._id} className={msg.user._id === user._id ? 'rightUser' : 'leftUser'}>

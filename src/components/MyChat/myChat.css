@@ -10,6 +10,8 @@
     min-height: 97px;
     min-width: 400px;
     border-bottom: 1px solid #ccc;
+    display: flex;
+    flex-direction: column;
 }
 
 .myChatList {
