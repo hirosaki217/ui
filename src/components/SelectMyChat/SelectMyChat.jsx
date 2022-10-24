@@ -17,6 +17,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ListConversation from '../MyChat/List/ListConversation';
+import ListFriend from '../MyChat/ListFriend/ListFriend';
+import ListInviteFriend from '../MyChat/ListInviteFriend/ListInviteFriend';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -164,10 +166,10 @@ export default function SelectMyChat() {
                     <ListConversation />
                 </div>
                 <div role="tabpanel" value={value} index={1} dir={theme.direction}>
-                    trống
+                    <ListFriend />
                 </div>
                 <div role="tabpanel" value={value} index={1} dir={theme.direction}>
-                    trống
+                    <ListInviteFriend />
                 </div>
             </SwipeableViews>
         </div>

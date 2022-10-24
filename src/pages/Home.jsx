@@ -12,20 +12,24 @@ import useWindowUnloadEffect from '../hooks/useWindowUnloadEffect';
 import { useAuthContext } from '../contexts/AuthContext';
 import jwt from '../utils/jwt';
 import { useNavigate } from 'react-router-dom';
+import { getProfile, meSelector } from '../store/reducers/userReducer/meReducer';
+import { findFriend, getFriends, getListInvite } from '../store/reducers/friendReducer/friendReducer';
 init();
 const Home = () => {
     const dispatch = useDispatch();
     const { isLogin } = useSelector(loginSelector);
     const conversations = useSelector(conversationSelector);
-    const user = { _id: jwt.getUserId() };
     const navigate = useNavigate();
     useEffect(() => {
         if (!jwt.getUserId()) navigate('login');
     }, [jwt.getUserId()]);
 
     useEffect(() => {
-        if (!user._id) return;
+        if (!jwt.getUserId()) return;
+        dispatch(getProfile());
         dispatch(getList({}));
+        dispatch(getFriends());
+        dispatch(getListInvite());
     }, []);
 
     useEffect(() => {
@@ -35,9 +39,9 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-        const userId = user._id;
+        const userId = jwt.getUserId();
         if (userId) socket.emit('join', userId);
-    }, [user]);
+    }, [jwt.getUserId()]);
 
     useEffect(() => {
         if (conversations.length === 0) return;
@@ -47,7 +51,7 @@ const Home = () => {
     }, [conversations]);
     useEffect(() => {
         socket.on('new-message', (conversationId, message) => {
-            if (user._id !== message.user._id) dispatch(rerenderMessage(message));
+            if (jwt.getUserId() !== message.user._id) dispatch(rerenderMessage(message));
         });
     }, []);
 
@@ -56,7 +60,7 @@ const Home = () => {
     }
     useWindowUnloadEffect(async () => {
         async function leaveApp() {
-            socket.emit('leave', user._id);
+            socket.emit('leave', jwt.getUserId());
             await sleep(2000);
         }
 

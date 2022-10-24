@@ -15,6 +15,18 @@ export const login = createAsyncThunk('login', async (data) => {
     return false;
 });
 
+export const logout = createAsyncThunk('login/logout', async () => {
+    try {
+        const response = await axios.post('auth/logout', { withCredentials: true });
+        if (response.data.logout) {
+            jwt.deleteToken();
+            localStorage.setItem('isLogin', false);
+            return true;
+        }
+    } catch (error) {}
+    return false;
+});
+
 const loginSlice = createSlice({
     name: 'login',
     initialState: {
@@ -45,6 +57,9 @@ const loginSlice = createSlice({
         [login.rejected]: (state, action) => {
             state.user.isLogin = false;
             state.user.isRegister = false;
+        },
+        [logout.fulfilled]: (state, action) => {
+            state.user.isLogin = false;
         },
     },
 });

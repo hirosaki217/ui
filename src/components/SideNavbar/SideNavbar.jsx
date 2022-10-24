@@ -6,12 +6,18 @@ import PermContactCalendarOutlinedIcon from '@material-ui/icons/PermContactCalen
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
 import React from 'react';
 import { Menu, MenuItem } from '@material-ui/core';
+import { logout } from '../../store/reducers/loginReducer/loginSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { meSelector } from '../../store/reducers/userReducer/meReducer';
 // import { userSelector } from '../../store/reducers/userReducer/userSlice';
 const SideNavbar = () => {
     // const user = userSelector(userSelector);
     // console.log(user === undefined);
-
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const profile = useSelector(meSelector);
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -20,14 +26,20 @@ const SideNavbar = () => {
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    const handleLogout = () => {
+        dispatch(logout());
+        window.location.reload();
+        setAnchorEl(null);
+    };
     return (
         <div className="sideNavbar">
             <div style={{ padding: '25px 0' }}>
-                <LightTooltip placement="right">
+                <LightTooltip placement="right" title={profile && profile.name}>
                     <Avatar
                         onClick={handleClick}
-                        // style={!user.avatar && { color: `${user.avatarColor}` }}
-                        // src={user?.avatar ? user.avatar : ''}
+                        style={{ color: `${profile && !profile.avatar ? profile.avatarColor : ''}` }}
+                        src={profile && profile.avatar ? profile.avatar : ''}
                     />
                 </LightTooltip>
             </div>
@@ -48,7 +60,7 @@ const SideNavbar = () => {
             <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
                 <MenuItem onClick={handleClose}>Profile</MenuItem>
                 <MenuItem onClick={handleClose}>My account</MenuItem>
-                <MenuItem onClick={handleClose}>Logout</MenuItem>
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
         </div>
     );

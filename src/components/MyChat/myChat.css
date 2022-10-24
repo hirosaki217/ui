@@ -16,4 +16,5 @@
 
 .myChatList {
     flex: 9;
+    max-width: 470px;
 }

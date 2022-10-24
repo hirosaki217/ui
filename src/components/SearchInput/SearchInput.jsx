@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './searchInput.css';
 import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
@@ -12,7 +12,10 @@ import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
 import GroupAddOutlinedIcon from '@material-ui/icons/GroupAddOutlined';
 import PersonAddOutlinedIcon from '@material-ui/icons/PersonAddOutlined';
-import { Button } from '@material-ui/core';
+import { Avatar, Button } from '@material-ui/core';
+import { useDispatch, useSelector } from 'react-redux';
+import { findFriend, friendSelector, inviteFriend } from '../../store/reducers/friendReducer/friendReducer';
+import jwt from '../../utils/jwt';
 const useStyles = makeStyles((theme) => ({
     root: {
         padding: '0px 4px',
@@ -50,14 +53,32 @@ Fade.propTypes = {
 
 export default function SearchInput() {
     const classes = useStyles();
+    const dispatch = useDispatch();
     const [open, setOpen] = React.useState(false);
-
+    const friend = useSelector(friendSelector);
+    const [phone, setPhone] = React.useState('');
+    const [result, setResult] = React.useState(null);
     const handleOpen = () => {
         setOpen(true);
+        setResult(null);
+        setPhone('');
     };
 
     const handleClose = () => {
         setOpen(false);
+    };
+    useEffect(() => {
+        if (friend) setResult(friend._id !== jwt.getUserId() ? friend : null);
+    }, [friend]);
+
+    const onClickToSearch = () => {
+        setResult(null);
+        if (!phone.length > 0 || !/[0-9]{10}/.test(phone)) return;
+        dispatch(findFriend(phone));
+    };
+    const onClickInvite = (result) => {
+        // dispatch(inviteFriend(result));
+        setResult(null);
     };
     return (
         <>
@@ -95,15 +116,42 @@ export default function SearchInput() {
                         <div className="modalAddFriendBody">
                             <div className="modalAddFriendInput">
                                 <span> +84</span>
-                                <input type="text" placeholder="Số điện thoại" />
+                                <input
+                                    type="text"
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
+                                    placeholder="Số điện thoại"
+                                />
                             </div>
-                            <div className="modalAddFriendResult scrollbar" id="style-scroll"></div>
+                            <div className="modalAddFriendResult scrollbar" id="style-scroll">
+                                <div>
+                                    {result && result._id !== jwt.getUserId() && (
+                                        <div className="friendItemInvite">
+                                            <Avatar style={{ marginLeft: '10px' }} src={result ? result.avatar : ''} />
+                                            <div style={{ flex: 1 }}>
+                                                <p className="friendItemInfo">{result ? result.username : ''}</p>
+                                                <p className="friendItemInfo">{result ? result.name : ''}</p>
+                                            </div>
+                                            <div>
+                                                {}
+                                                <Button
+                                                    onClick={onClickInvite.bind(this, result)}
+                                                    variant="contained"
+                                                    color="primary"
+                                                >
+                                                    kết bạn
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                         <div className="modalAddFriendFooter">
                             <Button onClick={handleClose} variant="contained">
                                 Thoát
                             </Button>
-                            <Button variant="contained" color="primary">
+                            <Button variant="contained" onClick={onClickToSearch} color="primary">
                                 Tìm kiếm
                             </Button>
                         </div>

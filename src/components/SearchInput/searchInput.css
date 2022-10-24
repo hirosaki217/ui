@@ -66,3 +66,15 @@
 .modalAddFriendFooter button {
     margin: 0 5px;
 }
+
+.friendItemInvite {
+    display: flex;
+    width: 336px;
+
+    align-items: center;
+}
+
+.friendItemInfo {
+    margin: 0;
+    padding-left: 10px;
+}
