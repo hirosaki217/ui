@@ -37,7 +37,7 @@ const ChattingPage = ({ socket }) => {
                         <div key={msg._id} className={msg.user._id === user._id ? 'rightUser' : 'leftUser'}>
                             <div className="wrapperMessage">
                                 <div className="messageUser">
-                                    <Avatar />
+                                    <Avatar src={msg.user.avatar ? msg.user.avatar : ''} />
                                 </div>
                                 <div className="content">
                                     <div className={`messageName`} style={{ fontSize: '13px', textIndent: '2px' }}>

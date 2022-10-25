@@ -5,7 +5,7 @@ const HeaderUser = ({ conversation }) => {
     return (
         <div className="conversation">
             <div className="conversationInfor">
-                <Avatar className="conversationAvatar" />
+                <Avatar className="conversationAvatar" src={conversation.avatar ? conversation.avatar : ''} />
 
                 <div className="conversationName">
                     <h5 className="name">{conversation.name ? conversation.name : 'name'}</h5>

@@ -6,14 +6,25 @@ import { init, socket } from '../utils/socketClient';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginSelector } from '../store/reducers/loginReducer/loginSlice';
-import { conversationSelector, getList } from '../store/reducers/conversationReducer/conversationSlice';
+import {
+    conversationSelector,
+    getConversationById,
+    getList,
+} from '../store/reducers/conversationReducer/conversationSlice';
 import { rerenderMessage } from '../store/reducers/messageReducer/messageSlice';
 import useWindowUnloadEffect from '../hooks/useWindowUnloadEffect';
 import { useAuthContext } from '../contexts/AuthContext';
 import jwt from '../utils/jwt';
 import { useNavigate } from 'react-router-dom';
 import { getProfile, meSelector } from '../store/reducers/userReducer/meReducer';
-import { findFriend, getFriends, getListInvite } from '../store/reducers/friendReducer/friendReducer';
+import {
+    findFriend,
+    getFriends,
+    getListInvite,
+    getListMeInvite,
+    recieveInvite,
+    setNewFriend,
+} from '../store/reducers/friendReducer/friendReducer';
 init();
 const Home = () => {
     const dispatch = useDispatch();
@@ -30,6 +41,7 @@ const Home = () => {
         dispatch(getList({}));
         dispatch(getFriends());
         dispatch(getListInvite());
+        dispatch(getListMeInvite());
     }, []);
 
     useEffect(() => {
@@ -49,6 +61,20 @@ const Home = () => {
         const conversationIds = conversations.map((conversation) => conversation._id);
         socket.emit('join-conversations', conversationIds);
     }, [conversations]);
+
+    useEffect(() => {
+        socket.on('create-individual-conversation', (converId) => {
+            socket.emit('join-conversation', converId);
+            dispatch(getConversationById(converId));
+        });
+    }, []);
+
+    useEffect(() => {
+        socket.on('create-individual-conversation-when-was-friend', (conversationId) => {
+            dispatch(getConversationById(conversationId));
+        });
+    }, []);
+
     useEffect(() => {
         socket.on('new-message', (conversationId, message) => {
             if (jwt.getUserId() !== message.user._id) dispatch(rerenderMessage(message));
@@ -66,6 +92,36 @@ const Home = () => {
 
         await leaveApp();
     }, true);
+
+    useEffect(() => {
+        socket.on('accept-friend', (value) => {
+            dispatch(setNewFriend(value._id));
+            // dispatch(setMyRequestFriend(value._id));
+        });
+
+        socket.on('send-friend-invite', (fq) => {
+            console.log('recieved friend invite', fq);
+            dispatch(recieveInvite(fq));
+            // dispatch(setAmountNotify(amountNotify + 1));
+        });
+
+        // xóa lời mời kết bạn
+        socket.on('deleted-friend-invite', (_id) => {
+            // dispatch(updateMyRequestFriend(_id));
+        });
+
+        //  xóa gởi lời mời kết bạn cho người khác
+        socket.on('deleted-invite-was-send', (_id) => {
+            // dispatch(updateRequestFriends(_id));
+        });
+
+        // xóa kết bạn
+        socket.on('deleted-friend', (_id) => {
+            // dispatch(updateFriend(_id));
+            // dispatch(updateFriendChat(_id));
+        });
+    }, []);
+
     return (
         <div className="home">
             <SideNavbar style={{ flex: 1 }} />

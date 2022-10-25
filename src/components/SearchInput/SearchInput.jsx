@@ -68,7 +68,10 @@ export default function SearchInput() {
         setOpen(false);
     };
     useEffect(() => {
-        if (friend) setResult(friend._id !== jwt.getUserId() ? friend : null);
+        if (friend) {
+            setResult(friend._id !== jwt.getUserId() ? friend : null);
+            console.log(friend);
+        }
     }, [friend]);
 
     const onClickToSearch = () => {
@@ -77,7 +80,7 @@ export default function SearchInput() {
         dispatch(findFriend(phone));
     };
     const onClickInvite = (result) => {
-        // dispatch(inviteFriend(result));
+        dispatch(inviteFriend(result));
         setResult(null);
     };
     return (

@@ -35,11 +35,29 @@ const friendSlice = createSlice({
     name: 'friend',
     initialState: {
         user: null,
-        friends: null,
+        friends: [],
         friendInvites: [],
         friendMeInvites: [],
     },
-    reducers: {},
+    reducers: {
+        recieveInvite: (state, action) => {
+            if (action.payload) state.friendInvites = [action.payload, ...state.friendInvites];
+        },
+        deleteMeInvive: (state, action) => {
+            state.friendMeInvites = state.friendMeInvites.filter(
+                (friendMeInvite) => friendMeInvite._id !== action.payload,
+            );
+        },
+        deleteInvite: (state, action) => {
+            state.friendInvites = state.friendInvites.filter((friendInvite) => friendInvite._id !== action.payload);
+        },
+        setNewFriend: (state, action) => {
+            const friend = state.friendMeInvites.find((friendMeInvite) => friendMeInvite._id === action.payload);
+            const newList = state.friendMeInvites.filter((friendMeInvite) => friendMeInvite.id !== action.payload);
+            state.friends = [friend, ...state.friends];
+            state.friendMeInvites = newList;
+        },
+    },
     extraReducers: {
         [findFriend.fulfilled]: (state, action) => {
             state.user = action.payload;
@@ -48,12 +66,14 @@ const friendSlice = createSlice({
             state.friends = action.payload;
         },
         [inviteFriend.fulfilled]: (state, action) => {
-            state.friendMeInvites = [action.payload, ...state.friendMeInvites];
+            const { _id, name, username, avatar, avatarColor } = action.payload;
+            const friendMeInvite = { _id, name, username, avatar, avatarColor };
+            state.friendMeInvites = [friendMeInvite, ...state.friendMeInvites];
         },
         [acceptFriend.fulfilled]: (state, action) => {
             const friend = state.friendInvites.find((friend) => friend._id === action.payload);
-            state.friendInvites.filter((friend) => friend._id !== action.payload);
-            if (state.friends !== null) state.friends = [friend, ...state.friends];
+            state.friendInvites = state.friendInvites.filter((friend) => friend._id !== action.payload);
+            state.friends = [friend, ...state.friends];
         },
         [getListInvite.fulfilled]: (state, action) => {
             state.friendInvites = action.payload;
@@ -69,5 +89,6 @@ const friendReducer = friendSlice.reducer;
 export const friendSelector = (state) => state.friendReducer.user;
 export const listFriendSelector = (state) => state.friendReducer.friends;
 export const listFriendInviteSelector = (state) => state.friendReducer.friendInvites;
-
+export const listFriendMeInviteSelector = (state) => state.friendReducer.friendMeInvites;
+export const { recieveInvite, setNewFriend } = friendSlice.actions;
 export default friendReducer;

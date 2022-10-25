@@ -9,4 +9,7 @@ export const apiConversations = {
             },
         });
     },
+    getConversationById: async (id) => {
+        return await axios.get(`/conversations/${id}`);
+    },
 };

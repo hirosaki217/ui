@@ -29,6 +29,7 @@ export default function ListInviteFriend() {
     };
 
     const handleAccept = (id) => {
+        handleClose();
         dispatch(acceptFriend(id));
     };
     React.useEffect(() => {
@@ -40,7 +41,7 @@ export default function ListInviteFriend() {
                 list.map((friend) => {
                     const labelId = `checkbox-list-secondary-label-${friend._id}`;
                     return (
-                        <>
+                        <div key={friend._id}>
                             <ListItem
                                 key={friend._id}
                                 secondaryAction={
@@ -94,7 +95,7 @@ export default function ListInviteFriend() {
                                     xóa yêu cầu
                                 </MenuItem>
                             </Menu>
-                        </>
+                        </div>
                     );
                 })}
         </List>

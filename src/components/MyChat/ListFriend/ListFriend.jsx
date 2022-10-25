@@ -29,7 +29,7 @@ export default function ListFriend() {
         setAnchorEl(null);
     };
     React.useEffect(() => {
-        setList(listFriend);
+        if (listFriend) setList(listFriend);
     }, [listFriend]);
     return (
         <List dense sx={{ width: '100%', bgcolor: 'background.paper' }}>

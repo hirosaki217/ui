@@ -6,6 +6,11 @@ export const getList = createAsyncThunk('conversation/getList', async ({ name, t
     return response.data;
 });
 
+export const getConversationById = createAsyncThunk('conversation/getConversationById', async (id) => {
+    const response = await apiConversations.getConversationById(id);
+    return response.data;
+});
+
 const conversationSlice = createSlice({
     name: 'conversation',
     initialState: {
@@ -24,6 +29,9 @@ const conversationSlice = createSlice({
         [getList.pending]: (state, action) => {},
         [getList.fulfilled]: (state, action) => {
             state.conversations = action.payload;
+        },
+        [getConversationById.fulfilled]: (state, action) => {
+            state.conversations = [action.payload, ...state.conversations];
         },
     },
 });
