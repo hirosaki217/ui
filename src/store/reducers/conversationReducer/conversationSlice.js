@@ -24,6 +24,16 @@ const conversationSlice = createSlice({
             state.currentConversation = action.payload._id;
             state.conversation = action.payload;
         },
+        setLastMessageInConversation: (state, action) => {
+            const { conversationId, message } = action.payload;
+            const index = state.conversations.findIndex((conversation) => conversation._id === conversationId);
+            const searchConversation = state.conversations[index];
+            searchConversation.lastMessage = message;
+
+            const conversationTempt = state.conversations.filter((conversation) => conversation._id !== conversationId);
+
+            state.conversations = [searchConversation, ...conversationTempt];
+        },
     },
     extraReducers: {
         [getList.pending]: (state, action) => {},
@@ -42,5 +52,5 @@ export const conversationSelector = (state) => state.conversationReducer.convers
 export const currentConversationSelector = (state) => state.conversationReducer.currentConversation;
 export const currentAConverSelector = (state) => state.conversationReducer.conversation;
 
-export const { getConversation, setCurrentConversation } = actions;
+export const { getConversation, setCurrentConversation, setLastMessageInConversation } = actions;
 export default conversationReducer;

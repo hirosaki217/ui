@@ -10,6 +10,7 @@ import {
     conversationSelector,
     getConversationById,
     getList,
+    setLastMessageInConversation,
 } from '../store/reducers/conversationReducer/conversationSlice';
 import { rerenderMessage } from '../store/reducers/messageReducer/messageSlice';
 import useWindowUnloadEffect from '../hooks/useWindowUnloadEffect';
@@ -78,6 +79,14 @@ const Home = () => {
     useEffect(() => {
         socket.on('new-message', (conversationId, message) => {
             if (jwt.getUserId() !== message.user._id) dispatch(rerenderMessage(message));
+
+            dispatch(setLastMessageInConversation({ conversationId, message }));
+        });
+    }, []);
+
+    useEffect(() => {
+        socket.on('has-change-conversation-when-have-new-message', (conversationId, message) => {
+            dispatch(setLastMessageInConversation({ conversationId, message }));
         });
     }, []);
 
