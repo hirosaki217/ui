@@ -34,8 +34,22 @@
 }
 
 .textContent > p {
-    width: 290px;
+    width: 250px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.listItem:hover .moreIcon {
+    color: black;
+    display: block !important;
+}
+
+.moreIcon {
+    position: absolute;
+    right: 20px;
+    top: 35%;
+    z-index: 2;
+    display: none !important;
+    color: #ccc;
 }

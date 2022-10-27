@@ -8,8 +8,9 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import React, { useEffect } from 'react';
-// import { AvatarGroup } from '@mui/material';
+import { AvatarGroup } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
+import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import {
     conversationSelector,
     getList,
@@ -83,35 +84,72 @@ const ListConversation = () => {
                 />
             </ListItem> */}
             {conversations &&
-                conversations.map((conversation) => (
-                    <ListItem
-                        onClick={onSelectConversation.bind(this, conversation)}
-                        key={conversation._id}
-                        className={classes.listItem}
-                        alignItems="flex-start"
-                    >
-                        <ListItemAvatar>
-                            <Avatar alt="Cindy Baker" src={conversation.avatar ? conversation.avatar : ''} />
-                        </ListItemAvatar>
-                        <ListItemText
-                            primary={conversation.name}
-                            className="textContent"
-                            secondary={
-                                <React.Fragment>
-                                    <Typography
-                                        component="span"
-                                        variant="body2"
-                                        className={classes.inline}
-                                        color="textPrimary"
-                                    >
-                                        {conversation.lastMessage.user.name}
-                                    </Typography>
-                                    {' - ' + conversation.lastMessage.content}
-                                </React.Fragment>
-                            }
-                        />
-                    </ListItem>
-                ))}
+                conversations.map((conversation) =>
+                    conversation.totalMembers > 2 ? (
+                        <ListItem key={conversation._id} className={classes.listItem} alignItems="flex-start">
+                            <ListItemAvatar className="listAvatar">
+                                <AvatarGroup className="group" total={5}>
+                                    <Avatar className="iconAvatar" alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                                    <Avatar
+                                        className="iconAvatar"
+                                        alt="Travis Howard"
+                                        src="/static/images/avatar/2.jpg"
+                                    />
+                                    <Avatar
+                                        className="iconAvatar"
+                                        alt="Agnes Walker"
+                                        src="/static/images/avatar/4.jpg"
+                                    />
+                                </AvatarGroup>
+                            </ListItemAvatar>
+                            <ListItemText
+                                primary="Brunch this weekend?"
+                                secondary={
+                                    <React.Fragment>
+                                        <Typography
+                                            component="span"
+                                            variant="body2"
+                                            className={classes.inline}
+                                            color="textPrimary"
+                                        >
+                                            Ali Connors
+                                        </Typography>
+                                        {" — I'll be in your neighborhood doing errands this…"}
+                                    </React.Fragment>
+                                }
+                            />
+                        </ListItem>
+                    ) : (
+                        <ListItem
+                            onClick={onSelectConversation.bind(this, conversation)}
+                            key={conversation._id}
+                            className={`${classes.listItem} listItem`}
+                            alignItems="flex-start"
+                        >
+                            <ListItemAvatar>
+                                <Avatar alt="Cindy Baker" src={conversation.avatar ? conversation.avatar : ''} />
+                            </ListItemAvatar>
+                            <ListItemText
+                                primary={conversation.name}
+                                className="textContent"
+                                secondary={
+                                    <React.Fragment>
+                                        <Typography
+                                            component="span"
+                                            variant="body2"
+                                            className={classes.inline}
+                                            color="textPrimary"
+                                        >
+                                            {conversation.lastMessage.user.name}
+                                        </Typography>
+                                        {' - ' + conversation.lastMessage.content}
+                                    </React.Fragment>
+                                }
+                            />
+                            <MoreHorizIcon className="moreIcon" />
+                        </ListItem>
+                    ),
+                )}
         </List>
     );
 };

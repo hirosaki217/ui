@@ -3,6 +3,7 @@ import './sideNavbar.css';
 import styled from 'styled-components';
 import ChatRoundedIcon from '@material-ui/icons/ChatRounded';
 import PermContactCalendarOutlinedIcon from '@material-ui/icons/PermContactCalendarOutlined';
+import CloudIcon from '@material-ui/icons/Cloud';
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
 import React from 'react';
 import { Menu, MenuItem } from '@material-ui/core';
@@ -10,7 +11,9 @@ import { logout } from '../../store/reducers/loginReducer/loginSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { meSelector } from '../../store/reducers/userReducer/meReducer';
+import { setIndex } from '../../store/reducers/nav/NavSlice';
 // import { userSelector } from '../../store/reducers/userReducer/userSlice';
+
 const SideNavbar = () => {
     // const user = userSelector(userSelector);
     // console.log(user === undefined);
@@ -32,6 +35,12 @@ const SideNavbar = () => {
         window.location.reload();
         setAnchorEl(null);
     };
+
+    const handleNavClick = (index) => {
+        dispatch(setIndex(index + ''));
+        setAnchorEl(null);
+    };
+
     return (
         <div className="sideNavbar">
             <div style={{ padding: '25px 0' }}>
@@ -43,20 +52,25 @@ const SideNavbar = () => {
                     />
                 </LightTooltip>
             </div>
+
             <div className="mid-icon">
                 <LightTooltip placement="right" title="tin nhắn">
-                    <ChatRoundedIcon className="icon active" />
+                    <ChatRoundedIcon onClick={handleNavClick.bind(this, 0)} className="icon active" />
                 </LightTooltip>
 
                 <LightTooltip placement="right" title="danh bạ">
-                    <PermContactCalendarOutlinedIcon className="icon" />
+                    <PermContactCalendarOutlinedIcon onClick={handleNavClick.bind(this, 1)} className="icon" />
                 </LightTooltip>
             </div>
             <div className="bottom-icon">
+                <LightTooltip placement="right" title="Cloud">
+                    <CloudIcon className="icon" />
+                </LightTooltip>
                 <LightTooltip placement="right" title="cài đặt" onClick={handleClick}>
                     <SettingsOutlinedIcon className="icon" />
                 </LightTooltip>
             </div>
+
             <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
                 <MenuItem onClick={handleClose}>Profile</MenuItem>
                 <MenuItem onClick={handleClose}>My account</MenuItem>

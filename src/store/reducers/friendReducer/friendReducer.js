@@ -90,5 +90,6 @@ export const friendSelector = (state) => state.friendReducer.user;
 export const listFriendSelector = (state) => state.friendReducer.friends;
 export const listFriendInviteSelector = (state) => state.friendReducer.friendInvites;
 export const listFriendMeInviteSelector = (state) => state.friendReducer.friendMeInvites;
+
 export const { recieveInvite, setNewFriend } = friendSlice.actions;
 export default friendReducer;

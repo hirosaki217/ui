@@ -4,6 +4,7 @@ import conversationReducer from './reducers/conversationReducer/conversationSlic
 import messageReducer from './reducers/messageReducer/messageSlice';
 import meReducer from './reducers/userReducer/meReducer';
 import friendReducer from './reducers/friendReducer/friendReducer';
+import navReducer from './reducers/nav/NavSlice';
 const store = configureStore({
     reducer: {
         loginReducer,
@@ -11,6 +12,7 @@ const store = configureStore({
         messageReducer,
         meReducer,
         friendReducer,
+        navReducer,
     },
 });
 

@@ -1,7 +1,11 @@
-.MuiBox-root-24 {
-    padding: 0 !important;
+.selectorTabList {
+    display: flex;
+    background-color: white;
+    border-bottom: 1px solid #ccc;
 }
 
-.MuiTab-root {
-    width: 50px !important;
+.selectorTab {
+    border: unset;
+    font-size: 14px;
+    background-color: white;
 }

@@ -8,13 +8,11 @@
 .myChatHeader {
     flex: 1;
     min-height: 97px;
-    min-width: 400px;
-    border-bottom: 1px solid #ccc;
     display: flex;
     flex-direction: column;
 }
 
 .myChatList {
     flex: 9;
-    max-width: 470px;
+    width: 360px;
 }
