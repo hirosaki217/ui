@@ -76,6 +76,15 @@
 .sendOption {
     height: 47px;
     border-bottom: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+}
+
+.btnOption {
+    border-radius: 3px !important;
+    width: 50px !important;
+    height: 50px !important;
+    padding: 0 !important;
 }
 
 .sendMessage {

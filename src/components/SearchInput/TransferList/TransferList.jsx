@@ -25,12 +25,22 @@ function union(a, b) {
     return [...a, ...not(b, a)];
 }
 
-export default function TransferList({ lsFr }) {
+const TransferList = ({
+    lsFr,
+    left,
+    setLeft,
+    right,
+    setRight,
+    listIndex,
+    setSearchInput,
+    friendToCreateGroup,
+    buttonRef,
+}) => {
     // const lsFr = useSelector(listFriendSelector);
     const [checked, setChecked] = React.useState([]);
-    const [left, setLeft] = React.useState([]);
-    const [right, setRight] = React.useState([]);
-    const friendToCreateGroup = [];
+    // const [left, setLeft] = React.useState([]);
+    // const [right, setRight] = React.useState([]);
+    // const friendToCreateGroup = [];
     const leftChecked = intersection(checked, left);
     const rightChecked = intersection(checked, right);
 
@@ -41,9 +51,16 @@ export default function TransferList({ lsFr }) {
     }, [lsFr]);
 
     React.useEffect(() => {
-        for (let i of right) {
-            friendToCreateGroup.push(lsFr[i]._id);
+        const lsFrToCreate = [];
+        for (let i of friendToCreateGroup) {
+            friendToCreateGroup.splice(i, 1);
         }
+        for (let i of right) {
+            lsFrToCreate.push(lsFr[i]._id);
+        }
+        friendToCreateGroup.push(...lsFrToCreate);
+
+        // listIndex.current = [...left];
     }, [right]);
 
     const handleToggle = (value) => () => {
@@ -58,7 +75,7 @@ export default function TransferList({ lsFr }) {
 
         setChecked(newChecked);
     };
-
+    // console.log(friendToCreateGroup);
     const numberOfChecked = (items) => intersection(checked, items).length;
 
     const handleToggleAll = (items) => () => {
@@ -70,13 +87,18 @@ export default function TransferList({ lsFr }) {
     };
 
     const handleCheckedRight = () => {
+        listIndex.current = [...not(left, leftChecked)];
         setRight(right.concat(leftChecked));
-        setLeft(not(left, leftChecked));
+        // setLeft(not(left, leftChecked));
+
         setChecked(not(checked, leftChecked));
     };
 
     const handleCheckedLeft = () => {
-        setLeft(left.concat(rightChecked));
+        listIndex.current = [...listIndex.current, ...rightChecked];
+        setLeft(listIndex.current);
+        // setLeft(left.concat(rightChecked));
+        setSearchInput('');
         setRight(not(right, rightChecked));
         setChecked(not(checked, rightChecked));
     };
@@ -177,4 +199,6 @@ export default function TransferList({ lsFr }) {
             <Grid item>{customList('Chosen', right)}</Grid>
         </Grid>
     );
-}
+};
+
+export default TransferList;

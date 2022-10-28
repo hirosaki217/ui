@@ -82,6 +82,9 @@ const Home = () => {
 
             dispatch(setLastMessageInConversation({ conversationId, message }));
         });
+        socket.on('create-conversation', (conversationId) => {
+            dispatch(getConversationById(conversationId));
+        });
     }, []);
 
     useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import './searchInput.css';
 import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
@@ -25,6 +25,7 @@ import jwt from '../../utils/jwt';
 import Groups2RoundedIcon from '@mui/icons-material/Groups2Rounded';
 import Radio from '@material-ui/core/Radio';
 import TransferList from './TransferList/TransferList';
+import { createGroupConversation } from '../../store/reducers/conversationReducer/conversationSlice';
 const useStyles = makeStyles((theme) => ({
     root: {
         padding: '0px 4px',
@@ -61,21 +62,59 @@ Fade.propTypes = {
 };
 
 export default function SearchInput() {
+    // transfer
+    const buttonRef = useRef();
+    const friendToCreateGroup = useRef();
+    const [left, setLeft] = React.useState([]);
+    const [right, setRight] = React.useState([]);
     const lsFr = useSelector(listFriendSelector);
     const listTempt = lsFr;
+    const listIndex = useRef(Array.from({ length: lsFr.length }, (_, i) => i));
+    //
     const classes = useStyles();
     const dispatch = useDispatch();
     const [open, setOpen] = React.useState(false);
     const [openGroup, setOpenGroup] = React.useState(false);
     const friend = useSelector(friendSelector);
     const [phone, setPhone] = React.useState('');
+    const [nameGroup, setNameGroup] = React.useState('');
     const [searchInput, setSearchInput] = React.useState('');
     const [result, setResult] = React.useState(null);
 
     const [selectedValue, setSelectedValue] = React.useState('a');
-
     const handleChange = (event) => {
         setSelectedValue(event.target.value);
+    };
+
+    React.useEffect(() => {
+        setLeft(listIndex.current);
+    }, [listIndex.current]);
+    useEffect(() => {
+        if (searchInput.length === 0 || searchInput === null) {
+            setLeft(listIndex.current);
+        } else {
+            let search = searchInput;
+            search = search.trim();
+            let lsTempt = [];
+            let regex = new RegExp('.*' + search + '.*', 'i');
+
+            for (let i of listIndex.current) {
+                if (regex.test(listTempt[i].name)) {
+                    lsTempt.push(i);
+                }
+            }
+            setLeft(lsTempt);
+        }
+        console.log(listIndex.current);
+    }, [searchInput]);
+    const handleCreateGroup = () => {
+        if (friendToCreateGroup.current.length >= 2 && nameGroup.trim().length > 2) {
+            console.log('đủ điều kiện', friendToCreateGroup.current);
+            const name = nameGroup.trim();
+            const userIds = friendToCreateGroup.current;
+            dispatch(createGroupConversation({ name, userIds }));
+        }
+        handleCloseModalGroup();
     };
 
     const handleOpen = () => {
@@ -84,6 +123,9 @@ export default function SearchInput() {
         setPhone('');
     };
     const handleOpenModalGroup = () => {
+        setNameGroup('');
+        setRight([]);
+        friendToCreateGroup.current = [];
         setOpenGroup(true);
         setResult(null);
         setPhone('');
@@ -100,7 +142,7 @@ export default function SearchInput() {
             setResult(friend._id !== jwt.getUserId() ? friend : null);
             console.log(friend);
         }
-    }, [friend]);
+    }, []);
 
     const onClickToSearch = () => {
         setResult(null);
@@ -221,8 +263,8 @@ export default function SearchInput() {
                                 </Avatar>
                                 <input
                                     type="text"
-                                    value={phone}
-                                    onChange={(e) => setPhone(e.target.value)}
+                                    value={nameGroup}
+                                    onChange={(e) => setNameGroup(e.target.value)}
                                     placeholder="Nhập tên nhóm"
                                 />
                             </div>
@@ -256,7 +298,17 @@ export default function SearchInput() {
                             </div>
                             <div className="modalAddGroupResult scrollbar" id="style-scroll">
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <TransferList lsFr={listTempt} />
+                                    <TransferList
+                                        lsFr={listTempt}
+                                        left={left}
+                                        right={right}
+                                        setLeft={setLeft}
+                                        setRight={setRight}
+                                        listIndex={listIndex}
+                                        setSearchInput={setSearchInput}
+                                        friendToCreateGroup={friendToCreateGroup.current}
+                                        buttonRef={buttonRef}
+                                    />
                                     {/* {result && result._id !== jwt.getUserId() && (
                                         <div className="friendItemInvite">
                                             <Avatar style={{ marginLeft: '10px' }} src={result ? result.avatar : ''} />
@@ -283,7 +335,7 @@ export default function SearchInput() {
                             <Button onClick={handleCloseModalGroup} variant="contained">
                                 Thoát
                             </Button>
-                            <Button disabled variant="contained" onClick={onClickToSearch} color="primary">
+                            <Button ref={buttonRef} variant="contained" onClick={handleCreateGroup} color="primary">
                                 Tạo nhóm
                             </Button>
                         </div>

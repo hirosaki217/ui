@@ -12,4 +12,7 @@ export const apiConversations = {
     getConversationById: async (id) => {
         return await axios.get(`/conversations/${id}`);
     },
+    createGroupConversation: async ({ name, userIds }) => {
+        return await axios.post(`/conversations/new/groups`, { name, userIds });
+    },
 };

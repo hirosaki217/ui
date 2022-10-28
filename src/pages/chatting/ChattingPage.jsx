@@ -7,14 +7,30 @@ import {
     currentConversationSelector,
 } from '../../store/reducers/conversationReducer/conversationSlice';
 import { messagesSelector } from '../../store/reducers/messageReducer/messageSlice';
-import { loginSelector } from '../../store/reducers/loginReducer/loginSlice';
 import dateUtils from '../../utils/dateUtils';
 import CustomizedInputBase from '../../components/CustomizedInputBase/CustomizedInputBase';
 import jwt from '../../utils/jwt';
 import { useEffect, useRef } from 'react';
 import HeaderUser from '../../components/ChatHeaderUser/HeaderUser';
-
+import InsertPhotoOutlinedIcon from '@material-ui/icons/InsertPhotoOutlined';
+import AttachFileOutlinedIcon from '@material-ui/icons/AttachFileOutlined';
+import { Button } from '@material-ui/core';
 const ChattingPage = ({ socket }) => {
+    // file image
+    const inputRef = useRef(null);
+    const handleClickChooseFile = () => {
+        // 👇️ open file input box on click of other element
+        inputRef.current.click();
+    };
+
+    const handleFileChange = (event) => {
+        const fileObj = event.target.files && event.target.files[0];
+        if (!fileObj) {
+            return;
+        }
+    };
+    // end file
+
     const currentConversation = useSelector(currentConversationSelector);
     const conversation = useSelector(currentAConverSelector);
     const messages = useSelector(messagesSelector);
@@ -77,7 +93,15 @@ const ChattingPage = ({ socket }) => {
             </div>
             {currentConversation ? (
                 <div className="chatAction">
-                    <div className="sendOption"></div>
+                    <div className="sendOption">
+                        <input style={{ display: 'none' }} ref={inputRef} type="file" onChange={handleFileChange} />
+                        <Button onClick={handleClickChooseFile} className="btnOption">
+                            <InsertPhotoOutlinedIcon />
+                        </Button>
+                        <Button className="btnOption">
+                            <AttachFileOutlinedIcon />
+                        </Button>
+                    </div>
                     <div className="sendMessage">
                         <CustomizedInputBase socket={socket} conversationId={currentConversation} />
                     </div>

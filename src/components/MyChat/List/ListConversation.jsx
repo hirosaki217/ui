@@ -44,6 +44,7 @@ const ListConversation = () => {
         dispatch(setCurrentConversation(conversation));
         dispatch(getMessages(conversation._id));
     };
+    console.log(conversations[0]);
     return (
         <List className={classes.root}>
             {/*<ListItem className={classes.listItem} alignItems="flex-start">
@@ -85,25 +86,44 @@ const ListConversation = () => {
             </ListItem> */}
             {conversations &&
                 conversations.map((conversation) =>
-                    conversation.totalMembers > 2 ? (
-                        <ListItem key={conversation._id} className={classes.listItem} alignItems="flex-start">
+                    conversation.type ? (
+                        <ListItem
+                            onClick={onSelectConversation.bind(this, conversation)}
+                            key={conversation._id}
+                            className={classes.listItem}
+                            alignItems="flex-start"
+                        >
                             <ListItemAvatar className="listAvatar">
-                                <AvatarGroup className="group" total={5}>
-                                    <Avatar className="iconAvatar" alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                                <AvatarGroup className="group" total={conversation.totalMembers}>
                                     <Avatar
                                         className="iconAvatar"
-                                        alt="Travis Howard"
-                                        src="/static/images/avatar/2.jpg"
+                                        alt="A"
+                                        src={`${conversation.avatar[0].avatar ? conversation.avatar[0].avatar : '0'}`}
                                     />
                                     <Avatar
                                         className="iconAvatar"
-                                        alt="Agnes Walker"
-                                        src="/static/images/avatar/4.jpg"
+                                        alt="B"
+                                        src={`${conversation.avatar[1].avatar ? conversation.avatar[1].avatar : '1'}`}
                                     />
+                                    <Avatar
+                                        className="iconAvatar"
+                                        alt="C"
+                                        src={`${conversation.avatar[2].avatar ? conversation.avatar[2].avatar : '2'}`}
+                                    />
+
+                                    {conversation.avatar.length > 3 && (
+                                        <Avatar
+                                            className="iconAvatar"
+                                            alt="D"
+                                            src={`${
+                                                conversation.avatar[3].avatar ? conversation.avatar[3].avatar : '3'
+                                            }`}
+                                        />
+                                    )}
                                 </AvatarGroup>
                             </ListItemAvatar>
                             <ListItemText
-                                primary="Brunch this weekend?"
+                                primary={conversation.name}
                                 secondary={
                                     <React.Fragment>
                                         <Typography
@@ -112,9 +132,9 @@ const ListConversation = () => {
                                             className={classes.inline}
                                             color="textPrimary"
                                         >
-                                            Ali Connors
+                                            {conversation.lastMessage ? conversation.lastMessage.user.name : ''}
                                         </Typography>
-                                        {" — I'll be in your neighborhood doing errands this…"}
+                                        {': ' + (conversation.lastMessage ? conversation.lastMessage.content : '')}
                                     </React.Fragment>
                                 }
                             />
@@ -142,7 +162,7 @@ const ListConversation = () => {
                                         >
                                             {conversation.lastMessage.user.name}
                                         </Typography>
-                                        {' - ' + conversation.lastMessage.content}
+                                        {':  ' + conversation.lastMessage.content}
                                     </React.Fragment>
                                 }
                             />

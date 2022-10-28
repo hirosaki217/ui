@@ -11,6 +11,15 @@ export const getConversationById = createAsyncThunk('conversation/getConversatio
     return response.data;
 });
 
+export const createGroupConversation = createAsyncThunk(
+    'conversation/createGroupConversation',
+    async ({ name, userIds }) => {
+        console.log('ids:', userIds);
+        const response = await apiConversations.createGroupConversation({ name, userIds });
+        return response.data;
+    },
+);
+
 const conversationSlice = createSlice({
     name: 'conversation',
     initialState: {
@@ -42,6 +51,9 @@ const conversationSlice = createSlice({
         },
         [getConversationById.fulfilled]: (state, action) => {
             state.conversations = [action.payload, ...state.conversations];
+        },
+        [createGroupConversation.fulfilled]: (state, action) => {
+            console.log('đã tạo nhóm');
         },
     },
 });
