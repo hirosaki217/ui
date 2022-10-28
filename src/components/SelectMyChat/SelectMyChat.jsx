@@ -35,7 +35,7 @@ export default function SelectMyChat() {
             <TabsListUnstyled className="selectorTabList">
                 <TabUnstyled className="selectorTab">Tất cả</TabUnstyled>
                 <TabUnstyled className="selectorTab">bạn bè</TabUnstyled>
-                <TabUnstyled className="selectorTab">Three</TabUnstyled>
+                <TabUnstyled className="selectorTab">lời mời</TabUnstyled>
             </TabsListUnstyled>
             <TabPanelUnstyled value={0}>
                 <ListConversation />

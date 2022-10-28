@@ -92,3 +92,22 @@
     display: flex;
     align-items: center;
 }
+
+.imageMessage,
+.videoMessage {
+    height: auto;
+    width: auto;
+    max-width: 400px;
+    max-height: 400px;
+}
+
+.content.notifyMessage {
+    background-color: #aaa;
+    border-radius: 15px;
+    height: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    color: white;
+}

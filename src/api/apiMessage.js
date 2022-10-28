@@ -12,4 +12,18 @@ export const apiMessage = {
             type,
         });
     },
+    sendFile: async ({ formData, attachInfo, callback }) => {
+        const { type, conversationId } = attachInfo;
+        const config = {
+            params: {
+                type,
+                conversationId,
+            },
+            onUploadProgress: function (progressEvent) {
+                let percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                callback(percentCompleted);
+            },
+        };
+        return await axios.post(`/messages/files`, formData, config);
+    },
 };

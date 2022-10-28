@@ -105,7 +105,6 @@ export default function SearchInput() {
             }
             setLeft(lsTempt);
         }
-        console.log(listIndex.current);
     }, [searchInput]);
     const handleCreateGroup = () => {
         if (friendToCreateGroup.current.length >= 2 && nameGroup.trim().length > 2) {

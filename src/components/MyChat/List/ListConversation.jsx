@@ -44,7 +44,6 @@ const ListConversation = () => {
         dispatch(setCurrentConversation(conversation));
         dispatch(getMessages(conversation._id));
     };
-    console.log(conversations[0]);
     return (
         <List className={classes.root}>
             {/*<ListItem className={classes.listItem} alignItems="flex-start">
@@ -134,7 +133,9 @@ const ListConversation = () => {
                                         >
                                             {conversation.lastMessage ? conversation.lastMessage.user.name : ''}
                                         </Typography>
-                                        {': ' + (conversation.lastMessage ? conversation.lastMessage.content : '')}
+                                        {conversation.lastMessage.type === 'TEXT' && conversation.lastMessage.content}
+                                        {/* {': ' + (conversation.lastMessage ? conversation.lastMessage.content : '')} */}
+                                        {conversation.lastMessage.type === 'IMAGE' && 'đã gửi hình ảnh'}
                                     </React.Fragment>
                                 }
                             />
