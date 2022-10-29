@@ -111,3 +111,19 @@
     padding: 5px;
     color: white;
 }
+
+.groupImage {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: start;
+    width: 620px;
+}
+
+.groupImage .imageMessage {
+    height: auto;
+    width: auto;
+    max-width: 200px;
+    max-height: 200px;
+    border: 2px solid #ccc;
+}

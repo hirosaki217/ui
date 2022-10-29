@@ -133,6 +133,7 @@ const ListConversation = () => {
                                         >
                                             {conversation.lastMessage ? conversation.lastMessage.user.name : ''}
                                         </Typography>
+                                        {': '}
                                         {conversation.lastMessage.type === 'TEXT' && conversation.lastMessage.content}
                                         {/* {': ' + (conversation.lastMessage ? conversation.lastMessage.content : '')} */}
                                         {conversation.lastMessage.type === 'IMAGE' && 'đã gửi hình ảnh'}
@@ -163,7 +164,10 @@ const ListConversation = () => {
                                         >
                                             {conversation.lastMessage.user.name}
                                         </Typography>
-                                        {':  ' + conversation.lastMessage.content}
+                                        {': '}
+                                        {conversation.lastMessage.type === 'TEXT' && conversation.lastMessage.content}
+                                        {/* {': ' + (conversation.lastMessage ? conversation.lastMessage.content : '')} */}
+                                        {conversation.lastMessage.type === 'IMAGE' && 'đã gửi hình ảnh'}
                                     </React.Fragment>
                                 }
                             />

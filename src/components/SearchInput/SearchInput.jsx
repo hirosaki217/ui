@@ -141,7 +141,7 @@ export default function SearchInput() {
             setResult(friend._id !== jwt.getUserId() ? friend : null);
             console.log(friend);
         }
-    }, []);
+    }, [friend]);
 
     const onClickToSearch = () => {
         setResult(null);

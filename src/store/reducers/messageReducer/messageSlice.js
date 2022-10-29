@@ -13,6 +13,18 @@ export const sendMessage = createAsyncThunk('message/sended', async (data) => {
     return response.data;
 });
 
+export const sendImage = createAsyncThunk('message/sended', async (data) => {
+    const { formData, attachInfo, callback } = data;
+    const response = await apiMessage.sendFile({ formData, attachInfo, callback });
+    return response.data;
+});
+
+export const sendImages = createAsyncThunk('message/sended', async (data) => {
+    const { formData, attachInfo, callback } = data;
+    const response = await apiMessage.sendFiles({ formData, attachInfo, callback });
+    return response.data;
+});
+
 const messageSlice = createSlice({
     name: 'message',
     initialState: {
@@ -41,6 +53,11 @@ const messageSlice = createSlice({
             state.messages = action.payload;
         },
         [sendMessage.fulfilled]: (state, action) => {
+            state.loading = false;
+            state.error = false;
+            state.messages.data = [...state.messages.data, action.payload];
+        },
+        [sendImage.fulfilled]: (state, action) => {
             state.loading = false;
             state.error = false;
             state.messages.data = [...state.messages.data, action.payload];

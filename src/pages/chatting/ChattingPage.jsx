@@ -1,12 +1,12 @@
 import './chatting.css';
 
 import { Avatar } from '@mui/material';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
     currentAConverSelector,
     currentConversationSelector,
 } from '../../store/reducers/conversationReducer/conversationSlice';
-import { messagesSelector } from '../../store/reducers/messageReducer/messageSlice';
+import { messagesSelector, sendImage, sendImages } from '../../store/reducers/messageReducer/messageSlice';
 import dateUtils from '../../utils/dateUtils';
 import CustomizedInputBase from '../../components/CustomizedInputBase/CustomizedInputBase';
 import jwt from '../../utils/jwt';
@@ -22,6 +22,7 @@ const ChattingPage = ({ socket }) => {
     const messages = useSelector(messagesSelector);
     const user = { _id: jwt.getUserId() };
     const scroll = useRef();
+    const dispath = useDispatch();
 
     // file image
     const inputRef = useRef(null);
@@ -30,7 +31,7 @@ const ChattingPage = ({ socket }) => {
         inputRef.current.click();
     };
     const handleFileChange = async (event) => {
-        // const files = event.target.files;
+        const files = event.target.files;
         const fileObj = event.target.files && event.target.files[0];
         if (!fileObj) {
             return;
@@ -38,25 +39,30 @@ const ChattingPage = ({ socket }) => {
         const formData = new FormData();
         console.log('fileObj is', fileObj);
 
-        formData.append('file', fileObj);
+        // formData.append('file', fileObj);
+        for (let file of files) {
+            formData.append('files', file);
+        }
+
+        // console.log('form data', formData.getAll('files'));
         // 👇️ reset file input
         event.target.value = null;
 
         // 👇️ is now empty
-        console.log(event.target.files);
+        // console.log(event.target.files);
 
-        // 👇️ can still access file object here
+        // // 👇️ can still access file object here
         console.log(fileObj);
         console.log(fileObj.name);
         const attachInfo = {
-            type: 'IMAGE',
+            type: 'GROUP_IMAGE',
             conversationId: currentConversation,
         };
         const callback = (percentCompleted) => {
             console.log(percentCompleted);
         };
         try {
-            await apiMessage.sendFile({ formData, attachInfo, callback });
+            dispath(sendImages({ formData, attachInfo, callback }));
         } catch (error) {
             console.log(error);
         }
@@ -79,6 +85,7 @@ const ChattingPage = ({ socket }) => {
                     messages.data.map((msg) => {
                         if (msg.type === 'TEXT') return Chatlogic.messageText(msg, user);
                         else if (msg.type === 'IMAGE') return Chatlogic.messageImage(msg, user);
+                        else if (msg.type === 'GROUP_IMAGE') return Chatlogic.messageGroupImage(msg, user);
                     })}
             </div>
             {currentConversation ? (
@@ -155,5 +162,33 @@ const Chatlogic = {
             </div>
         </div>
     ),
+    messageGroupImage: (msg, user) => {
+        const listImage = msg.content.split(';');
+        listImage.splice(listImage.length - 1, 1);
+
+        return (
+            <div key={msg._id} className={msg.user._id === user._id ? 'rightUser' : 'leftUser'}>
+                <div className="wrapperMessage">
+                    <div className="messageUser">
+                        <Avatar src={msg.user.avatar ? msg.user.avatar : ''} />
+                    </div>
+                    <div className="content">
+                        <div className="isMessageGroup messageName" style={{ fontSize: '13px', textIndent: '2px' }}>
+                            {msg.name}
+                        </div>
+                        <div style={{ padding: '5px 0' }}>
+                            <div className="groupImage">
+                                {listImage &&
+                                    listImage.map((image) => (
+                                        <img key={image} src={image} alt={image} className="imageMessage" />
+                                    ))}
+                            </div>
+                        </div>
+                        <div style={{ fontWeight: '300', fontSize: '13px' }}>{dateUtils.toTimeSent(msg.createdAt)}</div>
+                    </div>
+                </div>
+            </div>
+        );
+    },
 };
 export default ChattingPage;
