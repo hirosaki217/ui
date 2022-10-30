@@ -1,9 +1,91 @@
-.chatting {
+.wrapChatting {
     flex: 7;
+    display: flex;
+}
+
+.chatting {
+    flex: 1;
     display: flex;
     flex-direction: column;
 }
+/* info css */
+.infoConversation {
+    overflow: none;
+    border-left: 1px solid #ccc;
+    background-color: #fff;
+}
+.infoContainer.hide {
+    width: 0px;
+    overflow: hidden;
+}
 
+.titleInfo {
+    font-size: 18px;
+    height: 67px;
+    align-items: center;
+    line-height: 67px;
+    border-bottom: 1px solid #ccc;
+    background-color: #fff;
+    padding: 0;
+    margin: 0;
+}
+
+.infoContainer h5 {
+    background-color: #fff;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+}
+
+.infoContainer {
+    width: 350px;
+    -webkit-transition: width 0.3s ease-in-out;
+    -moz-transition: width 0.3s ease-in-out;
+    -o-transition: width 0.3s ease-in-out;
+    transition: width 0.3s ease-in-out;
+}
+.wrapInfoAvatar {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+}
+.btnEditName {
+    border-radius: 50%;
+    padding: 5px;
+    cursor: pointer;
+}
+.btnEditName:hover {
+    background-color: rgb(233, 231, 231);
+}
+.infoGroupCommon {
+    margin: 10px 0;
+    background-color: #fff;
+    min-height: 50px;
+}
+
+.infoGroupCommon p {
+    text-align: start;
+    padding-left: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+.infoMedia,
+.infoFile {
+    min-height: 100px;
+    background-color: #fff;
+    margin-bottom: 10px;
+}
+.infoMedia h5,
+.infoFile h5 {
+    padding-top: 10px;
+    padding-left: 10px;
+    text-align: start;
+    font-size: 16px;
+    color: #001a33;
+}
+/* end info */
 .headerUser {
     height: 68px;
     border-bottom: 1px solid #ccc;
@@ -115,7 +197,7 @@
 .groupImage {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    align-items: flex-start;
     justify-content: start;
     width: 620px;
 }
@@ -126,4 +208,67 @@
     max-width: 200px;
     max-height: 200px;
     border: 2px solid #ccc;
+}
+/* dot elastic */
+.typing-message {
+    text-align: start;
+    padding-left: 15px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+}
+.snippet {
+    display: flex;
+    align-items: center;
+    margin-left: 15px;
+}
+.dot-flashing {
+    position: relative;
+    width: 5px;
+    height: 5px;
+    border-radius: 2.5px;
+    background-color: #9880ff;
+    color: #9880ff;
+    animation: dotFlashing 1s infinite linear alternate;
+    animation-delay: 0.5s;
+}
+
+.dot-flashing::before,
+.dot-flashing::after {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    top: 0;
+}
+
+.dot-flashing::before {
+    left: -10px;
+    width: 5px;
+    height: 5px;
+    border-radius: 2.5px;
+    background-color: #9880ff;
+    color: #9880ff;
+    animation: dotFlashing 1s infinite alternate;
+    animation-delay: 0s;
+}
+
+.dot-flashing::after {
+    left: 10px;
+    width: 5px;
+    height: 5px;
+    border-radius: 2.5px;
+    background-color: #9880ff;
+    color: #9880ff;
+    animation: dotFlashing 1s infinite alternate;
+    animation-delay: 1s;
+}
+
+@keyframes dotFlashing {
+    0% {
+        background-color: #9880ff;
+    }
+    50%,
+    100% {
+        background-color: #ebe6ff;
+    }
 }

@@ -6,6 +6,11 @@ export const findFriend = createAsyncThunk('friend/findFriend', async (username)
     return rs.data;
 });
 
+export const findFriendById = createAsyncThunk('friend/findFriendById', async (userId) => {
+    const rs = await apiFriend.findFriendById(userId);
+    return rs.data;
+});
+
 export const getFriends = createAsyncThunk('friend/list', async () => {
     const rs = await apiFriend.getFriends();
     return rs.data;
@@ -57,9 +62,15 @@ const friendSlice = createSlice({
             state.friends = [friend, ...state.friends];
             state.friendMeInvites = newList;
         },
+        setEmptyFriend: (state, action) => {
+            state.user = '';
+        },
     },
     extraReducers: {
         [findFriend.fulfilled]: (state, action) => {
+            state.user = action.payload;
+        },
+        [findFriendById.fulfilled]: (state, action) => {
             state.user = action.payload;
         },
         [getFriends.fulfilled]: (state, action) => {
@@ -91,5 +102,5 @@ export const listFriendSelector = (state) => state.friendReducer.friends;
 export const listFriendInviteSelector = (state) => state.friendReducer.friendInvites;
 export const listFriendMeInviteSelector = (state) => state.friendReducer.friendMeInvites;
 
-export const { recieveInvite, setNewFriend } = friendSlice.actions;
+export const { recieveInvite, setNewFriend, setEmptyFriend } = friendSlice.actions;
 export default friendReducer;

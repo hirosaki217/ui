@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 const navSlice = createSlice({
     name: 'nav',
     initialState: {
-        navIndex: '0',
+        navIndex: 0,
     },
     reducers: {
         setIndex: (state, action) => {

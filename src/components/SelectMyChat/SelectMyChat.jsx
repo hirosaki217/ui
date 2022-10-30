@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     root: {},
 }));
 
-export default function SelectMyChat() {
+export default function SelectMyChat({ socket }) {
     const navIndex = useSelector(navSelector);
     const dispatch = useDispatch();
 
@@ -38,7 +38,7 @@ export default function SelectMyChat() {
                 <TabUnstyled className="selectorTab">lời mời</TabUnstyled>
             </TabsListUnstyled>
             <TabPanelUnstyled value={0}>
-                <ListConversation />
+                <ListConversation socket={socket} />
             </TabPanelUnstyled>
             <TabPanelUnstyled value={1}>
                 <ListFriend />

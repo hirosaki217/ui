@@ -15,4 +15,7 @@ export const apiConversations = {
     createGroupConversation: async ({ name, userIds }) => {
         return await axios.post(`/conversations/new/groups`, { name, userIds });
     },
+    getLastViewOfMembers: async (conversationId) => {
+        return await axios.get(`/conversations/${conversationId}/last-view`);
+    },
 };

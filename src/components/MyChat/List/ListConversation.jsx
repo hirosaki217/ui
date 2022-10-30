@@ -13,11 +13,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import {
     conversationSelector,
+    currentConversationSelector,
     getList,
+    numberUnreadSelector,
     setCurrentConversation,
+    updateTimeForConver,
 } from '../../../store/reducers/conversationReducer/conversationSlice';
 import { loginSelector } from '../../../store/reducers/loginReducer/loginSlice';
 import { getMessages } from '../../../store/reducers/messageReducer/messageSlice';
+import { findFriendById } from '../../../store/reducers/friendReducer/friendReducer';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -34,16 +38,19 @@ const useStyles = makeStyles((theme) => ({
         },
     },
 }));
-const ListConversation = () => {
+const ListConversation = ({ socket }) => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const conversations = useSelector(conversationSelector);
     const user = useSelector(loginSelector);
-
+    const currentConversation = useSelector(currentConversationSelector);
     const onSelectConversation = (conversation) => {
         dispatch(setCurrentConversation(conversation));
         dispatch(getMessages(conversation._id));
+        if (!conversations.type) dispatch(findFriendById(conversation.userId));
     };
+    console.log(conversations[0]);
+
     return (
         <List className={classes.root}>
             {/*<ListItem className={classes.listItem} alignItems="flex-start">
@@ -137,9 +144,28 @@ const ListConversation = () => {
                                         {conversation.lastMessage.type === 'TEXT' && conversation.lastMessage.content}
                                         {/* {': ' + (conversation.lastMessage ? conversation.lastMessage.content : '')} */}
                                         {conversation.lastMessage.type === 'IMAGE' && 'đã gửi hình ảnh'}
+                                        {conversation.lastMessage.type === 'GROUP_IMAGE' && 'đã gửi các hình ảnh'}
                                     </React.Fragment>
                                 }
                             />
+                            <MoreHorizIcon className="moreIcon" />
+                            <div style={{ alignSelf: 'center' }}>
+                                {conversation.numberUnread > 0 && (
+                                    <Avatar
+                                        style={{
+                                            width: '20px',
+                                            height: '20px',
+                                            fontSize: '14px',
+                                            backgroundColor: 'white',
+                                            color: 'red',
+                                            boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 12px',
+                                        }}
+                                        className="numberUnread"
+                                    >
+                                        {conversation.numberUnread}
+                                    </Avatar>
+                                )}
+                            </div>
                         </ListItem>
                     ) : (
                         <ListItem
@@ -172,6 +198,23 @@ const ListConversation = () => {
                                 }
                             />
                             <MoreHorizIcon className="moreIcon" />
+                            <div style={{ alignSelf: 'center' }}>
+                                {conversation.numberUnread > 0 && (
+                                    <Avatar
+                                        style={{
+                                            width: '20px',
+                                            height: '20px',
+                                            fontSize: '14px',
+                                            backgroundColor: 'white',
+                                            color: 'red',
+                                            boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 12px',
+                                        }}
+                                        className="numberUnread"
+                                    >
+                                        {conversation.numberUnread}
+                                    </Avatar>
+                                )}
+                            </div>
                         </ListItem>
                     ),
                 )}

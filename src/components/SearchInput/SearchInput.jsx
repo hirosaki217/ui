@@ -19,6 +19,7 @@ import {
     friendSelector,
     inviteFriend,
     listFriendSelector,
+    setEmptyFriend,
 } from '../../store/reducers/friendReducer/friendReducer';
 import jwt from '../../utils/jwt';
 
@@ -151,6 +152,7 @@ export default function SearchInput() {
     const onClickInvite = (result) => {
         dispatch(inviteFriend(result));
         setResult(null);
+        dispatch(setEmptyFriend());
     };
     return (
         <>

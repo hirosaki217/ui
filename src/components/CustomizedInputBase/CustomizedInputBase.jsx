@@ -33,13 +33,31 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function CustomizedInputBase({ conversationId, socket }) {
+let typing = false;
+let timeout = undefined;
+
+export default function CustomizedInputBase({ conversationId, socket, me }) {
     const classes = useStyles();
     const dispatch = useDispatch();
     const [text, setText] = useState('');
     const onEmojiClick = (emojiObj) => {
         setText((prv) => prv + emojiObj.emoji);
     };
+    function timeoutFunction() {
+        typing = false;
+        socket.emit('not-typing', conversationId, me);
+    }
+    function onKeyDownNotEnter() {
+        if (typing === false) {
+            typing = true;
+            socket.emit('typing', conversationId, me);
+            timeout = setTimeout(timeoutFunction, 1000);
+        } else {
+            clearTimeout(timeout);
+            timeout = setTimeout(timeoutFunction, 1000);
+        }
+    }
+
     const onClickToSend = (e) => {
         try {
             e.preventDefault();
@@ -60,6 +78,7 @@ export default function CustomizedInputBase({ conversationId, socket }) {
                 value={text}
                 onChange={setText}
                 cleanOnEnter
+                onKeyDown={onKeyDownNotEnter}
                 onEnter={(e) => onClickToSend(e)}
                 placeholder="Nhập tin nhắn"
             />

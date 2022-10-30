@@ -137,7 +137,7 @@ const Home = () => {
     return (
         <div className="home">
             <SideNavbar style={{ flex: 1 }} />
-            <MyChat></MyChat>
+            <MyChat socket={socket}></MyChat>
             <ChattingPage socket={socket} />
         </div>
     );

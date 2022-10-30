@@ -3,6 +3,9 @@ export const apiFriend = {
     findFriend: async (username) => {
         return await axios.get(`/users/search/username/${username}`);
     },
+    findFriendById: async (userId) => {
+        return await axios.get(`/users/search/id/${userId}`);
+    },
     getFriends: async () => {
         return await axios.get(`/friends`);
     },

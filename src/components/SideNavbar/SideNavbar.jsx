@@ -11,12 +11,15 @@ import { logout } from '../../store/reducers/loginReducer/loginSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { meSelector } from '../../store/reducers/userReducer/meReducer';
-import { setIndex } from '../../store/reducers/nav/NavSlice';
+import { navSelector, setIndex } from '../../store/reducers/nav/NavSlice';
+import { toTalUnreadSelector } from '../../store/reducers/conversationReducer/conversationSlice';
 // import { userSelector } from '../../store/reducers/userReducer/userSlice';
 
 const SideNavbar = () => {
     // const user = userSelector(userSelector);
     // console.log(user === undefined);
+    const toTalUnread = useSelector(toTalUnreadSelector);
+    const tabIndex = useSelector(navSelector);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -37,7 +40,7 @@ const SideNavbar = () => {
     };
 
     const handleNavClick = (index) => {
-        dispatch(setIndex(index + ''));
+        dispatch(setIndex(index));
         setAnchorEl(null);
     };
 
@@ -55,11 +58,53 @@ const SideNavbar = () => {
 
             <div className="mid-icon">
                 <LightTooltip placement="right" title="tin nhắn">
-                    <ChatRoundedIcon onClick={handleNavClick.bind(this, 0)} className="icon active" />
+                    <div style={{ position: 'relative' }}>
+                        <ChatRoundedIcon onClick={handleNavClick.bind(this, 0)} className="icon active" />
+                        {toTalUnread > 0 && (
+                            <div style={{ alignSelf: 'center' }}>
+                                <Avatar
+                                    style={{
+                                        width: '20px',
+                                        height: '20px',
+                                        fontSize: '14px',
+                                        backgroundColor: 'red',
+                                        color: 'white',
+                                        boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 12px',
+                                        position: 'absolute',
+                                        top: 0,
+                                        right: 0,
+                                    }}
+                                    className="numberUnread"
+                                >
+                                    {toTalUnread}
+                                </Avatar>
+                            </div>
+                        )}
+                    </div>
                 </LightTooltip>
 
                 <LightTooltip placement="right" title="danh bạ">
-                    <PermContactCalendarOutlinedIcon onClick={handleNavClick.bind(this, 1)} className="icon" />
+                    <div style={{ position: 'relative' }}>
+                        <PermContactCalendarOutlinedIcon onClick={handleNavClick.bind(this, 1)} className="icon" />
+                        {/* <div style={{ alignSelf: 'center' }}>
+                            <Avatar
+                                style={{
+                                    width: '20px',
+                                    height: '20px',
+                                    fontSize: '14px',
+                                    backgroundColor: 'red',
+                                    color: 'white',
+                                    boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 12px',
+                                    position: 'absolute',
+                                    top: 0,
+                                    right: 0,
+                                }}
+                                className="numberUnread"
+                            >
+                                3
+                            </Avatar>
+                        </div> */}
+                    </div>
                 </LightTooltip>
             </div>
             <div className="bottom-icon">

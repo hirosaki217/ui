@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { apiConversations } from '../../../api/apiConversation';
+import dateUtils from '../../../utils/dateUtils';
 
 export const getList = createAsyncThunk('conversation/getList', async ({ name, type }) => {
     const response = await apiConversations.getList(name ? name : '', (type = 0));
@@ -20,15 +21,27 @@ export const createGroupConversation = createAsyncThunk(
     },
 );
 
+export const getLastViewOfMembers = createAsyncThunk(`conversation/getLastViewOfMembers`, async (params, _) => {
+    const { conversationId } = params;
+    const lastViews = await apiConversations.getLastViewOfMembers(conversationId);
+
+    return lastViews.data;
+});
+
 const conversationSlice = createSlice({
     name: 'conversation',
     initialState: {
         currentConversation: '',
         conversations: [],
         conversation: {},
+        toTalUnread: 0,
+
+        lastViewOfMember: [],
     },
     reducers: {
-        getConversation: (state, action) => {},
+        getConversation: (state, action) => {
+            state.numberUnread = action.payload.numberUnread;
+        },
         setCurrentConversation: (state, action) => {
             state.currentConversation = action.payload._id;
             state.conversation = action.payload;
@@ -37,11 +50,49 @@ const conversationSlice = createSlice({
             const { conversationId, message } = action.payload;
             const index = state.conversations.findIndex((conversation) => conversation._id === conversationId);
             const searchConversation = state.conversations[index];
-            searchConversation.lastMessage = message;
-
+            searchConversation.numberUnread = searchConversation.numberUnread + 1;
+            searchConversation.lastMessage = {
+                ...message,
+                createdAt: dateUtils.toTime(message.createdAt),
+            };
+            if (conversationId === state.currentConversation) searchConversation.numberUnread = 0;
             const conversationTempt = state.conversations.filter((conversation) => conversation._id !== conversationId);
 
             state.conversations = [searchConversation, ...conversationTempt];
+        },
+        updateLastViewOfMembers: (state, action) => {
+            const { conversationId, userId, lastView } = action.payload;
+
+            if (conversationId === state.currentConversation) {
+                const index = state.lastViewOfMember.findIndex((ele) => ele.user._id === userId);
+                state.lastViewOfMember[index].lastView = lastView;
+            }
+        },
+        updateTimeForConver: (state, action) => {
+            const { isOnline, id, lastLogin } = action.payload;
+            const index = state.conversations.findIndex((ele) => ele._id === id);
+            const newConver = {
+                ...state.conversations[index],
+                isOnline,
+                lastLogin,
+            };
+            state.conversations[index] = newConver;
+        },
+        setNumberUnreadForNewFriend: (state, action) => {
+            const id = action.payload;
+            const index = state.conversations.findIndex((ele) => ele._id === id);
+            const numberUnread = state.conversations[index].numberUnread + 1;
+            state.conversations[index] = {
+                ...state.conversations[index],
+                numberUnread,
+            };
+        },
+        setToTalUnread: (state, action) => {
+            let tempCount = 0;
+            state.conversations.forEach((ele, index) => {
+                if (ele.numberUnread > 0) tempCount += 1;
+            });
+            state.toTalUnread = tempCount;
         },
     },
     extraReducers: {
@@ -55,6 +106,9 @@ const conversationSlice = createSlice({
         [createGroupConversation.fulfilled]: (state, action) => {
             console.log('đã tạo nhóm');
         },
+        [getLastViewOfMembers.fulfilled]: (state, action) => {
+            state.lastViewOfMember = action.payload;
+        },
     },
 });
 
@@ -63,6 +117,14 @@ const conversationReducer = reducer;
 export const conversationSelector = (state) => state.conversationReducer.conversations;
 export const currentConversationSelector = (state) => state.conversationReducer.currentConversation;
 export const currentAConverSelector = (state) => state.conversationReducer.conversation;
-
-export const { getConversation, setCurrentConversation, setLastMessageInConversation } = actions;
+export const toTalUnreadSelector = (state) => state.conversationReducer.toTalUnread;
+export const {
+    getConversation,
+    updateTimeForConver,
+    setCurrentConversation,
+    updateLastViewOfMembers,
+    setLastMessageInConversation,
+    setNumberUnreadForNewFriend,
+    setToTalUnread,
+} = actions;
 export default conversationReducer;

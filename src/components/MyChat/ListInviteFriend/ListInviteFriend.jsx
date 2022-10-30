@@ -98,6 +98,7 @@ export default function ListInviteFriend() {
                         </div>
                     );
                 })}
+            {list.length === 0 && <p>chưa có lời mời nào</p>}
         </List>
     );
 }
