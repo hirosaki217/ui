@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     currentAConverSelector,
     currentConversationSelector,
-    updateLastViewOfMembers,
+    // updateLastViewOfMembers,
 } from '../../store/reducers/conversationReducer/conversationSlice';
 import { messagesSelector, sendImage, sendImages } from '../../store/reducers/messageReducer/messageSlice';
 import dateUtils from '../../utils/dateUtils';
@@ -53,6 +53,7 @@ const ChattingPage = ({ socket }) => {
         });
 
         socket.on('not-typing', (conversationId, user) => {
+            console.log('not-typing....');
             if (conversationId === currentConversation) {
                 const index = usersTyping.findIndex((ele) => ele._id === user._id);
                 const newUserTyping = usersTyping.filter((ele) => ele._id !== user._id);
@@ -61,18 +62,18 @@ const ChattingPage = ({ socket }) => {
             }
         });
 
-        socket.on('user-last-view', ({ conversationId, userId, lastView }) => {
-            if (userId != user._id) {
-                dispatch(
-                    updateLastViewOfMembers({
-                        conversationId,
-                        userId,
-                        lastView,
-                    }),
-                );
-            }
-        });
-    }, []);
+        // socket.on('user-last-view', ({ conversationId, userId, lastView }) => {
+        //     if (userId != user._id) {
+        //         dispatch(
+        //             updateLastViewOfMembers({
+        //                 conversationId,
+        //                 userId,
+        //                 lastView,
+        //             }),
+        //         );
+        //     }
+        // });
+    }, [currentConversation]);
 
     // file image
     const inputRef = useRef(null);

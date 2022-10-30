@@ -60,14 +60,14 @@ const conversationSlice = createSlice({
 
             state.conversations = [searchConversation, ...conversationTempt];
         },
-        updateLastViewOfMembers: (state, action) => {
-            const { conversationId, userId, lastView } = action.payload;
+        // updateLastViewOfMembers: (state, action) => {
+        //     const { conversationId, userId, lastView } = action.payload;
 
-            if (conversationId === state.currentConversation) {
-                const index = state.lastViewOfMember.findIndex((ele) => ele.user._id === userId);
-                state.lastViewOfMember[index].lastView = lastView;
-            }
-        },
+        //     if (conversationId === state.currentConversation) {
+        //         const index = state.lastViewOfMember.findIndex((ele) => ele.user._id === userId);
+        //         state.lastViewOfMember[index].lastView = lastView;
+        //     }
+        // },
         updateTimeForConver: (state, action) => {
             const { isOnline, id, lastLogin } = action.payload;
             const index = state.conversations.findIndex((ele) => ele._id === id);
@@ -122,7 +122,7 @@ export const {
     getConversation,
     updateTimeForConver,
     setCurrentConversation,
-    updateLastViewOfMembers,
+    // updateLastViewOfMembers,
     setLastMessageInConversation,
     setNumberUnreadForNewFriend,
     setToTalUnread,
