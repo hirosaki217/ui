@@ -1,10 +1,21 @@
 import './chatting.css';
 
-import { Avatar, AvatarGroup } from '@mui/material';
+import {
+    Avatar,
+    AvatarGroup,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemIcon,
+    ListItemText,
+    Menu,
+    MenuItem,
+} from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     currentAConverSelector,
     currentConversationSelector,
+    listMemberSelector,
     // updateLastViewOfMembers,
 } from '../../store/reducers/conversationReducer/conversationSlice';
 import { messagesSelector, sendImage, sendImages } from '../../store/reducers/messageReducer/messageSlice';
@@ -16,15 +27,36 @@ import HeaderUser from '../../components/ChatHeaderUser/HeaderUser';
 import InsertPhotoOutlinedIcon from '@material-ui/icons/InsertPhotoOutlined';
 import AttachFileOutlinedIcon from '@material-ui/icons/AttachFileOutlined';
 import { Button } from '@material-ui/core';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { apiMessage } from '../../api/apiMessage';
 import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
 import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
 import { friendSelector } from '../../store/reducers/friendReducer/friendReducer';
 import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
 import { meSelector } from '../../store/reducers/userReducer/meReducer';
+
+const TYPE_MATCH_MEDIA = ['image/png', 'image/jpeg', 'image/gif', 'video/mp4'];
+
+const TYPE_MATCH = [
+    'image/png',
+    'image/jpeg',
+    'image/gif',
+    'video/mp3',
+    'video/mp4',
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    'application/vnd.rar',
+    'application/zip',
+];
+
 const ChattingPage = ({ socket }) => {
     const dispatch = useDispatch();
     const me = useSelector(meSelector);
+    const listMember = useSelector(listMemberSelector);
+    const [members, setMembers] = useState([]);
     const tabInfoRef = useRef();
     const currentConversation = useSelector(currentConversationSelector);
     const conversation = useSelector(currentAConverSelector);
@@ -39,7 +71,17 @@ const ChattingPage = ({ socket }) => {
     useEffect(() => {
         setFrProfile(friendProfile);
     }, [friendProfile]);
+    // members
+    const membersRef = useRef();
 
+    const handleShowMember = () => {
+        membersRef.current.classList.toggle('showMembers');
+    };
+
+    useEffect(() => {
+        setMembers(listMember);
+    }, [listMember]);
+    // end members
     useEffect(() => {
         socket.on('typing', (conversationId, user) => {
             console.log('typing....');
@@ -91,11 +133,14 @@ const ChattingPage = ({ socket }) => {
         const callback = (percentCompleted) => {
             console.log(percentCompleted);
         };
-        console.log('fileObj is', fileObj);
 
         if (files.length > 1) {
             for (let file of files) {
-                formData.append('files', file);
+                for (let type of TYPE_MATCH_MEDIA) {
+                    if (file.type === type) {
+                        formData.append('files', file);
+                    }
+                }
             }
             const attachInfo = {
                 type: 'GROUP_IMAGE',
@@ -103,37 +148,39 @@ const ChattingPage = ({ socket }) => {
             };
 
             try {
-                dispath(sendImages({ formData, attachInfo, callback }));
+                if (formData.has('files')) dispath(sendImages({ formData, attachInfo, callback }));
             } catch (error) {
                 console.log(error);
             }
         } else {
+            let mineType = 'IMAGE';
+
+            if (!checkFileMedia(fileObj)) return;
+            if (fileObj.type === TYPE_MATCH_MEDIA[3]) mineType = 'VIDEO';
             formData.append('file', fileObj);
             const attachInfo = {
-                type: 'IMAGE',
+                type: mineType,
                 conversationId: currentConversation,
             };
 
             try {
-                dispath(sendImage({ formData, attachInfo, callback }));
+                if (formData.has('file')) dispath(sendImage({ formData, attachInfo, callback }));
             } catch (error) {
                 console.log(error);
             }
         }
 
-        // console.log('form data', formData.getAll('files'));
-        // 👇️ reset file input
         event.target.value = null;
-
-        // 👇️ is now empty
-        // console.log(event.target.files);
-
-        // // 👇️ can still access file object here
-        console.log(fileObj);
-        console.log(fileObj.name);
     };
+    function checkFileMedia(file) {
+        for (let type of TYPE_MATCH_MEDIA) {
+            if (file.type === type) {
+                return true;
+            }
+        }
+        return false;
+    }
     // end file
-
     useEffect(() => {
         const scrollToBottom = (node) => {
             node.scrollTop = node.scrollHeight;
@@ -141,7 +188,16 @@ const ChattingPage = ({ socket }) => {
         scrollToBottom(scroll.current);
         scroll.current.scrollIntoView({ behavior: 'smooth' });
     });
-
+    // event group
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+    // end event group
     return (
         <div className="wrapChatting">
             <div className="chatting">
@@ -154,8 +210,28 @@ const ChattingPage = ({ socket }) => {
                         messages.data.map((msg) => {
                             if (msg.type === 'TEXT') return Chatlogic.messageText(msg, user);
                             else if (msg.type === 'IMAGE') return Chatlogic.messageImage(msg, user);
+                            else if (msg.type === 'VIDEO') return Chatlogic.messageImage(msg, user);
                             else if (msg.type === 'GROUP_IMAGE') return Chatlogic.messageGroupImage(msg, user);
+                            else if (msg.type === 'NOTIFY') return Chatlogic.messageNotify(msg);
                         })}
+
+                    {/* <div className="leftUser">
+                        <div className="wrapperMessage">
+                            <div className="content messageDelete">
+                                <div
+                                    className="contentDeleted"
+                                    style={{
+                                        padding: '5px 0',
+                                        wordWrap: 'break-word',
+                                        contain: 'style',
+                                        wordBreak: 'break-word',
+                                    }}
+                                >
+                                    this is message deleted
+                                </div>
+                            </div>
+                        </div>
+                    </div> */}
 
                     {/* typing check */}
                     {usersTyping.length > 0 && (
@@ -182,7 +258,7 @@ const ChattingPage = ({ socket }) => {
                     <div className="chatAction">
                         <div className="sendOption">
                             <input
-                                accept="image/*"
+                                accept="image/*,video/mp4,video/x-m4v,video/*"
                                 multiple
                                 style={{ display: 'none' }}
                                 ref={inputRef}
@@ -260,11 +336,46 @@ const ChattingPage = ({ socket }) => {
                                 {frProfile ? frProfile.numberCommonGroup : 0}nhóm chung
                             </p>
                         ) : (
-                            <p>
+                            <p onClick={handleShowMember}>
                                 <PeopleOutlinedIcon style={{ margin: '0 5px' }} />
-                                thành viên
+                                {conversation.totalMembers ? conversation.totalMembers : 0} thành viên
                             </p>
                         )}
+                        <div ref={membersRef} className="containerMembers">
+                            <List className="listMember scrollbar" id="style-scroll">
+                                {members.map((member) => (
+                                    <ListItem key={member._id}>
+                                        <ListItemAvatar>
+                                            <Avatar src={member.avatar && member.avatar} alt={member.name}></Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText primary={member.name} />
+                                        <ListItemIcon>
+                                            <MoreVertIcon
+                                                id="basic-button"
+                                                aria-controls={open ? 'basic-menu' : undefined}
+                                                aria-haspopup="true"
+                                                aria-expanded={open ? 'true' : undefined}
+                                                onClick={handleClick}
+                                            />
+                                        </ListItemIcon>
+                                        <div>
+                                            <Menu
+                                                id="basic-menu"
+                                                anchorEl={anchorEl}
+                                                open={open}
+                                                onClose={handleClose}
+                                                MenuListProps={{
+                                                    'aria-labelledby': 'basic-button',
+                                                }}
+                                            >
+                                                <MenuItem onClick={handleClose}>Thêm phó nhóm</MenuItem>
+                                                <MenuItem onClick={handleClose}>Xóa khỏi nhóm</MenuItem>
+                                            </Menu>
+                                        </div>
+                                    </ListItem>
+                                ))}
+                            </List>
+                        </div>
                     </div>
                     <div className="infoMedia">
                         <h5>Ảnh/Video</h5>
@@ -316,7 +427,11 @@ const Chatlogic = {
                         {msg.name}
                     </div>
                     <div style={{ padding: '5px 0' }}>
-                        <img src={msg.content} alt="không tải được ảnh" className="imageMessage" />
+                        {checkType(msg.content) === 'VIDEO' ? (
+                            <video controls src={msg.content} alt="không tải được video" className="imageMessage" />
+                        ) : (
+                            <img src={msg.content} alt="không tải được ảnh" className="imageMessage" />
+                        )}
                     </div>
                     <div style={{ fontWeight: '300', fontSize: '13px' }}>{dateUtils.toTimeSent(msg.createdAt)}</div>
                 </div>
@@ -340,9 +455,19 @@ const Chatlogic = {
                         <div style={{ padding: '5px 0' }}>
                             <div className="groupImage">
                                 {listImage &&
-                                    listImage.map((image) => (
-                                        <img key={image} src={image} alt={image} className="imageMessage" />
-                                    ))}
+                                    listImage.map((file) => {
+                                        if (checkType(file) === 'VIDEO')
+                                            return (
+                                                <video
+                                                    controls
+                                                    key={file}
+                                                    src={file}
+                                                    alt={file}
+                                                    className="imageMessage"
+                                                />
+                                            );
+                                        else return <img key={file} src={file} alt={file} className="imageMessage" />;
+                                    })}
                             </div>
                         </div>
                         <div style={{ fontWeight: '300', fontSize: '13px' }}>{dateUtils.toTimeSent(msg.createdAt)}</div>
@@ -351,5 +476,37 @@ const Chatlogic = {
             </div>
         );
     },
+    messageNotify: (msg) => (
+        <div key={msg._id} style={{ position: 'relative' }}>
+            <hr />
+            <span
+                style={{
+                    position: 'absolute',
+                    margin: 0,
+                    top: '50%',
+                    left: '50%',
+                    msTransform: 'translate(-50%, -50%)',
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: 999,
+                    backgroundColor: '#f7f7f7',
+                    borderRadius: '10px',
+                    color: '#000',
+                    padding: '0 10px',
+
+                    alignItems: 'center',
+                }}
+            >
+                {msg.content}
+            </span>
+        </div>
+    ),
 };
+
+const checkType = (content) => {
+    const splitTempt = content.split('.');
+    const fileExtension = splitTempt[splitTempt.length - 1];
+    if (fileExtension === 'mp4') return 'VIDEO';
+    return 'IMAGE';
+};
+
 export default ChattingPage;

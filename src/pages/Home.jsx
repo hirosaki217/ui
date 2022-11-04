@@ -2,7 +2,7 @@ import MyChat from '../components/MyChat/MyChat';
 import SideNavbar from '../components/SideNavbar/SideNavbar';
 
 import ChattingPage from './chatting/ChattingPage';
-import { init, socket } from '../utils/socketClient';
+import { socket } from '../utils/socketClient';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginSelector } from '../store/reducers/loginReducer/loginSlice';
@@ -26,7 +26,7 @@ import {
     recieveInvite,
     setNewFriend,
 } from '../store/reducers/friendReducer/friendReducer';
-init();
+
 const Home = () => {
     const dispatch = useDispatch();
     const { isLogin } = useSelector(loginSelector);
@@ -58,7 +58,7 @@ const Home = () => {
 
     useEffect(() => {
         if (conversations.length === 0) return;
-
+        console.log('join join join');
         const conversationIds = conversations.map((conversation) => conversation._id);
         socket.emit('join-conversations', conversationIds);
     }, [conversations]);

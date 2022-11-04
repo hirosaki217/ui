@@ -62,6 +62,7 @@
     margin: 10px 0;
     background-color: #fff;
     min-height: 50px;
+    cursor: pointer;
 }
 
 .infoGroupCommon p {
@@ -140,6 +141,14 @@
     contain: style;
     word-break: break-word;
 }
+.content.messageDelete {
+    background-color: #aaa;
+}
+
+.messageDelete .contentDeleted {
+    color: #fff;
+}
+
 .messageName {
     display: none;
 }
@@ -271,4 +280,30 @@
     100% {
         background-color: #ebe6ff;
     }
+}
+
+/* dot member */
+
+.MuiList-root {
+    display: flex;
+    flex-direction: column;
+    padding-left: 10px;
+    padding-right: 5px;
+}
+
+.MuiList-root > li {
+    text-align: start;
+    align-self: flex-start;
+}
+
+.listMember {
+    max-height: 350px;
+}
+
+.containerMembers {
+    display: none;
+}
+
+.containerMembers.showMembers {
+    display: block;
 }

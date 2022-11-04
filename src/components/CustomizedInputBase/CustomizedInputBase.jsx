@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './customInput.css';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
@@ -40,6 +40,9 @@ export default function CustomizedInputBase({ conversationId, socket, me }) {
     const classes = useStyles();
     const dispatch = useDispatch();
     const [text, setText] = useState('');
+    useEffect(() => {
+        setText('');
+    }, [conversationId]);
     const onEmojiClick = (emojiObj) => {
         setText((prv) => prv + emojiObj.emoji);
     };

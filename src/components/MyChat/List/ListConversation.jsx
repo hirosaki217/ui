@@ -15,6 +15,7 @@ import {
     conversationSelector,
     currentConversationSelector,
     getList,
+    getListMembers,
     numberUnreadSelector,
     setCurrentConversation,
     updateTimeForConver,
@@ -47,6 +48,7 @@ const ListConversation = ({ socket }) => {
     const onSelectConversation = (conversation) => {
         dispatch(setCurrentConversation(conversation));
         dispatch(getMessages(conversation._id));
+        dispatch(getListMembers({ conversationId: conversation._id }));
         // if (!conversations.type) dispatch(findFriendById(conversation.userId));
     };
     console.log(conversations[0]);

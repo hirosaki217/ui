@@ -18,4 +18,18 @@ export const apiConversations = {
     getLastViewOfMembers: async (conversationId) => {
         return await axios.get(`/conversations/${conversationId}/last-view`);
     },
+    getListMember: async (conversationId) => {
+        return await axios.get(`/conversations/${conversationId}/members`);
+    },
+    addMember: async ({ conversationId, userIds }) => {
+        return await axios.get(`/conversations/${conversationId}/members`, {
+            userIds,
+        });
+    },
+    removeMember: async ({ conversationId, userId }) => {
+        return await axios.delete(`/conversations/${conversationId}/members/${userId}`);
+    },
+    leaveGroup: async (conversationId) => {
+        return await axios.delete(`/conversations/${conversationId}/members/leave`);
+    },
 };

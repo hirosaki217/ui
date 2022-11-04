@@ -28,6 +28,12 @@ export const getLastViewOfMembers = createAsyncThunk(`conversation/getLastViewOf
     return lastViews.data;
 });
 
+export const getListMembers = createAsyncThunk('conversation/getListMember', async (params, _) => {
+    const { conversationId } = params;
+    const response = await apiConversations.getListMember(conversationId);
+    return response.data;
+});
+
 const conversationSlice = createSlice({
     name: 'conversation',
     initialState: {
@@ -35,7 +41,7 @@ const conversationSlice = createSlice({
         conversations: [],
         conversation: {},
         toTalUnread: 0,
-
+        members: [],
         lastViewOfMember: [],
     },
     reducers: {
@@ -109,6 +115,9 @@ const conversationSlice = createSlice({
         [getLastViewOfMembers.fulfilled]: (state, action) => {
             state.lastViewOfMember = action.payload;
         },
+        [getListMembers.fulfilled]: (state, action) => {
+            state.members = action.payload;
+        },
     },
 });
 
@@ -118,6 +127,7 @@ export const conversationSelector = (state) => state.conversationReducer.convers
 export const currentConversationSelector = (state) => state.conversationReducer.currentConversation;
 export const currentAConverSelector = (state) => state.conversationReducer.conversation;
 export const toTalUnreadSelector = (state) => state.conversationReducer.toTalUnread;
+export const listMemberSelector = (state) => state.conversationReducer.members;
 export const {
     getConversation,
     updateTimeForConver,

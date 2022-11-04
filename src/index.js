@@ -7,10 +7,11 @@ import './index.css';
 
 import store from './store';
 import AuthContextProvider from './contexts/AuthContext';
+import { init } from './utils/socketClient';
 
 const container = document.getElementById('root');
 const root = createRoot(container);
-
+init();
 root.render(
     <>
         <AuthContextProvider>
