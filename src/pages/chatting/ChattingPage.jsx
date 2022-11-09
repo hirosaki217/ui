@@ -67,7 +67,7 @@ const ChattingPage = ({ socket }) => {
     const scroll = useRef();
     const dispath = useDispatch();
     const [usersTyping, setUsersTyping] = useState([]);
-
+    const [option, setOption] = useState(0);
     useEffect(() => {
         setFrProfile(friendProfile);
     }, [friendProfile]);
@@ -191,13 +191,86 @@ const ChattingPage = ({ socket }) => {
     // event group
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
-    const handleClick = (event) => {
+    const handleClick = (event, id) => {
         setAnchorEl(event.currentTarget);
+        if (id === user._id) {
+            setOption(1);
+        } else if (id !== user._id && conversation.leaderId === user._id) {
+            setOption(2);
+        } else if (id !== user._id && conversation.managerIds.includes(user._id)) {
+            setOption(3);
+        } else {
+            setOption(0);
+        }
     };
     const handleClose = () => {
         setAnchorEl(null);
     };
+
     // end event group
+
+    //
+    const MemberSelect = (option) => {
+        if (option === 1)
+            return (
+                <div>
+                    <Menu
+                        id="basic-menu"
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                        MenuListProps={{
+                            'aria-labelledby': 'basic-button',
+                        }}
+                    >
+                        <MenuItem style={{ padding: '5px 5px' }} onClick={handleClose}>
+                            Rời khỏi nhóm
+                        </MenuItem>
+                    </Menu>
+                </div>
+            );
+        if (option === 2)
+            return (
+                <div>
+                    <Menu
+                        id="basic-menu"
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                        MenuListProps={{
+                            'aria-labelledby': 'basic-button',
+                        }}
+                    >
+                        <MenuItem style={{ padding: '5px 5px' }} onClick={handleClose}>
+                            Thêm phó nhóm
+                        </MenuItem>
+                        <MenuItem style={{ padding: '5px 5px' }} onClick={handleClose}>
+                            Xóa khỏi nhóm
+                        </MenuItem>
+                    </Menu>
+                </div>
+            );
+        if (option === 3)
+            return (
+                <div>
+                    <Menu
+                        id="basic-menu"
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                        MenuListProps={{
+                            'aria-labelledby': 'basic-button',
+                        }}
+                    >
+                        <MenuItem style={{ padding: '5px 5px' }} onClick={handleClose}>
+                            Xóa khỏi nhóm
+                        </MenuItem>
+                    </Menu>
+                </div>
+            );
+        return <></>;
+    };
+    //
     return (
         <div className="wrapChatting">
             <div className="chatting">
@@ -349,31 +422,19 @@ const ChattingPage = ({ socket }) => {
                                             <Avatar src={member.avatar && member.avatar} alt={member.name}></Avatar>
                                         </ListItemAvatar>
                                         <ListItemText primary={member.name} />
+
                                         <ListItemIcon>
                                             <MoreVertIcon
                                                 id="basic-button"
                                                 aria-controls={open ? 'basic-menu' : undefined}
                                                 aria-haspopup="true"
                                                 aria-expanded={open ? 'true' : undefined}
-                                                onClick={handleClick}
+                                                onClick={(e) => handleClick(e, member._id)}
                                             />
                                         </ListItemIcon>
-                                        <div>
-                                            <Menu
-                                                id="basic-menu"
-                                                anchorEl={anchorEl}
-                                                open={open}
-                                                onClose={handleClose}
-                                                MenuListProps={{
-                                                    'aria-labelledby': 'basic-button',
-                                                }}
-                                            >
-                                                <MenuItem onClick={handleClose}>Thêm phó nhóm</MenuItem>
-                                                <MenuItem onClick={handleClose}>Xóa khỏi nhóm</MenuItem>
-                                            </Menu>
-                                        </div>
                                     </ListItem>
                                 ))}
+                                {MemberSelect(option)}
                             </List>
                         </div>
                     </div>
