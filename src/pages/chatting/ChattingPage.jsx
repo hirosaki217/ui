@@ -19,6 +19,7 @@ import {
     getLastViewOfMembers,
     leaveGroup,
     listMemberSelector,
+    removeManager,
     removeMember,
     updateMemberInconver,
     // updateLastViewOfMembers,
@@ -249,6 +250,11 @@ const ChattingPage = ({ socket }) => {
         dispatch(addManager({ conversationId: conversation._id, managerIds: [option.id] }));
         setAnchorEl(null);
     };
+
+    const handleRemoveManager = () => {
+        dispatch(removeManager({ conversationId: conversation._id, managerIds: [option.id] }));
+        setAnchorEl(null);
+    };
     // end event group
 
     //
@@ -271,7 +277,7 @@ const ChattingPage = ({ socket }) => {
                     </Menu>
                 </div>
             );
-        if (option.option === 2)
+        if (option.option === 2) {
             return (
                 <div>
                     <Menu
@@ -283,15 +289,23 @@ const ChattingPage = ({ socket }) => {
                             'aria-labelledby': 'basic-button',
                         }}
                     >
-                        <MenuItem style={{ padding: '5px 5px' }} onClick={handleAddManager}>
-                            Thêm phó nhóm
-                        </MenuItem>
+                        {option.id === conversation.managerIds.includes(option.id) ? (
+                            <MenuItem style={{ padding: '5px 5px' }} onClick={handleRemoveManager}>
+                                Xóa phó nhóm
+                            </MenuItem>
+                        ) : (
+                            <MenuItem style={{ padding: '5px 5px' }} onClick={handleAddManager}>
+                                Thêm phó nhóm
+                            </MenuItem>
+                        )}
+
                         <MenuItem style={{ padding: '5px 5px' }} onClick={handleRemoveMember}>
                             Xóa khỏi nhóm
                         </MenuItem>
                     </Menu>
                 </div>
             );
+        }
         if (option.option === 3)
             return (
                 <div>
