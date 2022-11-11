@@ -7,9 +7,13 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginSelector } from '../store/reducers/loginReducer/loginSlice';
 import {
+    addManager,
+    addManager1,
     conversationSelector,
     getConversationById,
     getList,
+    removeManager,
+    removeManager1,
     setLastMessageInConversation,
 } from '../store/reducers/conversationReducer/conversationSlice';
 import { rerenderMessage } from '../store/reducers/messageReducer/messageSlice';
@@ -132,6 +136,15 @@ const Home = () => {
             // dispatch(updateFriend(_id));
             // dispatch(updateFriendChat(_id));
         });
+        // thêm phó nhóm
+        socket.on('add-managers', ({ conversationId, managerIds }) => {
+            dispatch(addManager1({ conversationId, managerIds }));
+        });
+
+        socket.on('delete-managers', ({ conversationId, managerIds }) => {
+            dispatch(removeManager1({ conversationId, managerIds }));
+        });
+        socket.on('update-member', ({ conversationId }) => {});
     }, []);
 
     return (

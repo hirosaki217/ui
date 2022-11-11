@@ -13,9 +13,12 @@ import {
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+    addManager,
     currentAConverSelector,
     currentConversationSelector,
+    leaveGroup,
     listMemberSelector,
+    removeMember,
     // updateLastViewOfMembers,
 } from '../../store/reducers/conversationReducer/conversationSlice';
 import { messagesSelector, sendImage, sendImages } from '../../store/reducers/messageReducer/messageSlice';
@@ -67,7 +70,10 @@ const ChattingPage = ({ socket }) => {
     const scroll = useRef();
     const dispath = useDispatch();
     const [usersTyping, setUsersTyping] = useState([]);
-    const [option, setOption] = useState(0);
+    const [option, setOption] = useState({
+        option: 0,
+        id: '',
+    });
     useEffect(() => {
         setFrProfile(friendProfile);
     }, [friendProfile]);
@@ -194,24 +200,50 @@ const ChattingPage = ({ socket }) => {
     const handleClick = (event, id) => {
         setAnchorEl(event.currentTarget);
         if (id === user._id) {
-            setOption(1);
+            setOption({
+                option: 1,
+                id,
+            });
         } else if (id !== user._id && conversation.leaderId === user._id) {
-            setOption(2);
+            setOption({
+                option: 2,
+                id,
+            });
         } else if (id !== user._id && conversation.managerIds.includes(user._id)) {
-            setOption(3);
+            setOption({
+                option: 3,
+                id,
+            });
         } else {
-            setOption(0);
+            setOption({
+                option: 0,
+                id: '',
+            });
         }
     };
     const handleClose = () => {
         setAnchorEl(null);
     };
 
+    const handleLeaveGroup = () => {
+        dispatch(leaveGroup({ conversationId: conversation._id }));
+        setAnchorEl(null);
+    };
+
+    const handleRemoveMember = () => {
+        dispatch(removeMember({ conversationId: conversation._id, userId: option.id }));
+        setAnchorEl(null);
+    };
+
+    const handleAddManager = () => {
+        dispatch(addManager({ conversationId: conversation._id, managerIds: [option.id] }));
+        setAnchorEl(null);
+    };
     // end event group
 
     //
     const MemberSelect = (option) => {
-        if (option === 1)
+        if (option.option === 1)
             return (
                 <div>
                     <Menu
@@ -223,13 +255,13 @@ const ChattingPage = ({ socket }) => {
                             'aria-labelledby': 'basic-button',
                         }}
                     >
-                        <MenuItem style={{ padding: '5px 5px' }} onClick={handleClose}>
+                        <MenuItem style={{ padding: '5px 5px' }} onClick={handleLeaveGroup}>
                             Rời khỏi nhóm
                         </MenuItem>
                     </Menu>
                 </div>
             );
-        if (option === 2)
+        if (option.option === 2)
             return (
                 <div>
                     <Menu
@@ -241,16 +273,16 @@ const ChattingPage = ({ socket }) => {
                             'aria-labelledby': 'basic-button',
                         }}
                     >
-                        <MenuItem style={{ padding: '5px 5px' }} onClick={handleClose}>
+                        <MenuItem style={{ padding: '5px 5px' }} onClick={handleAddManager}>
                             Thêm phó nhóm
                         </MenuItem>
-                        <MenuItem style={{ padding: '5px 5px' }} onClick={handleClose}>
+                        <MenuItem style={{ padding: '5px 5px' }} onClick={handleRemoveMember}>
                             Xóa khỏi nhóm
                         </MenuItem>
                     </Menu>
                 </div>
             );
-        if (option === 3)
+        if (option.option === 3)
             return (
                 <div>
                     <Menu
@@ -262,7 +294,7 @@ const ChattingPage = ({ socket }) => {
                             'aria-labelledby': 'basic-button',
                         }}
                     >
-                        <MenuItem style={{ padding: '5px 5px' }} onClick={handleClose}>
+                        <MenuItem style={{ padding: '5px 5px' }} onClick={handleRemoveMember}>
                             Xóa khỏi nhóm
                         </MenuItem>
                     </Menu>

@@ -32,4 +32,14 @@ export const apiConversations = {
     leaveGroup: async (conversationId) => {
         return await axios.delete(`/conversations/${conversationId}/members/leave`);
     },
+    addManager: async ({ conversationId, managerIds }) => {
+        return await axios.post(`/conversations/${conversationId}/managers`, {
+            managerIds,
+        });
+    },
+    deleteManager: async ({ conversationId, managerIds }) => {
+        return await axios.delete(`/conversations/${conversationId}/managers`, {
+            managerIds,
+        });
+    },
 };

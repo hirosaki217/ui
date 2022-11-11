@@ -28,6 +28,41 @@ export const getLastViewOfMembers = createAsyncThunk(`conversation/getLastViewOf
     return lastViews.data;
 });
 
+export const addManager = createAsyncThunk('conversation/addManager', async (params, _) => {
+    const { conversationId, managerId } = params;
+    const managerIds = [managerId];
+    const response = await apiConversations.addManager({ conversationId, managerIds });
+    return response.data;
+});
+
+export const removeManager = createAsyncThunk('conversation/removeManager', async (params, _) => {
+    const { conversationId, managerId } = params;
+    const managerIds = [managerId];
+    const response = await apiConversations.deleteManager({ conversationId, managerIds });
+    return response.data;
+});
+
+export const removeMember = createAsyncThunk('conversation/removeMember', async (params, _) => {
+    const { conversationId, userId } = params;
+
+    const response = await apiConversations.removeMember({ conversationId, userId });
+    return response.data;
+});
+
+export const addMember = createAsyncThunk('conversation/addMember', async (params, _) => {
+    const { conversationId, userId } = params;
+
+    const response = await apiConversations.addMember({ conversationId, userId });
+    return response.data;
+});
+
+export const leaveGroup = createAsyncThunk('conversation/leaveGroup', async (params, _) => {
+    const { conversationId } = params;
+
+    const response = await apiConversations.leaveGroup(conversationId);
+    return response.data;
+});
+
 export const getListMembers = createAsyncThunk('conversation/getListMember', async (params, _) => {
     const { conversationId } = params;
     const response = await apiConversations.getListMember(conversationId);
@@ -100,6 +135,39 @@ const conversationSlice = createSlice({
             });
             state.toTalUnread = tempCount;
         },
+        addManager1: (state, action) => {
+            let { conversationId, managerIds } = action.payload;
+            const conver = state.conversations.find((conversation) => conversation._id === conversationId);
+            if (conver) {
+                conver.managerIds = managerIds;
+
+                const conversations = state.conversations.filter((conversation) => conversation._id !== conversationId);
+                state.conversations = [conver, ...conversations];
+            }
+        },
+        removeManager1: (state, action) => {
+            let { conversationId, managerIds } = action.payload;
+            const conver = state.conversations.find((conversation) => conversation._id === conversationId);
+            if (conver) {
+                managerIds.forEach((id) => {
+                    const index = conver.managerIds.findIndex((idEle) => idEle === id);
+                    if (index !== -1) {
+                        conver.managerIds.splice(index, 1);
+                    }
+                });
+
+                const conversations = state.conversations.filter((conversation) => conversation._id !== conversationId);
+                state.conversations = [conver, ...conversations];
+            }
+        },
+        leaveGroup1: (state, action) => {
+            const conversations = state.conversations.filter(
+                (conversation) => conversation._id !== action.conversationId,
+            );
+            state.conversations = [...conversations];
+        },
+        addMember1: (state, action) => {},
+        removeMember1: (state, action) => {},
     },
     extraReducers: {
         [getList.pending]: (state, action) => {},
@@ -117,6 +185,40 @@ const conversationSlice = createSlice({
         },
         [getListMembers.fulfilled]: (state, action) => {
             state.members = action.payload;
+        },
+        [addManager.fulfilled]: (state, action) => {
+            let { conversationId, managerIds } = action.payload;
+            const conver = state.conversations.find((conversation) => conversation._id === conversationId);
+            if (conver) {
+                conver.managerIds = managerIds;
+
+                const conversations = state.conversations.filter((conversation) => conversation._id !== conversationId);
+                state.conversations = [conver, ...conversations];
+            }
+        },
+        [removeManager.fulfilled]: (state, action) => {
+            let { conversationId, managerIds } = action.payload;
+            const conver = state.conversations.find((conversation) => conversation._id === conversationId);
+            if (conver) {
+                managerIds.forEach((id) => {
+                    const index = conver.managerIds.findIndex((idEle) => idEle === id);
+                    if (index !== -1) {
+                        conver.managerIds.splice(index, 1);
+                    }
+                });
+
+                const conversations = state.conversations.filter((conversation) => conversation._id !== conversationId);
+                state.conversations = [conver, ...conversations];
+            }
+        },
+        [leaveGroup.fulfilled]: (state, action) => {
+            console.log('leaveGroup');
+        },
+        [addMember.fulfilled]: (state, action) => {
+            console.log('addMember');
+        },
+        [removeMember.fulfilled]: (state, action) => {
+            console.log('removeMember');
         },
     },
 });
@@ -136,5 +238,7 @@ export const {
     setLastMessageInConversation,
     setNumberUnreadForNewFriend,
     setToTalUnread,
+    addManager1,
+    removeManager1,
 } = actions;
 export default conversationReducer;
