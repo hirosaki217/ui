@@ -253,6 +253,7 @@ const ChattingPage = ({ socket }) => {
     };
 
     const handleRemoveManager = () => {
+        console.log('Removing ', [option.id]);
         dispatch(removeManager({ conversationId: conversation._id, managerIds: [option.id] }));
         setAnchorEl(null);
     };

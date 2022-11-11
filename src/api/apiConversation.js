@@ -39,7 +39,9 @@ export const apiConversations = {
     },
     deleteManager: async ({ conversationId, managerIds }) => {
         return await axios.delete(`/conversations/${conversationId}/managers`, {
-            managerIds,
+            data: {
+                managerIds: managerIds,
+            },
         });
     },
 };

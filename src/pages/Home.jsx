@@ -88,6 +88,11 @@ const Home = () => {
 
             dispatch(setLastMessageInConversation({ conversationId, message }));
         });
+        socket.on('new-message-group', (conversationId, message) => {
+            dispatch(rerenderMessage(message));
+
+            dispatch(setLastMessageInConversation({ conversationId, message }));
+        });
         socket.on('create-conversation', (conversationId) => {
             dispatch(getConversationById(conversationId));
         });

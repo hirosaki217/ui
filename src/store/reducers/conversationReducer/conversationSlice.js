@@ -37,7 +37,7 @@ export const addManager = createAsyncThunk('conversation/addManager', async (par
 
 export const removeManager = createAsyncThunk('conversation/removeManager', async (params, _) => {
     const { conversationId, managerIds } = params;
-
+    console.log(managerIds);
     const response = await apiConversations.deleteManager({ conversationId, managerIds });
     return response.data;
 });
@@ -223,10 +223,10 @@ const conversationSlice = createSlice({
             }
         },
         [removeManager.fulfilled]: (state, action) => {
-            let { conversationId, managerIds } = action.payload;
+            let { conversationId, deleteManagerIds } = action.payload;
             const conver = state.conversations.find((conversation) => conversation._id === conversationId);
             if (conver) {
-                managerIds.forEach((id) => {
+                deleteManagerIds.forEach((id) => {
                     const index = conver.managerIds.findIndex((idEle) => idEle === id);
                     if (index !== -1) {
                         conver.managerIds.splice(index, 1);
