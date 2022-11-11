@@ -51,7 +51,7 @@ const ListConversation = ({ socket }) => {
         dispatch(getListMembers({ conversationId: conversation._id }));
         // if (!conversations.type) dispatch(findFriendById(conversation.userId));
     };
-    console.log(conversations[0]);
+    console.log(conversations[conversations.length - 1]);
 
     return (
         <List className={classes.root}>

@@ -16,9 +16,11 @@ import {
     addManager,
     currentAConverSelector,
     currentConversationSelector,
+    getLastViewOfMembers,
     leaveGroup,
     listMemberSelector,
     removeMember,
+    updateMemberInconver,
     // updateLastViewOfMembers,
 } from '../../store/reducers/conversationReducer/conversationSlice';
 import { messagesSelector, sendImage, sendImages } from '../../store/reducers/messageReducer/messageSlice';
@@ -37,6 +39,7 @@ import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
 import { friendSelector } from '../../store/reducers/friendReducer/friendReducer';
 import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
 import { meSelector } from '../../store/reducers/userReducer/meReducer';
+import { apiConversations } from '../../api/apiConversation';
 
 const TYPE_MATCH_MEDIA = ['image/png', 'image/jpeg', 'image/gif', 'video/mp4'];
 
@@ -121,6 +124,13 @@ const ChattingPage = ({ socket }) => {
         //         );
         //     }
         // });
+        socket.on('update-member', async (conversationId) => {
+            if (conversationId === conversation._id) {
+                await dispatch(getLastViewOfMembers({ conversationId }));
+                const newMember = await apiConversations.getMemberInConversation(conversation._id);
+                dispatch(updateMemberInconver({ conversationId, newMember }));
+            }
+        });
     }, [currentConversation]);
 
     // file image

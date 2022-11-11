@@ -15,6 +15,7 @@ import {
     removeManager,
     removeManager1,
     setLastMessageInConversation,
+    updateAvatarWhenUpdateMember,
 } from '../store/reducers/conversationReducer/conversationSlice';
 import { rerenderMessage } from '../store/reducers/messageReducer/messageSlice';
 import useWindowUnloadEffect from '../hooks/useWindowUnloadEffect';
@@ -30,6 +31,7 @@ import {
     recieveInvite,
     setNewFriend,
 } from '../store/reducers/friendReducer/friendReducer';
+import { apiConversations } from '../api/apiConversation';
 
 const Home = () => {
     const dispatch = useDispatch();
@@ -144,7 +146,17 @@ const Home = () => {
         socket.on('delete-managers', ({ conversationId, managerIds }) => {
             dispatch(removeManager1({ conversationId, managerIds }));
         });
-        socket.on('update-member', ({ conversationId }) => {});
+        socket.on('update-member', async (conversationId) => {
+            const data = await apiConversations.getConversationById(conversationId);
+            const { avatar, totalMembers } = data;
+            dispatch(
+                updateAvatarWhenUpdateMember({
+                    conversationId,
+                    avatar,
+                    totalMembers,
+                }),
+            );
+        });
     }, []);
 
     return (

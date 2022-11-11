@@ -136,28 +136,31 @@ const conversationSlice = createSlice({
             state.toTalUnread = tempCount;
         },
         addManager1: (state, action) => {
-            let { conversationId, managerIds } = action.payload;
-            const conver = state.conversations.find((conversation) => conversation._id === conversationId);
-            if (conver) {
-                conver.managerIds = managerIds;
+            const { conversationId, managerIds } = action.payload;
+            if (conversationId === state.currentConversation) {
+                const index = state.conversations.findIndex((ele) => ele._id === conversationId);
 
-                const conversations = state.conversations.filter((conversation) => conversation._id !== conversationId);
-                state.conversations = [conver, ...conversations];
+                const tempManagerIds = state.conversations[index].managerIds.concat(managerIds);
+                if (index > -1) {
+                    state.conversations[index] = {
+                        ...state.conversations[index],
+                        managerIds: tempManagerIds,
+                    };
+                }
             }
         },
         removeManager1: (state, action) => {
-            let { conversationId, managerIds } = action.payload;
-            const conver = state.conversations.find((conversation) => conversation._id === conversationId);
-            if (conver) {
-                managerIds.forEach((id) => {
-                    const index = conver.managerIds.findIndex((idEle) => idEle === id);
-                    if (index !== -1) {
-                        conver.managerIds.splice(index, 1);
-                    }
-                });
+            const { conversationId, managerIds } = action.payload;
+            if (conversationId === state.currentConversation) {
+                const index = state.conversations.findIndex((ele) => ele._id === conversationId);
 
-                const conversations = state.conversations.filter((conversation) => conversation._id !== conversationId);
-                state.conversations = [conver, ...conversations];
+                const tempManagerIds = state.conversations[index].managerIds.filter((ele) => ele !== managerIds[0]);
+                if (index > -1) {
+                    state.conversations[index] = {
+                        ...state.conversations[index],
+                        managerIds: tempManagerIds,
+                    };
+                }
             }
         },
         leaveGroup1: (state, action) => {
@@ -166,8 +169,31 @@ const conversationSlice = createSlice({
             );
             state.conversations = [...conversations];
         },
-        addMember1: (state, action) => {},
-        removeMember1: (state, action) => {},
+        updateMemberInconver: (state, action) => {
+            const { conversationId, newMember } = action.payload;
+            state.memberInConversation = newMember;
+            const index = state.conversations.findIndex((ele) => ele._id === conversationId);
+            if (index > -1) {
+                state.conversations[index].totalMembers = newMember.length;
+            }
+        },
+        removeMember1: (state, action) => {
+            const { conversationId } = action.payload;
+            const index = state.conversations.findIndex((ele) => ele._id === conversationId);
+            if (index > -1) {
+                state.conversations[index].totalMembers = state.conversations[index].totalMembers - 1;
+            }
+        },
+        updateAvatarWhenUpdateMember: (state, action) => {
+            const { conversationId, avatar, totalMembers } = action.payload;
+
+            const index = state.conversations.findIndex((ele) => ele._id === conversationId);
+
+            state.conversations[index].totalMembers = totalMembers;
+            if (index > -1 && typeof state.conversations[index].avatar === 'object') {
+                state.conversations[index].avatar = avatar;
+            }
+        },
     },
     extraReducers: {
         [getList.pending]: (state, action) => {},
@@ -240,5 +266,7 @@ export const {
     setToTalUnread,
     addManager1,
     removeManager1,
+    updateMemberInconver,
+    updateAvatarWhenUpdateMember,
 } = actions;
 export default conversationReducer;
