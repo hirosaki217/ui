@@ -29,15 +29,15 @@ export const getLastViewOfMembers = createAsyncThunk(`conversation/getLastViewOf
 });
 
 export const addManager = createAsyncThunk('conversation/addManager', async (params, _) => {
-    const { conversationId, managerId } = params;
-    const managerIds = [managerId];
+    const { conversationId, managerIds } = params;
+
     const response = await apiConversations.addManager({ conversationId, managerIds });
     return response.data;
 });
 
 export const removeManager = createAsyncThunk('conversation/removeManager', async (params, _) => {
-    const { conversationId, managerId } = params;
-    const managerIds = [managerId];
+    const { conversationId, managerIds } = params;
+
     const response = await apiConversations.deleteManager({ conversationId, managerIds });
     return response.data;
 });

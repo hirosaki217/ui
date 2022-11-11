@@ -199,6 +199,7 @@ const ChattingPage = ({ socket }) => {
     }
     // end file
     useEffect(() => {
+        console.log(conversation);
         const scrollToBottom = (node) => {
             node.scrollTop = node.scrollHeight;
         };
@@ -289,7 +290,7 @@ const ChattingPage = ({ socket }) => {
                             'aria-labelledby': 'basic-button',
                         }}
                     >
-                        {option.id === conversation.managerIds.includes(option.id) ? (
+                        {conversation.managerIds.includes(option.id) ? (
                             <MenuItem style={{ padding: '5px 5px' }} onClick={handleRemoveManager}>
                                 Xóa phó nhóm
                             </MenuItem>
