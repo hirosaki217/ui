@@ -21,7 +21,7 @@ import { rerenderMessage } from '../store/reducers/messageReducer/messageSlice';
 import useWindowUnloadEffect from '../hooks/useWindowUnloadEffect';
 import { useAuthContext } from '../contexts/AuthContext';
 import jwt from '../utils/jwt';
-import { useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { getProfile, meSelector } from '../store/reducers/userReducer/meReducer';
 import {
     findFriend,
@@ -32,12 +32,15 @@ import {
     setNewFriend,
 } from '../store/reducers/friendReducer/friendReducer';
 import { apiConversations } from '../api/apiConversation';
+import { useRef } from 'react';
 
+let idCall = null;
 const Home = () => {
     const dispatch = useDispatch();
     const { isLogin } = useSelector(loginSelector);
     const conversations = useSelector(conversationSelector);
     const navigate = useNavigate();
+    const answerBtnRef = useRef();
     useEffect(() => {
         if (!jwt.getUserId()) navigate('login');
     }, [jwt.getUserId()]);
@@ -162,13 +165,35 @@ const Home = () => {
                 }),
             );
         });
-    }, []);
+        socket.on('notify-call', (myId) => {
+            idCall = myId;
+            answerBtnRef.current.classList.remove('hideCall');
+            console.log('notify call');
 
+            try {
+                setTimeout(() => {
+                    if (answerBtnRef.current.classList) answerBtnRef.current.classList.add('hideCall');
+                }, 5000);
+            } catch (error) {}
+        });
+    }, []);
+    const handleAnswer = () => {
+        if (idCall) {
+            // navigate(`/call/accept`);
+
+            socket.emit('answer-call', idCall);
+
+            window.open('/call/accept', '_blank');
+        }
+    };
     return (
         <div className="home">
             <SideNavbar style={{ flex: 1 }} />
             <MyChat socket={socket}></MyChat>
             <ChattingPage socket={socket} />
+            <div ref={answerBtnRef} className="hideCall">
+                <button onClick={handleAnswer}>Answer</button>
+            </div>
         </div>
     );
 };

@@ -11,7 +11,7 @@ import { init } from './utils/socketClient';
 
 const container = document.getElementById('root');
 const root = createRoot(container);
-init();
+// init();
 root.render(
     <>
         <AuthContextProvider>

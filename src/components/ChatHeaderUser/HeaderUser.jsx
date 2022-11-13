@@ -4,15 +4,37 @@ import './headerUser.css';
 import PhoneIcon from '@material-ui/icons/Phone';
 import VideoCallIcon from '@material-ui/icons/VideoCall';
 import VerticalSplitIcon from '@material-ui/icons/VerticalSplit';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { listMemberSelector } from '../../store/reducers/conversationReducer/conversationSlice';
+import jwt from '../../utils/jwt';
+import { useEffect } from 'react';
 
-const HeaderUser = ({ conversation, tabInfoRef }) => {
+const HeaderUser = ({ conversation, tabInfoRef, socket }) => {
+    const members = useSelector(listMemberSelector);
+    const myId = jwt.getUserId();
+    const navigate = useNavigate();
     const handleShowTabInfo = () => {
         // tabInfoRef.current.classList.add('')
         const hasClass = tabInfoRef.current.classList.contains('hide');
         if (hasClass) tabInfoRef.current.classList.remove('hide');
         else tabInfoRef.current.classList.add('hide');
     };
-
+    const handleCall = () => {
+        if (members.length === 2) {
+            const { _id: userId } = members.find((member) => member._id !== myId);
+            console.log(userId);
+            socket.emit('has-call', userId, myId);
+        }
+    };
+    useEffect(() => {
+        if (members.length === 2) {
+            const { _id: userId } = members.find((member) => member._id !== myId);
+            socket.on('accept-call', (idCall) => {
+                window.open(`/call/${userId}`, '_blank');
+            });
+        }
+    }, []);
     return (
         <div className="conversation">
             <div className="conversationInfor">
@@ -23,16 +45,21 @@ const HeaderUser = ({ conversation, tabInfoRef }) => {
                             alt="A"
                             src={`${conversation.avatar[0].avatar ? conversation.avatar[0].avatar : '0'}`}
                         />
-                        <Avatar
-                            className="iconAvatar"
-                            alt="B"
-                            src={`${conversation.avatar[1].avatar ? conversation.avatar[1].avatar : '1'}`}
-                        />
-                        <Avatar
-                            className="iconAvatar"
-                            alt="C"
-                            src={`${conversation.avatar[2].avatar ? conversation.avatar[2].avatar : '2'}`}
-                        />
+                        {conversation.avatar.length > 1 && (
+                            <Avatar
+                                className="iconAvatar"
+                                alt="B"
+                                src={`${conversation.avatar[1].avatar ? conversation.avatar[1].avatar : '1'}`}
+                            />
+                        )}
+
+                        {conversation.avatar.length > 2 && (
+                            <Avatar
+                                className="iconAvatar"
+                                alt="C"
+                                src={`${conversation.avatar[2].avatar ? conversation.avatar[2].avatar : '2'}`}
+                            />
+                        )}
 
                         {conversation.avatar.length > 3 && (
                             <Avatar
@@ -53,12 +80,15 @@ const HeaderUser = ({ conversation, tabInfoRef }) => {
             </div>
             <div>
                 <div className="conversationOption">
-                    <Button>
-                        <PhoneIcon />
-                    </Button>
-                    <Button>
+                    {!conversation.type && (
+                        <Button onClick={handleCall}>
+                            <PhoneIcon />
+                        </Button>
+                    )}
+
+                    {/* <Button>
                         <VideoCallIcon />
-                    </Button>
+                    </Button> */}
                     <Button onClick={handleShowTabInfo}>
                         <VerticalSplitIcon />
                     </Button>

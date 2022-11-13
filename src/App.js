@@ -9,9 +9,11 @@ import Home from './pages/Home';
 import Register from './pages/register/Register';
 import { useEffect, useState } from 'react';
 import { useAuthContext } from './contexts/AuthContext';
+import VideoCall from './pages/videocall/VideoCall';
 // import jwt from './utils/jwt';
 // import axios from './api/apiConfig';
-
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
 function App() {
     const [loading, setLoading] = useState(true);
     const { checkAuth } = useAuthContext();
@@ -23,11 +25,22 @@ function App() {
         };
         authenticate();
     }, []);
-    if (loading) return <h1>loading</h1>;
+    if (loading) {
+        return (
+            <div style={{ width: '100%' }}>
+                <h1>security ....</h1>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <CircularProgress />
+                </Box>
+            </div>
+        );
+    }
     return (
         <div className="App">
             <Routes>
                 <Route path="/" element={<Home />}></Route>
+                <Route path="call/:userId" element={<VideoCall />} />
+
                 <Route path="login" element={<Login />}></Route>
                 <Route path="register" element={<Register />}></Route>
             </Routes>

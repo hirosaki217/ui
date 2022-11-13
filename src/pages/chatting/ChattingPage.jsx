@@ -333,7 +333,9 @@ const ChattingPage = ({ socket }) => {
         <div className="wrapChatting">
             <div className="chatting">
                 <div className="headerUser">
-                    {messages.data && <HeaderUser tabInfoRef={tabInfoRef} conversation={conversation} />}
+                    {messages.data && (
+                        <HeaderUser tabInfoRef={tabInfoRef} socket={socket} conversation={conversation} />
+                    )}
                 </div>
                 {/* message */}
                 <div ref={scroll} className="roomChat scrollbar" id="style-scroll">
@@ -424,16 +426,25 @@ const ChattingPage = ({ socket }) => {
                                         alt="A"
                                         src={`${conversation.avatar[0].avatar ? conversation.avatar[0].avatar : '0'}`}
                                     />
-                                    <Avatar
-                                        className="iconAvatar"
-                                        alt="B"
-                                        src={`${conversation.avatar[1].avatar ? conversation.avatar[1].avatar : '1'}`}
-                                    />
-                                    <Avatar
-                                        className="iconAvatar"
-                                        alt="C"
-                                        src={`${conversation.avatar[2].avatar ? conversation.avatar[2].avatar : '2'}`}
-                                    />
+                                    {conversation.avatar.length > 1 && (
+                                        <Avatar
+                                            className="iconAvatar"
+                                            alt="B"
+                                            src={`${
+                                                conversation.avatar[1].avatar ? conversation.avatar[1].avatar : '1'
+                                            }`}
+                                        />
+                                    )}
+
+                                    {conversation.avatar.length > 2 && (
+                                        <Avatar
+                                            className="iconAvatar"
+                                            alt="C"
+                                            src={`${
+                                                conversation.avatar[2].avatar ? conversation.avatar[2].avatar : '2'
+                                            }`}
+                                        />
+                                    )}
 
                                     {conversation.avatar.length > 3 && (
                                         <Avatar
