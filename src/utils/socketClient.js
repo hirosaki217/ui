@@ -45,10 +45,9 @@ function routesClient(socket) {
     return false;
 }
 
-function initClient() {
+export function initClient() {
     init();
 }
-
 window.onload = function () {
     initClient();
 };

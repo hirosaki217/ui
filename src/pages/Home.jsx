@@ -2,13 +2,14 @@ import MyChat from '../components/MyChat/MyChat';
 import SideNavbar from '../components/SideNavbar/SideNavbar';
 
 import ChattingPage from './chatting/ChattingPage';
-import { socket } from '../utils/socketClient';
-import { useEffect } from 'react';
+import { initClient, socket } from '../utils/socketClient';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginSelector } from '../store/reducers/loginReducer/loginSlice';
 import {
     addManager,
     addManager1,
+    addNewConversation,
     conversationSelector,
     getConversationById,
     getList,
@@ -33,7 +34,8 @@ import {
 } from '../store/reducers/friendReducer/friendReducer';
 import { apiConversations } from '../api/apiConversation';
 import { useRef } from 'react';
-
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
 let idCall = null;
 const Home = () => {
     const dispatch = useDispatch();
@@ -176,6 +178,12 @@ const Home = () => {
                 }, 5000);
             } catch (error) {}
         });
+        socket.on('added-group', async (id) => {
+            const data = await apiConversations.getConversationById(id);
+            if (data) {
+                dispatch(addNewConversation(data));
+            }
+        });
     }, []);
     const handleAnswer = () => {
         if (idCall) {
@@ -186,6 +194,7 @@ const Home = () => {
             window.open('/call/accept', '_blank');
         }
     };
+
     return (
         <div className="home">
             <SideNavbar style={{ flex: 1 }} />

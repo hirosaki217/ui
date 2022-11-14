@@ -18,7 +18,9 @@ const Login = () => {
     jwt.getUserId();
     useEffect(() => {
         console.log(jwt.getUserId());
-        if (jwt.getUserId()) navigate('..');
+        if (jwt.getUserId())
+            // navigate('..');
+            window.location.href = '/';
     }, [jwt.getUserId()]);
 
     const clickToFormRegister = (e) => {
@@ -30,7 +32,8 @@ const Login = () => {
         e.preventDefault();
         dispatch(login({ username, password }));
         setIsError(!isLogin);
-        if (isLogin) navigate('..');
+        if (isLogin) window.location.href = '/';
+        // if (isLogin) navigate('..');
     };
     return (
         <div className="Auth-form-container loginContainer ">

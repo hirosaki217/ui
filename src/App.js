@@ -14,6 +14,7 @@ import VideoCall from './pages/videocall/VideoCall';
 // import axios from './api/apiConfig';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
+import { initClient } from './utils/socketClient';
 function App() {
     const [loading, setLoading] = useState(true);
     const { checkAuth } = useAuthContext();
@@ -35,6 +36,7 @@ function App() {
             </div>
         );
     }
+
     return (
         <div className="App">
             <Routes>

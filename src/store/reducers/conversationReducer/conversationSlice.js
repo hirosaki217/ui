@@ -50,9 +50,9 @@ export const removeMember = createAsyncThunk('conversation/removeMember', async 
 });
 
 export const addMember = createAsyncThunk('conversation/addMember', async (params, _) => {
-    const { conversationId, userId } = params;
+    const { conversationId, userIds } = params;
 
-    const response = await apiConversations.addMember({ conversationId, userId });
+    const response = await apiConversations.addMember({ conversationId, userIds });
     return response.data;
 });
 
@@ -194,6 +194,9 @@ const conversationSlice = createSlice({
                 state.conversations[index].avatar = avatar;
             }
         },
+        addNewConversation: (state, action) => {
+            state.conversations = [...state.conversations, action.payload];
+        },
     },
     extraReducers: {
         [getList.pending]: (state, action) => {},
@@ -268,5 +271,6 @@ export const {
     removeManager1,
     updateMemberInconver,
     updateAvatarWhenUpdateMember,
+    addNewConversation,
 } = actions;
 export default conversationReducer;

@@ -199,7 +199,6 @@ const ChattingPage = ({ socket }) => {
     }
     // end file
     useEffect(() => {
-        console.log(conversation);
         const scrollToBottom = (node) => {
             node.scrollTop = node.scrollHeight;
         };
@@ -273,9 +272,9 @@ const ChattingPage = ({ socket }) => {
                             'aria-labelledby': 'basic-button',
                         }}
                     >
-                        <MenuItem style={{ padding: '5px 5px' }} onClick={handleLeaveGroup}>
+                        {/* <MenuItem style={{ padding: '5px 5px' }} onClick={handleLeaveGroup}>
                             Rời khỏi nhóm
-                        </MenuItem>
+                        </MenuItem> */}
                     </Menu>
                 </div>
             );
@@ -320,9 +319,11 @@ const ChattingPage = ({ socket }) => {
                             'aria-labelledby': 'basic-button',
                         }}
                     >
-                        <MenuItem style={{ padding: '5px 5px' }} onClick={handleRemoveMember}>
-                            Xóa khỏi nhóm
-                        </MenuItem>
+                        {(option.id !== conversation.leaderId || conversation.managerIds.includes(option.id)) && (
+                            <MenuItem style={{ padding: '5px 5px' }} onClick={handleRemoveMember}>
+                                Xóa khỏi nhóm
+                            </MenuItem>
+                        )}
                     </Menu>
                 </div>
             );
