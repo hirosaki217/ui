@@ -5,6 +5,13 @@ export const apiMessage = {
     getList: async (id) => {
         return await axios.get(`/messages/${id}`);
     },
+    getListByPage: async ({ id, page }) => {
+        return await axios.get(`/messages/${id}`, {
+            params: {
+                page,
+            },
+        });
+    },
     sendText: async ({ conversationId, content, type = 'TEXT' }) => {
         return await axios.post(`/messages/text`, {
             conversationId,

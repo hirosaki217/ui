@@ -47,7 +47,7 @@ const ListConversation = ({ socket }) => {
     const currentConversation = useSelector(currentConversationSelector);
     const onSelectConversation = (conversation) => {
         dispatch(setCurrentConversation(conversation));
-        dispatch(getMessages(conversation._id));
+        dispatch(getMessages({ id: conversation._id }));
         dispatch(getListMembers({ conversationId: conversation._id }));
         // if (!conversations.type) dispatch(findFriendById(conversation.userId));
     };

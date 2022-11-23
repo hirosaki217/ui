@@ -24,7 +24,12 @@ import {
     updateMemberInconver,
     // updateLastViewOfMembers,
 } from '../../store/reducers/conversationReducer/conversationSlice';
-import { messagesSelector, sendImage, sendImages } from '../../store/reducers/messageReducer/messageSlice';
+import {
+    getMessagesByPage,
+    messagesSelector,
+    sendImage,
+    sendImages,
+} from '../../store/reducers/messageReducer/messageSlice';
 import dateUtils from '../../utils/dateUtils';
 import CustomizedInputBase from '../../components/CustomizedInputBase/CustomizedInputBase';
 import jwt from '../../utils/jwt';
@@ -78,6 +83,21 @@ const ChattingPage = ({ socket }) => {
         option: 0,
         id: '',
     });
+
+    const handleScroll = (event) => {
+        const scrollTop = event.target.scrollTop;
+        let page = messages.page;
+        const totalPages = messages.totalPages;
+
+        if (scrollTop === 0 && page < totalPages) {
+            page += 1;
+
+            dispatch(getMessagesByPage({ id: currentConversation, page }));
+        }
+        console.log('scrollTop: ', event.currentTarget.scrollTop, scrollTop === 0);
+        console.log('offsetHeight: ', event.currentTarget.offsetHeight);
+    };
+
     useEffect(() => {
         setFrProfile(friendProfile);
     }, [friendProfile]);
@@ -203,8 +223,12 @@ const ChattingPage = ({ socket }) => {
             node.scrollTop = node.scrollHeight;
         };
         scrollToBottom(scroll.current);
+        setTimeout(() => {
+            scrollToBottom(scroll.current);
+        }, 2000);
+
         scroll.current.scrollIntoView({ behavior: 'smooth' });
-    });
+    }, [currentConversation]);
     // event group
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -339,7 +363,7 @@ const ChattingPage = ({ socket }) => {
                     )}
                 </div>
                 {/* message */}
-                <div ref={scroll} className="roomChat scrollbar" id="style-scroll">
+                <div onScroll={handleScroll} ref={scroll} className="roomChat scrollbar" id="style-scroll">
                     {messages.data &&
                         messages.data.map((msg) => {
                             if (msg.type === 'TEXT') return Chatlogic.messageText(msg, user);

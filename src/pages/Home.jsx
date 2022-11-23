@@ -179,6 +179,7 @@ const Home = () => {
             } catch (error) {}
         });
         socket.on('added-group', async (id) => {
+            console.log('added group');
             const data = await apiConversations.getConversationById(id);
             if (data) {
                 dispatch(addNewConversation(data));

@@ -1,9 +1,15 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { apiMessage } from '../../../api/apiMessage';
 
-export const getMessages = createAsyncThunk('messages/list', async (id, thunkApi) => {
+export const getMessages = createAsyncThunk('messages/list', async ({ id, page }, thunkApi) => {
     // thunkApi.dispatch(messageLoading(true));
     const list = await apiMessage.getList(id);
+    return list.data;
+});
+
+export const getMessagesByPage = createAsyncThunk('messages/listByPage', async ({ id, page }, thunkApi) => {
+    // thunkApi.dispatch(messageLoading(true));
+    const list = await apiMessage.getListByPage({ id, page });
     return list.data;
 });
 
@@ -50,6 +56,7 @@ const messageSlice = createSlice({
         [getMessages.fulfilled]: (state, action) => {
             state.loading = false;
             state.error = false;
+
             state.messages = action.payload;
         },
         [sendMessage.fulfilled]: (state, action) => {
@@ -61,6 +68,16 @@ const messageSlice = createSlice({
             state.loading = false;
             state.error = false;
             state.messages.data = [...state.messages.data, action.payload];
+        },
+        [getMessagesByPage.fulfilled]: (state, action) => {
+            state.loading = false;
+            state.error = false;
+            const oldData = state.messages.data ? state.messages.data : [];
+
+            state.messages = {
+                ...action.payload,
+                data: [...action.payload.data, ...oldData],
+            };
         },
     },
 });
