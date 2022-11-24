@@ -7,8 +7,8 @@ export const getProfile = createAsyncThunk('me/getProfile', async () => {
 });
 
 export const updateProfile = createAsyncThunk('me/updateProfile', async(data)=>{
-    const {name} = data;
-    const rs = await apiUser.updateProfile({name})
+    const {name,birthDay,gender} = data;
+    const rs = await apiUser.updateProfile({name,birthDay,gender})
     return rs.data;
 })
 
@@ -25,13 +25,16 @@ const meSlice = createSlice({
     extraReducers: {
         [getProfile.fulfilled]: (state, action) => {
             state.user = action.payload;
-           
         },
+        // ,
+        // [updateProfile.pending]:(state,action)=>{
+        //     state.user = action.payload;
+        // },
+        // [updateProfile.rejected]:(state,action)=>{
+        //     state.user = action.payload;
+        // },
         [updateProfile.fulfilled]:(state,action)=>{
-            
             state.user = action.payload;
-            console.log(state.user)
-            
         }
 
     },

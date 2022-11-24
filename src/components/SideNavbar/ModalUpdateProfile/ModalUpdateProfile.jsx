@@ -26,10 +26,11 @@ const ModalUpdateProfile = (props) => {
     const month = profileUser.birthDay.month;
     const year = profileUser.birthDay.year;
     const [birthDay, setBirthDay] = useState()
+    const [birthDayStr, setBirthDayStr] = useState('')
     const classes = useStyles();
     const [avatar,setAvatar] = useState(profileUser.avatar);
     const [name,setName] = useState(profileUser.name);
-    const [gender, setGender] = useState(profileUser.gender);
+    const [gender, setGender] = useState(profileUser.gender? 1: 0);
     useEffect(() => {
         if (month < 10 && day < 10) {
             setBirthDay(`${year}-0${month}-0${day}`);
@@ -46,6 +47,7 @@ const ModalUpdateProfile = (props) => {
     }, [])
     const handleChangeDate = e => {
         setBirthDay(e.target.value);
+        // setBirthDay(new Date(birthDayStr));
      };
      
     const handlePreviewAvatar=(e)=>{
@@ -62,7 +64,9 @@ const ModalUpdateProfile = (props) => {
         e.preventDefault();
         disPatch(
              updateProfile({
-                name: name
+                name: name,
+                birthDay: birthDay,
+                gender: gender
             }),
         )
         // disPatch(
@@ -135,11 +139,11 @@ const ModalUpdateProfile = (props) => {
                                     value={
                                         gender
                                     }
-                                    onChange={(e)=>setGender(e.target.value)}
+                                    onChange={(e)=>setGender(Number(e.target.value))}
                                 >
                                     <div style={{ display: 'flex' }}>
-                                        <FormControlLabel value={true} control={<Radio />} label="Nam" />
-                                        <FormControlLabel value={false} control={<Radio />} label="Nữ" />
+                                        <FormControlLabel value={1} control={<Radio />} label="Nam" />
+                                        <FormControlLabel value={0} control={<Radio />} label="Nữ" />
                                     </div>
                                 </RadioGroup>
                             </div>

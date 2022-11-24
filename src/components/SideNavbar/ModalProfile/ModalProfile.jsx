@@ -1,6 +1,7 @@
 import { Avatar, Backdrop, Button, Fade, makeStyles, Modal } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { apiUser } from "../../../api/apiUser";
 import { getProfile, meSelector } from "../../../store/reducers/userReducer/meReducer"
 import ModalUpdateProfile from "../ModalUpdateProfile/ModalUpdateProfile";
 import './modalProfile.css';
@@ -19,16 +20,24 @@ const useStyles = makeStyles((theme) => ({
 const ModalProfile = (props) => {
     
     const profileUser = useSelector(meSelector);
-    
+    const [name,setName]= useState();
+    const [birthDay,setBirthDay]= useState();
+    const [gender,setGender]= useState();
     const openProfile = props.openProfilee;
     const classes = useStyles();
     const [openUpdateProfile, setOpenUpdateProfile] = useState(false);
 
-    const handleOpenUpdateProfile = ()=>{
+    const handleOpenUpdateProfile = async()=>{
         setOpenUpdateProfile(true);
     }
 
-    const handleCloseUpdateProfile = ()=>{
+    const handleCloseUpdateProfile = async()=>{
+        const rs = await apiUser.getProfile();
+        const userNew = rs.data;
+        console.log("new update", userNew);
+        setName(userNew.name);
+        setBirthDay(userNew.birthDay);
+        setGender(userNew.gender);
         setOpenUpdateProfile(false);
         console.log(profileUser.name);
     }
@@ -71,7 +80,7 @@ const ModalProfile = (props) => {
                             </Avatar>
                         </div>
                         <div className='profile-info-bao'>
-                            <h5 >{profileUser.name}</h5>
+                            <h5 >{name? name: profileUser.name}</h5>
                             <h6 >Thông tin cá nhân</h6>
                             <div style={{ display: 'flex' }}>
                                 <div className='info-left'>
@@ -82,8 +91,20 @@ const ModalProfile = (props) => {
 
                                 <div className='info-right'>
                                     <p>{profileUser.username}</p>
-                                    <p>{profileUser.gender ? "Nam" : "Nữ"}</p>
-                                    <p>{`${profileUser.birthDay.day} / ${profileUser.birthDay.month} / ${profileUser.birthDay.year}`}</p>
+                                    <p>
+                                        {
+                                        
+                                        profileUser.gender ? "Nam" : "Nữ"
+                                        
+                                        }</p>
+                                    <p>
+                                        {
+                                            birthDay
+                                            ?`${birthDay.day} / ${birthDay.month} / ${birthDay.year}`
+                                            : `${profileUser.birthDay.day} / ${profileUser.birthDay.month} / ${profileUser.birthDay.year}`
+                                    
+                                        }   
+                                    </p>
                                 </div>
                             </div>
                         </div>

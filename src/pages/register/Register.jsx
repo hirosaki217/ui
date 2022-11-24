@@ -386,14 +386,16 @@ const Register = () => {
                         </div>
                         <div className="form-group mt-3">
                             <label>Ngày sinh</label>
-                            <input type="date" name='birthDay' ref={birthRef} id="birtDay"
+                            <input type="date" name='birthDay'
+                                defaultValue={'1999-01-01'}
+                                ref={birthRef} id="birtDay"
                                 onChange={(e) => {
                                     const birth = e.target.value;
                                     const date = new Date(birth)
                                     console.log("date change ",typeof birth);
                                     console.log("date change2 ",typeof date);
                                     // const dateCv = Date(date.getFullYear)
-                                    setBirthDay(date);
+                                    setBirthDay(birth);
                                 }}
                            
                             

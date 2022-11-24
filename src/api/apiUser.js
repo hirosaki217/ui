@@ -8,14 +8,15 @@ export const apiUser = {
         return await axios.get(`auth/users/${username}`);
     },
     updateProfile: async ({ name, birthDay, gender }) => {
-        const yyyy = birthDay.getFullYear();
-        let mm = birthDay.getMonth() + 1; // Months start at 0!
-        let dd = birthDay.getDate();
+        const date = new Date(birthDay);
+        const yyyy = date.getFullYear();
+        let mm = date.getMonth() + 1; // Months start at 0!
+        let dd = date.getDate();
         const dateOfBirth = {
             day: dd, month: mm, year: yyyy
         }
         console.log("API ", birthDay);
         await axios.put('/m/profile', { name, dateOfBirth, gender })
-        // return await axios.get('/m/profile');
+        return await axios.get('/m/profile');
     }
 };
