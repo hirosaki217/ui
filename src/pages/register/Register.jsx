@@ -29,7 +29,7 @@ const Register = () => {
     const [name, setName] = useState('Chưa đặt tên');
     const birthRef = useRef();
     const [birthDayStr, setBirthDayStr] = useState('');
-    const [birthDay, setBirthDay] = useState();
+    const [birthDay, setBirthDay] = useState('1999-01-01');
     const [gender, setGender] = useState(Number(0));
     const [step, setStep] = useState('FORM_REGISTER');
     const [checkDis, setDis] = useState(false)
@@ -122,6 +122,7 @@ const Register = () => {
                     if (regis.config.data){
                         setStep('FORM_OTP');
                         setTimeLeft(60);
+                        setDis(false)
                     }
                 } catch (error) {
                     const account = await apiUser.getUserByUserName({ username });
@@ -133,6 +134,7 @@ const Register = () => {
                         apiRegister.resetOtp({ username });
                         setStep('FORM_OTP');
                         setTimeLeft(60);
+                        setDis(false)
                     }
                     console.log("user")
                 }
@@ -202,7 +204,7 @@ const Register = () => {
             }
             if (timeLeft > 0) {
                 setTimeLeft(timeLeft - 1);
-                setDis(false)
+                
             }
         }, 1000);
         return () => clearInterval(intervalId);
@@ -210,6 +212,8 @@ const Register = () => {
     const handleResentOTP = async (e) => {
         e.preventDefault();
         setOtp('');
+        checkOtp.current.className = 'catchError hide';
+        checkCountOtp.current.className = 'catchError hide';
         setDis(false);
         setTimeLeft(60);
         await apiRegister.resetOtp({ username });
@@ -387,7 +391,7 @@ const Register = () => {
                         <div className="form-group mt-3">
                             <label>Ngày sinh</label>
                             <input type="date" name='birthDay'
-                                defaultValue={'1999-01-01'}
+                                value={birthDay}
                                 ref={birthRef} id="birtDay"
                                 onChange={(e) => {
                                     const birth = e.target.value;
