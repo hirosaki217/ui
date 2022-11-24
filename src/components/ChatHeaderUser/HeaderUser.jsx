@@ -92,13 +92,13 @@ const HeaderUser = ({ conversation, tabInfoRef, socket }) => {
                             />
                         )}
 
-                        {conversation.avatar.length > 3 && (
+                        {/* {conversation.avatar.length > 3 && (
                             <Avatar
                                 className="iconAvatar"
                                 alt="D"
                                 src={`${conversation.avatar[3].avatar ? conversation.avatar[3].avatar : '3'}`}
                             />
-                        )}
+                        )} */}
                     </AvatarGroup>
                 ) : (
                     <Avatar className="conversationAvatar" src={conversation.avatar ? conversation.avatar : ''} />

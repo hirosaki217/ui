@@ -471,7 +471,7 @@ const ChattingPage = ({ socket }) => {
                                         />
                                     )}
 
-                                    {conversation.avatar.length > 3 && (
+                                    {/* {conversation.avatar.length > 3 && (
                                         <Avatar
                                             className="iconAvatar"
                                             alt="D"
@@ -479,7 +479,7 @@ const ChattingPage = ({ socket }) => {
                                                 conversation.avatar[3].avatar ? conversation.avatar[3].avatar : '3'
                                             }`}
                                         />
-                                    )}
+                                    )} */}
                                 </AvatarGroup>
                             ) : (
                                 <Avatar
