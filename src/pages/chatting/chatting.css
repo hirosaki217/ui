@@ -209,7 +209,7 @@
     flex-wrap: wrap;
     align-items: flex-start;
     justify-content: start;
-    width: 620px;
+    /* width: 620px; */
 }
 
 .groupImage .imageMessage {

@@ -13,6 +13,9 @@
 .conversationAvatar {
     margin-right: 15px;
 }
+/* .conversationInfor{
+    justify-self: flex-start;
+} */
 .conversationName .isOnline {
     font-size: 14px;
     color: #888;

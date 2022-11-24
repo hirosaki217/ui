@@ -109,6 +109,8 @@ const HeaderUser = ({ conversation, tabInfoRef, socket }) => {
                     <p className="isOnline">1 phút trước</p>
                 </div>
             </div>
+            <div style={{flex:'1'}}></div>
+            
             <div>
                 <div className="conversationOption">
                     {!conversation.type && (
