@@ -1,6 +1,7 @@
 import MyChat from '../components/MyChat/MyChat';
 import SideNavbar from '../components/SideNavbar/SideNavbar';
-
+import CallIcon from '@mui/icons-material/Call';
+import CallEndIcon from '@mui/icons-material/CallEnd';
 import ChattingPage from './chatting/ChattingPage';
 import { initClient, socket } from '../utils/socketClient';
 import { useEffect, useState } from 'react';
@@ -36,13 +37,30 @@ import { apiConversations } from '../api/apiConversation';
 import { useRef } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
+import { Avatar, Backdrop, Button, Fade, makeStyles, Modal } from '@material-ui/core';
+import './home.css'
 let idCall = null;
+const useStyles = makeStyles((theme) => ({
+    paper: {
+        width: '350px',
+        height: '600px',
+        // backgroundColor: theme.palette.background.paper,
+        backgroundColor: '#5a78f1',
+        border: 'none',
+        borderRadius: '5px',
+        boxShadow: theme.shadows[5],
+
+    },
+}));
 const Home = () => {
+    const classes = useStyles();
+    const [openModal, setOpenModal] = useState(false);
     const dispatch = useDispatch();
     const { isLogin } = useSelector(loginSelector);
     const conversations = useSelector(conversationSelector);
     const navigate = useNavigate();
     const answerBtnRef = useRef();
+
     useEffect(() => {
         if (!jwt.getUserId()) navigate('login');
     }, [jwt.getUserId()]);
@@ -174,9 +192,12 @@ const Home = () => {
 
             try {
                 setTimeout(() => {
-                    if (answerBtnRef.current.classList) answerBtnRef.current.classList.add('hideCall');
+                    if (answerBtnRef.current.classList) {
+                        answerBtnRef.current.classList.add('hideCall');
+                        handleOpenModalCall()
+                    }
                 }, 5000);
-            } catch (error) {}
+            } catch (error) { }
         });
         socket.on('added-group', async (id) => {
             console.log('added group');
@@ -195,14 +216,76 @@ const Home = () => {
             window.open('/call/accept', '_blank');
         }
     };
-
+    const handleOpenModalCall = () => {
+        setOpenModal(true);
+    };
+    const handleCloseModalCall = () => {
+        setOpenModal(false);
+    };
     return (
         <div className="home">
             <SideNavbar style={{ flex: 1 }} />
             <MyChat socket={socket}></MyChat>
             <ChattingPage socket={socket} />
             <div ref={answerBtnRef} className="hideCall">
-                <button onClick={handleAnswer}>Answer</button>
+                <Modal
+                    aria-labelledby="transition-modal-title"
+                    aria-describedby="transition-modal-description"
+                    className='modal-profile'
+                    open={openModal}
+                    // onClose={handleCloseModalCall}
+                    closeAfterTransition
+                    BackdropComponent={Backdrop}
+                    BackdropProps={{
+                        timeout: 500,
+                    }}
+
+                >
+                    <Fade in={openModal}>
+                        <div className={classes.paper}>
+                            <div className='calling-bao'>
+                                <div>
+
+                                </div>
+                                <div className='avatar-call-bao'>
+                                    <div>
+                                        <Avatar
+                                            style={{ width: '70px', height: '70px', border: '2px solid white' }}
+                                            src={''}>
+                                            ?
+                                        </Avatar>
+                                    </div>
+                                    <div>
+                                        <h5 style={{ color: 'white' }}>Ai đang gọi...</h5>
+                                    </div>
+                                </div>
+
+                                <div className="btn-action">
+                                    <div className='btn-dis-call-bao'>
+                                        <Button
+                                            className="btn-dis-call"
+                                            style={{ backgroundColor: '#f5261b' }}
+                                            onClick={handleCloseModalCall}>
+                                            <CallEndIcon style={{ color: '#f6fcf8' }} />
+                                        </Button>
+                                    </div>
+                                    <div className='btn-accep-call-bao'>
+                                        <Button
+                                            className="btn-accep-call"
+                                            onClick={handleAnswer}
+                                            style={{ backgroundColor: '#179c4c' }}>
+                                            <CallIcon style={{ color: '#f6fcf8' }} />
+                                        </Button>
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </Fade>
+                </Modal>
+
             </div>
         </div>
     );

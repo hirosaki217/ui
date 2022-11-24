@@ -1,0 +1,37 @@
+
+.hideCall{
+    margin: 0;
+    width: 1000px;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+      
+}
+.calling-bao{
+    display: flex;
+    flex-direction: column;
+}
+.avatar-call-bao{
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.btn-action{
+    flex: 4;
+    display: flex;
+}
+.btn-accep-call-bao{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+}
+.btn-dis-call-bao{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+}

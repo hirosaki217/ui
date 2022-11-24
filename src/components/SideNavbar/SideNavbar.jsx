@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { meSelector } from '../../store/reducers/userReducer/meReducer';
 import { navSelector, setIndex } from '../../store/reducers/nav/NavSlice';
 import { toTalUnreadSelector } from '../../store/reducers/conversationReducer/conversationSlice';
+import ModalProfile from './ModalProfile/ModalProfile';
 // import { userSelector } from '../../store/reducers/userReducer/userSlice';
 
 const SideNavbar = () => {
@@ -24,7 +25,7 @@ const SideNavbar = () => {
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const profile = useSelector(meSelector);
-
+    const [openProfile, setOpenProfile] = React.useState(false);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -43,7 +44,12 @@ const SideNavbar = () => {
         dispatch(setIndex(index));
         setAnchorEl(null);
     };
-
+    const handleOpenProfile = () => {
+        setOpenProfile(true);
+    };
+    const handleCloseProfile = () => {
+        setOpenProfile(false);
+    };
     return (
         <div className="sideNavbar">
             <div style={{ padding: '25px 0' }}>
@@ -117,7 +123,8 @@ const SideNavbar = () => {
             </div>
 
             <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
+                <MenuItem onClick={handleOpenProfile}>Profile</MenuItem>
+                <ModalProfile openProfilee={openProfile} closeProfile ={handleCloseProfile}/>
                 <MenuItem onClick={handleClose}>My account</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
