@@ -1,13 +1,4 @@
 
-.hideCall{
-    margin: 0;
-    width: 1000px;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-      
-}
 .calling-bao{
     display: flex;
     flex-direction: column;
