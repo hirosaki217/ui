@@ -11,6 +11,11 @@ export const updateProfile = createAsyncThunk('me/updateProfile', async(data)=>{
     const rs = await apiUser.updateProfile({name,birthDay,gender})
     return rs.data;
 })
+export const updateAvatar = createAsyncThunk('me/avatar', async(data)=>{
+    const avatar = data;
+    const rs = await apiUser.updateAvatar(avatar)
+    return rs.data;
+})
 
 const meSlice = createSlice({
     name: 'me',
@@ -34,6 +39,9 @@ const meSlice = createSlice({
         //     state.user = action.payload;
         // },
         [updateProfile.fulfilled]:(state,action)=>{
+            state.user = action.payload;
+        },
+        [updateAvatar.fulfilled]:(state,action)=>{
             state.user = action.payload;
         }
 

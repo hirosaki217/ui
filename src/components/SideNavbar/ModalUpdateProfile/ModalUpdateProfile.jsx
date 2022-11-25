@@ -4,9 +4,10 @@ import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
 import { height } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getProfile, meSelector, setUser, updateProfile } from "../../../store/reducers/userReducer/meReducer"
+import { getProfile, meSelector, setUser, updateAvatar, updateProfile } from "../../../store/reducers/userReducer/meReducer"
 import './modalUpdateProfile.css';
 import { PhotoCamera } from "@material-ui/icons";
+import { apiUser } from "../../../api/apiUser";
 const useStyles = makeStyles((theme) => ({
 
     paper: {
@@ -28,7 +29,8 @@ const ModalUpdateProfile = (props) => {
     const [birthDay, setBirthDay] = useState()
     const [birthDayStr, setBirthDayStr] = useState('')
     const classes = useStyles();
-    const [avatar,setAvatar] = useState(profileUser.avatar);
+    const [avatarPre,setAvatarPre] = useState(profileUser.avatar);
+    const [avatar1,setAvatar] = useState(profileUser.avatar);
     const [name,setName] = useState(profileUser.name);
     const [gender, setGender] = useState(profileUser.gender? 1: 0);
     useEffect(() => {
@@ -53,14 +55,15 @@ const ModalUpdateProfile = (props) => {
     const handlePreviewAvatar=(e)=>{
         const file = e.target.files[0]
         file.preview = URL.createObjectURL(file);
-        setAvatar(file.preview);
+        setAvatarPre(file.preview);
+        setAvatar(file);
     }
     // useEffect(()=>{
     //     avatar && URL.revokeObjectURL(avatar)
     //  },[avatar])
 
     const [checkUpdate,setCheck] = useState(false);
-    const clickToUpdate = (e)=>{
+    const clickToUpdate = async (e)=>{
         e.preventDefault();
         disPatch(
              updateProfile({
@@ -69,11 +72,13 @@ const ModalUpdateProfile = (props) => {
                 gender: gender
             }),
         )
-        // disPatch(
-        //       setUser({
-        //          name: name
-        //      })
-        // )
+        const avatar = new FormData();
+        avatar.append('file', avatar1);
+         console.log("avart", avatar1);
+        // await apiUser.updateAvatar(avatar);
+        disPatch(
+            updateAvatar(avatar)
+        )
         setCheck(true)
     }
 
@@ -102,15 +107,15 @@ const ModalUpdateProfile = (props) => {
                     <div className='profile-avatar'>
                         <Avatar
                             style={{ width: '70px', height: '70px', marginLeft:'20px',border: '2px solid white' }}
-                            src={avatar ? avatar : ""}
+                            src={avatarPre ? avatarPre : ""}
                         >
-                            {avatar ? "" : profileUser.name[0].toUpperCase()}
+                            {avatarPre ? "" : profileUser.name[0].toUpperCase()}
                            
                         </Avatar>
                 {/* ///choose file */}
                         <div style={{marginLeft:'-30px',marginTop:'30px'}}>
                             <IconButton color="primary" aria-label="upload picture" component="label">
-                                <input accept="image/*" hidden type="file" onChange={handlePreviewAvatar}/>
+                                <input accept="image/**" hidden type="file" onChange={handlePreviewAvatar}/>
 
                                 <PhotoCamera />
                             </IconButton>

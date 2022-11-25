@@ -18,5 +18,9 @@ export const apiUser = {
         console.log("API ", birthDay);
         await axios.put('/m/profile', { name, dateOfBirth, gender })
         return await axios.get('/m/profile');
+    },
+    updateAvatar: async(avatar)=>{
+        await axios.patch('m/avatar',avatar)
+        return await axios.get('/m/profile');
     }
 };
