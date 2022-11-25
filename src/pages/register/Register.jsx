@@ -10,9 +10,10 @@ import jwt from '../../utils/jwt';
 import { apiRegister } from '../../api/apiRegister';
 import { apiUser } from '../../api/apiUser';
 import Timer from './CountDown';
-import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Avatar, FormControlLabel, IconButton, Radio, RadioGroup } from "@mui/material";
 import CountDown from './CountDown';
 import { getProfile, meSelector } from '../../store/reducers/userReducer/meReducer';
+import { PhotoCamera } from '@material-ui/icons';
 
 
 const Register = () => {
@@ -106,11 +107,19 @@ const Register = () => {
     const [checksubmit, setSubmit] = useState(false);
     const [countOtp, setCountOtp] = useState(1);
     const [timeLeft, setTimeLeft] = useState(0);
+    const [avatarPre,setAvatarPre] = useState();
+    const [avatar1,setAvatar] = useState();
     // const onLogin = (e) => {
     //     e.preventDefault();
     //     dispatch(login({ username, password }));
     //     if (isLogin) navigate('..');
     // };
+    const handlePreviewAvatar=(e)=>{
+        const file = e.target.files[0]
+        file.preview = URL.createObjectURL(file);
+        setAvatarPre(file.preview);
+        setAvatar(file);
+    }
     const onSubmit = async (e) => {
         setSubmit(true);
         e.preventDefault();
@@ -118,78 +127,61 @@ const Register = () => {
             if (conditional) {
                 try {
                     const regis = await apiRegister.register({ name, username, password })
-                    // console.log("regis", regis.config.data)
-                    if (regis.config.data){
+                    if (regis.config.data) {
                         setStep('FORM_OTP');
                         setTimeLeft(60);
                         setDis(false)
                     }
                 } catch (error) {
                     const account = await apiUser.getUserByUserName({ username });
-                    console.log("accc", account.data)
                     if (account.data.isActived) {
                         alert(`Số điện thoại ${username} đã được kích hoạt vui lòng đăng ký tài khoản khác`)
-                        // navigate("/login")
                     } else {
                         apiRegister.resetOtp({ username });
                         setStep('FORM_OTP');
                         setTimeLeft(60);
                         setDis(false)
                     }
-                    console.log("user")
                 }
-
-                //  apiRegister.register({name, username, password}).then(res => {
-                //     dispatch(
-                //     resetOTP({
-                //         username: username
-                //     }),
-                // )  
-                //  })
             };
         }
         if (step === 'FORM_OTP') {
             checkOtp.current.className = 'catchError hide';
             try {
                 const confirm = await apiRegister.confirm({ username, otp });
-                console.log("confirm", confirm)
-                    const account = await apiUser.getUserByUserName({ username });
-                    console.log("acctive",account.data.isActived )
-                    if(account.data.isActived ===true){
-                        dispatch(login({ username, password }));
-                        setTimeout(async() => {
-                        console.log("userrx", jwt.getUserId())
-                        console.log("token", jwt.getToken())
+                const account = await apiUser.getUserByUserName({ username });
+                if (account.data.isActived === true) {
+                    dispatch(login({ username, password }));
+                    setTimeout(async () => {
                         const user = await apiUser.getProfile();
-                        console.log("uu", typeof user.data.birthDay)
                         setStep('FORM_INFO');
-                        }, 1500);
-                    }   
-                 
-                
+                    }, 1500);
+                }
+
+
             } catch (error) {
                 // apiRegister.resetOtp({ username });
                 setCountOtp(countOtp + 1);
-                console.log("wrong otp")
-                console.log(countOtp)
+                // console.log("wrong otp")
+                // console.log(countOtp)
                 checkOtp.current.className = 'catchError error';
                 if (countOtp > 3) {
                     checkOtp.current.className = 'catchError hide';
                     checkCountOtp.current.className = 'catchError error';
-
                     setDis(true)
                 }
             }
         }
         if (step === 'FORM_INFO') {
-            console.log(`name: ${name} birth: ${birthDay} gender: ${gender}`);
-            // console.log("birtREF", birthRef.current.value)
-            console.log("type birh", typeof birthDay)
-            
-            await apiUser.updateProfile({ name, birthDay, gender })
+            // console.log(`name: ${name} birth: ${birthDay} gender: ${gender}`);
+            // console.log("type birh", typeof birthDay)
 
-            const us = await apiUser.getProfile();
-            console.log("upp", us.data)
+            await apiUser.updateProfile({ name, birthDay, gender })
+            const avatar = new FormData();
+            if(avatar1){
+                avatar.append('file', avatar1);
+                await apiUser.updateAvatar(avatar);
+            }
             navigate('..');
         }
 
@@ -204,7 +196,7 @@ const Register = () => {
             }
             if (timeLeft > 0) {
                 setTimeLeft(timeLeft - 1);
-                
+
             }
         }, 1000);
         return () => clearInterval(intervalId);
@@ -301,7 +293,7 @@ const Register = () => {
 
                         <div className="d-grid gap-2 mt-3">
                             <button type="submit" className="btn btn-primary">
-                                Submit
+                                Tiếp
                             </button>
                         </div>
                         <p className="option-login text-right mt-2">
@@ -363,7 +355,24 @@ const Register = () => {
             {step === 'FORM_INFO' && (
                 <form className="Auth-form" onSubmit={onSubmit}>
                     <div className="Auth-form-content">
-                        <h4 className="">xác nhận thông tin tài khoản</h4>
+                        <h4 className="" style={{marginBottom:'50px'}}>xác nhận thông tin tài khoản</h4>
+                        <div className='profile-avatar'>
+                            <Avatar
+                                style={{ width: '120px', height: '120px', marginLeft:'20px',border: '2px solid white' }}
+                                src={avatarPre ? avatarPre : ""}
+                            >
+                                ?
+
+                            </Avatar>
+                            {/* ///choose file */}
+                            <div style={{ marginLeft: '-30px', marginTop: '80px' }}>
+                                <IconButton color="primary" aria-label="upload picture" component="label">
+                                    <input accept="image/**" hidden type="file" onChange={handlePreviewAvatar} />
+
+                                    <PhotoCamera />
+                                </IconButton>
+                            </div>
+                        </div>
                         <div className="form-group mt-3">
                             <label>Tên</label>
                             <input type="text" name='name' onChange={(e) => setName(e.target.value)} className="form-control mt-1" placeholder="Tên người dùng" />
@@ -395,19 +404,15 @@ const Register = () => {
                                 ref={birthRef} id="birtDay"
                                 onChange={(e) => {
                                     const birth = e.target.value;
-                                    const date = new Date(birth)
-                                    console.log("date change ",typeof birth);
-                                    console.log("date change2 ",typeof date);
-                                    // const dateCv = Date(date.getFullYear)
                                     setBirthDay(birth);
                                 }}
-                           
-                            
+
+
                                 className="form-control mt-1" />
                         </div>
                         <div className="d-grid gap-2 mt-3">
                             <button type="submit" className="btn btn-primary">
-                                Lưu
+                                Hoàn thành
                             </button>
                         </div>
                         <p className="option-login text-right mt-2">
