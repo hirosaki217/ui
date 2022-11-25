@@ -46,6 +46,7 @@ import { friendSelector } from '../../store/reducers/friendReducer/friendReducer
 import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
 import { meSelector } from '../../store/reducers/userReducer/meReducer';
 import { apiConversations } from '../../api/apiConversation';
+import { useCallback } from 'react';
 
 const TYPE_MATCH_MEDIA = ['image/png', 'image/jpeg', 'image/gif', 'video/mp4'];
 
@@ -64,6 +65,8 @@ const TYPE_MATCH = [
     'application/zip',
 ];
 
+let currentId = "";
+
 const ChattingPage = ({ socket }) => {
     const dispatch = useDispatch();
     const me = useSelector(meSelector);
@@ -79,23 +82,39 @@ const ChattingPage = ({ socket }) => {
     const scroll = useRef();
     const dispath = useDispatch();
     const [usersTyping, setUsersTyping] = useState([]);
+    const [isType, setType] = useState(false);
     const [option, setOption] = useState({
         option: 0,
         id: '',
     });
+    // useEffect(()=> {
+    //     scroll.current.addEventListener("scroll", (event)=>{
+    //         const scrollTop = event.target.scrollTop;
+    //     let page = messages.page;
+    //     const totalPages = messages.totalPages;
 
+    //     if (scrollTop === 0 && page < totalPages) {
+    //         page += 1;
+
+    //         dispatch(getMessagesByPage({ id: currentConversation, page }));
+    //     }
+    //     })
+    // }, [currentConversation])
     const handleScroll = (event) => {
         const scrollTop = event.target.scrollTop;
         let page = messages.page;
         const totalPages = messages.totalPages;
 
-        if (scrollTop === 0 && page < totalPages) {
-            page += 1;
+        if (scrollTop === 0 ) {
+            if(page <= totalPages){
 
-            dispatch(getMessagesByPage({ id: currentConversation, page }));
+                page += 1;
+    
+                dispatch(getMessagesByPage({ id: currentConversation, page }));
+            }
         }
-        console.log('scrollTop: ', event.currentTarget.scrollTop, scrollTop === 0);
-        console.log('offsetHeight: ', event.currentTarget.offsetHeight);
+        // console.log('scrollTop: ', event.currentTarget.scrollTop, scrollTop === 0);
+        // console.log('offsetHeight: ', event.currentTarget.offsetHeight);
     };
 
     useEffect(() => {
@@ -112,26 +131,33 @@ const ChattingPage = ({ socket }) => {
         setMembers(listMember);
     }, [listMember]);
     // end members
+    
     useEffect(() => {
+        
         socket.on('typing', (conversationId, user) => {
-            console.log('typing....');
-            if (conversationId === currentConversation) {
+            console.log('typing....', currentId);
+            currentId = conversationId;
+            
                 const index = usersTyping.findIndex((ele) => ele._id === user._id);
-
                 if (usersTyping.length === 0 || index < 0) {
                     setUsersTyping([...usersTyping, user]);
                 }
-            }
+                
+            
+
         });
 
         socket.on('not-typing', (conversationId, user) => {
+            currentId = conversationId;
             console.log('not-typing....');
-            if (conversationId === currentConversation) {
+           
                 const index = usersTyping.findIndex((ele) => ele._id === user._id);
                 const newUserTyping = usersTyping.filter((ele) => ele._id !== user._id);
 
                 setUsersTyping(newUserTyping);
-            }
+                
+                
+            
         });
 
         // socket.on('user-last-view', ({ conversationId, userId, lastView }) => {
@@ -152,8 +178,9 @@ const ChattingPage = ({ socket }) => {
                 dispatch(updateMemberInconver({ conversationId, newMember }));
             }
         });
+        
     }, [currentConversation]);
-
+    
     // file image
     const inputRef = useRef(null);
     const handleClickChooseFile = () => {
@@ -218,17 +245,19 @@ const ChattingPage = ({ socket }) => {
         return false;
     }
     // end file
+
     useEffect(() => {
+        
         const scrollToBottom = (node) => {
             node.scrollTop = node.scrollHeight;
         };
         scrollToBottom(scroll.current);
         setTimeout(() => {
-            scrollToBottom(scroll.current);
-        }, 2000);
-
+                scrollToBottom(scroll.current);
+            }, 1000);
         scroll.current.scrollIntoView({ behavior: 'smooth' });
-    }, [currentConversation]);
+
+    });
     // event group
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -392,8 +421,13 @@ const ChattingPage = ({ socket }) => {
                     </div> */}
 
                     {/* typing check */}
-                    {usersTyping.length > 0 && (
-                        <div key={currentConversation} className="typing-message">
+                    
+                </div>
+                
+                <div>
+
+                    {(usersTyping.length > 0 && currentId === currentConversation) && (
+                        <div key={currentConversation} className="typing-message ">
                             {usersTyping.map((ele, index) => (
                                 <span key={ele._id}>
                                     {index < 3 && (
@@ -414,6 +448,7 @@ const ChattingPage = ({ socket }) => {
                 {/* chat */}
                 {currentConversation ? (
                     <div className="chatAction">
+                        
                         <div className="sendOption">
                             <input
                                 accept="image/*,video/mp4,video/x-m4v,video/*"
