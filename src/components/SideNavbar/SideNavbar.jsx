@@ -14,6 +14,7 @@ import { meSelector } from '../../store/reducers/userReducer/meReducer';
 import { navSelector, setIndex } from '../../store/reducers/nav/NavSlice';
 import { toTalUnreadSelector } from '../../store/reducers/conversationReducer/conversationSlice';
 import ModalProfile from './ModalProfile/ModalProfile';
+import { useState } from 'react';
 // import { userSelector } from '../../store/reducers/userReducer/userSlice';
 
 const SideNavbar = () => {
@@ -26,6 +27,7 @@ const SideNavbar = () => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const profile = useSelector(meSelector);
     const [openProfile, setOpenProfile] = React.useState(false);
+    const [activeNav , setActiveNav] = useState(0);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -39,8 +41,9 @@ const SideNavbar = () => {
         window.location.reload();
         setAnchorEl(null);
     };
-
+    let i;
     const handleNavClick = (index) => {
+        setActiveNav(index)
         dispatch(setIndex(index));
         setAnchorEl(null);
     };
@@ -65,7 +68,7 @@ const SideNavbar = () => {
             <div className="mid-icon">
                 <LightTooltip placement="right" title="tin nhắn">
                     <div style={{ position: 'relative' }}>
-                        <ChatRoundedIcon onClick={handleNavClick.bind(this, 0)} className="icon active" />
+                        <ChatRoundedIcon onClick={handleNavClick.bind(this, 0)} className={activeNav ===0 ? "icon active": "icon" } />
                         {toTalUnread > 0 && (
                             <div style={{ alignSelf: 'center' }}>
                                 <Avatar
@@ -91,7 +94,7 @@ const SideNavbar = () => {
 
                 <LightTooltip placement="right" title="danh bạ">
                     <div style={{ position: 'relative' }}>
-                        <PermContactCalendarOutlinedIcon onClick={handleNavClick.bind(this, 1)} className="icon" />
+                        <PermContactCalendarOutlinedIcon onClick={handleNavClick.bind(this, 1)} className={activeNav ===1 ? "icon active": "icon" } />
                         {/* <div style={{ alignSelf: 'center' }}>
                             <Avatar
                                 style={{

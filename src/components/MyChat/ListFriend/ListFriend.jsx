@@ -12,6 +12,9 @@ import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { listFriendSelector } from '../../../store/reducers/friendReducer/friendReducer';
 import { useSelector } from 'react-redux';
+import ModalProfileFriend from './ModalProfileFriend';
+import { useState } from 'react';
+import { apiUser } from '../../../api/apiUser';
 
 const options = ['trang cá nhân', 'hủy kết bạn'];
 
@@ -22,9 +25,21 @@ export default function ListFriend() {
     const [list, setList] = React.useState([]);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
+    const [openProfile, setOpenProfile] = React.useState(false);
+    const [friendProfile, setFriendProfile] = useState();
+    const [fen, setFen] = useState();
+    const handleOpenProfile = () => {
+        //  const friend = await apiUser.getUserByUserName(username)
+        // setFriendProfile()
+        setOpenProfile(true);
+    };
+    const handleCloseProfile = () => {
+        setOpenProfile(false);
+    };
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
-    };
+    }
     const handleClose = () => {
         setAnchorEl(null);
     };
@@ -38,6 +53,7 @@ export default function ListFriend() {
                     const labelId = `checkbox-list-secondary-label-${friend._id}`;
                     return (
                         <ListItem
+                            // onClick={handleClick.bind(this+1, friend)}
                             key={friend._id}
                             secondaryAction={
                                 <IconButton
@@ -46,7 +62,10 @@ export default function ListFriend() {
                                     aria-controls={open ? 'long-menu' : undefined}
                                     aria-expanded={open ? 'true' : undefined}
                                     aria-haspopup="true"
-                                    onClick={handleClick}
+                                    onClick={(e) => {
+                                        setAnchorEl(e.currentTarget);
+                                        setFriendProfile(friend);
+                                    }}
                                 >
                                     <MoreVertIcon />
                                 </IconButton>
@@ -62,8 +81,11 @@ export default function ListFriend() {
                                 </ListItemAvatar>
                                 <ListItemText id={labelId} primary={friend.name} />
                             </ListItemButton>
+
                         </ListItem>
+
                     );
+
                 })}
             <Menu
                 id="long-menu"
@@ -81,10 +103,12 @@ export default function ListFriend() {
                 }}
             >
                 {options.map((option) => (
-                    <MenuItem className="optionItem" key={option} selected={option === 'Pyxis'} onClick={handleClose}>
+                    <MenuItem onClick={option === 'trang cá nhân' ? handleOpenProfile : handleClose} className="optionItem" key={option} selected={option === 'Pyxis'}>
                         {option}
                     </MenuItem>
+
                 ))}
+                <ModalProfileFriend friend={friendProfile} openProfilee={openProfile} closeProfile={handleCloseProfile} />
             </Menu>
         </List>
     );
