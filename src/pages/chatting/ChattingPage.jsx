@@ -105,11 +105,11 @@ const ChattingPage = ({ socket }) => {
         let page = messages.page;
         const totalPages = messages.totalPages;
 
-        if (scrollTop === 0 ) {
-            if(page <= totalPages){
+        if (scrollTop === 0) {
+            if (page <= totalPages) {
 
                 page += 1;
-    
+
                 dispatch(getMessagesByPage({ id: currentConversation, page }));
             }
         }
@@ -131,33 +131,33 @@ const ChattingPage = ({ socket }) => {
         setMembers(listMember);
     }, [listMember]);
     // end members
-    
+
     useEffect(() => {
-        
+
         socket.on('typing', (conversationId, user) => {
             console.log('typing....', currentId);
             currentId = conversationId;
-            
-                const index = usersTyping.findIndex((ele) => ele._id === user._id);
-                if (usersTyping.length === 0 || index < 0) {
-                    setUsersTyping([...usersTyping, user]);
-                }
-                
-            
+
+            const index = usersTyping.findIndex((ele) => ele._id === user._id);
+            if (usersTyping.length === 0 || index < 0) {
+                setUsersTyping([...usersTyping, user]);
+            }
+
+
 
         });
 
         socket.on('not-typing', (conversationId, user) => {
             currentId = conversationId;
             console.log('not-typing....');
-           
-                const index = usersTyping.findIndex((ele) => ele._id === user._id);
-                const newUserTyping = usersTyping.filter((ele) => ele._id !== user._id);
 
-                setUsersTyping(newUserTyping);
-                
-                
-            
+            const index = usersTyping.findIndex((ele) => ele._id === user._id);
+            const newUserTyping = usersTyping.filter((ele) => ele._id !== user._id);
+
+            setUsersTyping(newUserTyping);
+
+
+
         });
 
         // socket.on('user-last-view', ({ conversationId, userId, lastView }) => {
@@ -178,9 +178,9 @@ const ChattingPage = ({ socket }) => {
                 dispatch(updateMemberInconver({ conversationId, newMember }));
             }
         });
-        
+
     }, [currentConversation]);
-    
+
     // file image
     const inputRef = useRef(null);
     const handleClickChooseFile = () => {
@@ -247,14 +247,14 @@ const ChattingPage = ({ socket }) => {
     // end file
 
     useEffect(() => {
-        
+
         const scrollToBottom = (node) => {
             node.scrollTop = node.scrollHeight;
         };
         scrollToBottom(scroll.current);
         setTimeout(() => {
-                scrollToBottom(scroll.current);
-            }, 1000);
+            scrollToBottom(scroll.current);
+        }, 1000);
         scroll.current.scrollIntoView({ behavior: 'smooth' });
 
     });
@@ -268,7 +268,8 @@ const ChattingPage = ({ socket }) => {
                 option: 1,
                 id,
             });
-        } else if (id !== user._id && conversation.leaderId === user._id) {
+        }
+        else if (id !== user._id && conversation.leaderId === user._id) {
             setOption({
                 option: 2,
                 id,
@@ -278,7 +279,8 @@ const ChattingPage = ({ socket }) => {
                 option: 3,
                 id,
             });
-        } else {
+        }
+        else {
             setOption({
                 option: 0,
                 id: '',
@@ -313,74 +315,56 @@ const ChattingPage = ({ socket }) => {
 
     //
     const MemberSelect = (option) => {
-        if (option.option === 1)
-            return (
-                <div>
-                    <Menu
-                        id="basic-menu"
-                        anchorEl={anchorEl}
-                        open={open}
-                        onClose={handleClose}
-                        MenuListProps={{
-                            'aria-labelledby': 'basic-button',
-                        }}
-                    >
-                        {/* <MenuItem style={{ padding: '5px 5px' }} onClick={handleLeaveGroup}>
-                            Rời khỏi nhóm
-                        </MenuItem> */}
-                    </Menu>
-                </div>
-            );
-        if (option.option === 2) {
-            return (
-                <div>
-                    <Menu
-                        id="basic-menu"
-                        anchorEl={anchorEl}
-                        open={open}
-                        onClose={handleClose}
-                        MenuListProps={{
-                            'aria-labelledby': 'basic-button',
-                        }}
-                    >
-                        {conversation.managerIds.includes(option.id) ? (
-                            <MenuItem style={{ padding: '5px 5px' }} onClick={handleRemoveManager}>
-                                Xóa phó nhóm
-                            </MenuItem>
-                        ) : (
-                            <MenuItem style={{ padding: '5px 5px' }} onClick={handleAddManager}>
-                                Thêm phó nhóm
-                            </MenuItem>
-                        )}
 
+        return (
+            <div>
+                <Menu
+                    id="basic-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    MenuListProps={{
+                        'aria-labelledby': 'basic-button',
+                    }}
+                >
+                    <MenuItem style={{ padding: '5px 5px' }}>
+                        Xem thông tin
+                    </MenuItem>
+
+                    {(option.id === user._id && option.id !== conversation.leaderId) &&
+                        <MenuItem style={{ padding: '5px 5px' }} onClick={handleLeaveGroup}>
+                            Rời khỏi nhóm
+                        </MenuItem>
+                    }
+
+                    {(option.option === 2 && conversation.managerIds.includes(option.id)) &&
+                        <MenuItem style={{ padding: '5px 5px' }} onClick={handleRemoveManager}>
+                            Xóa phó nhóm
+                        </MenuItem>
+                    }
+                    {(option.option === 2 && !conversation.managerIds.includes(option.id)) &&
+                        <MenuItem style={{ padding: '5px 5px' }} onClick={handleAddManager}>
+                            Thêm phó nhóm
+                        </MenuItem>
+                    }
+                    {
+                        option.option === 2 &&
                         <MenuItem style={{ padding: '5px 5px' }} onClick={handleRemoveMember}>
                             Xóa khỏi nhóm
                         </MenuItem>
-                    </Menu>
-                </div>
-            );
-        }
-        if (option.option === 3)
-            return (
-                <div>
-                    <Menu
-                        id="basic-menu"
-                        anchorEl={anchorEl}
-                        open={open}
-                        onClose={handleClose}
-                        MenuListProps={{
-                            'aria-labelledby': 'basic-button',
-                        }}
-                    >
-                        {(option.id !== conversation.leaderId || conversation.managerIds.includes(option.id)) && (
-                            <MenuItem style={{ padding: '5px 5px' }} onClick={handleRemoveMember}>
-                                Xóa khỏi nhóm
-                            </MenuItem>
-                        )}
-                    </Menu>
-                </div>
-            );
-        return <></>;
+                    }
+                    {
+                        (option.option === 3 && (option.id !== conversation.leaderId || conversation.managerIds.includes(option.id)))
+                        &&
+                        <MenuItem style={{ padding: '5px 5px' }} onClick={handleRemoveMember}>
+                            Xóa khỏi nhóm
+                        </MenuItem>
+                    }
+                </Menu>
+
+
+            </div>
+        );
     };
     //
     return (
@@ -421,9 +405,9 @@ const ChattingPage = ({ socket }) => {
                     </div> */}
 
                     {/* typing check */}
-                    
+
                 </div>
-                
+
                 <div>
 
                     {(usersTyping.length > 0 && currentId === currentConversation) && (
@@ -448,7 +432,7 @@ const ChattingPage = ({ socket }) => {
                 {/* chat */}
                 {currentConversation ? (
                     <div className="chatAction">
-                        
+
                         <div className="sendOption">
                             <input
                                 accept="image/*,video/mp4,video/x-m4v,video/*"
@@ -490,9 +474,8 @@ const ChattingPage = ({ socket }) => {
                                         <Avatar
                                             className="iconAvatar"
                                             alt="B"
-                                            src={`${
-                                                conversation.avatar[1].avatar ? conversation.avatar[1].avatar : '1'
-                                            }`}
+                                            src={`${conversation.avatar[1].avatar ? conversation.avatar[1].avatar : '1'
+                                                }`}
                                         />
                                     )}
 
@@ -500,9 +483,8 @@ const ChattingPage = ({ socket }) => {
                                         <Avatar
                                             className="iconAvatar"
                                             alt="C"
-                                            src={`${
-                                                conversation.avatar[2].avatar ? conversation.avatar[2].avatar : '2'
-                                            }`}
+                                            src={`${conversation.avatar[2].avatar ? conversation.avatar[2].avatar : '2'
+                                                }`}
                                         />
                                     )}
 
