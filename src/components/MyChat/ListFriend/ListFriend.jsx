@@ -27,10 +27,7 @@ export default function ListFriend() {
     const open = Boolean(anchorEl);
     const [openProfile, setOpenProfile] = React.useState(false);
     const [friendProfile, setFriendProfile] = useState();
-    const [fen, setFen] = useState();
     const handleOpenProfile = () => {
-        //  const friend = await apiUser.getUserByUserName(username)
-        // setFriendProfile()
         setOpenProfile(true);
     };
     const handleCloseProfile = () => {

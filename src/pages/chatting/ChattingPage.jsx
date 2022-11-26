@@ -47,6 +47,10 @@ import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
 import { meSelector } from '../../store/reducers/userReducer/meReducer';
 import { apiConversations } from '../../api/apiConversation';
 import { useCallback } from 'react';
+import ModalProfileFriend from '../../components/MyChat/ListFriend/ModalProfileFriend';
+import ModalProfile from '../../components/SideNavbar/ModalProfile/ModalProfile';
+import { apiUser } from '../../api/apiUser';
+import { apiFriend } from '../../api/apiFriend';
 
 const TYPE_MATCH_MEDIA = ['image/png', 'image/jpeg', 'image/gif', 'video/mp4'];
 
@@ -87,6 +91,26 @@ const ChattingPage = ({ socket }) => {
         option: 0,
         id: '',
     });
+    const [openProfile, setOpenProfile] = useState(false);
+    const [friendProfilee, setFriendProfilee] = useState();
+    const [openMyProfile, setOpenMyProfile] = useState(false);
+    const handleOpenProfile = () => {
+        setOpenProfile(true);
+    };
+    const handleCloseProfile = () => {
+        setOpenProfile(false);
+        setOpenMyProfile(false);
+    };
+    const getFriendIdOption = async(optionId)=>{
+        const temp = optionId
+        console.log("idoption",temp)
+        if(temp && temp !==user._id){
+            const fen = await apiFriend.findFriendById(temp)
+             setFriendProfilee(fen.data);
+             setOpenProfile(true);
+        }else if(temp && temp ===user._id)
+            setOpenMyProfile(true)
+    }
     // useEffect(()=> {
     //     scroll.current.addEventListener("scroll", (event)=>{
     //         const scrollTop = event.target.scrollTop;
@@ -326,8 +350,12 @@ const ChattingPage = ({ socket }) => {
                     MenuListProps={{
                         'aria-labelledby': 'basic-button',
                     }}
+                    
                 >
-                    <MenuItem style={{ padding: '5px 5px' }}>
+                    <MenuItem 
+                        style={{ padding: '5px 5px' }} 
+                        onClick={getFriendIdOption.bind(this,option.id)}
+                    >
                         Xem thông tin
                     </MenuItem>
 
@@ -360,6 +388,8 @@ const ChattingPage = ({ socket }) => {
                             Xóa khỏi nhóm
                         </MenuItem>
                     }
+                    <ModalProfile openProfilee={openMyProfile} closeProfile={handleCloseProfile} />
+                    <ModalProfileFriend friend={friendProfilee} openProfilee={openProfile} closeProfile={handleCloseProfile} />
                 </Menu>
 
 

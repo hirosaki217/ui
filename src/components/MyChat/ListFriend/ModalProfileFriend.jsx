@@ -1,7 +1,8 @@
 import { Avatar, Backdrop, Button, Fade, makeStyles, Modal } from "@material-ui/core";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useEffect, useState } from "react";
-import {useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { listFriendSelector } from "../../../store/reducers/friendReducer/friendReducer";
 
 import { meSelector } from "../../../store/reducers/userReducer/meReducer"
 import '../../SideNavbar/ModalProfile/modalProfile.css';
@@ -16,14 +17,43 @@ const useStyles = makeStyles((theme) => ({
 
     },
 }));
+const ButtonAddOrDeleteFriend = (props) => {
+    const listFriend = useSelector(listFriendSelector);
+    const profile = props.profile
+    console.log(listFriend.length)
+
+    const check = listFriend.some((friend) => {
+        console.log("profile", profile.username)
+        console.log("friend", friend.username)
+        if (friend.username === profile.username)
+            return true;
+        return false;
+    })
+    if (check)
+        return (
+            <Button style={{ backgroundColor: '#f32c2c', color: 'white' }} fullWidth={true} >
+                <DeleteIcon /> Hủy kết bạn
+            </Button>
+        )
+    return (
+        <Button style={{ backgroundColor: '#2c75f3', color: 'white' }} fullWidth={true} >
+            Kết bạn
+        </Button>
+        )
+}
 const ModalProfileFriend = (props) => {
-    
+
     const profileUser = props.friend;
-    const [name,setName]= useState();
-    const [birthDay,setBirthDay]= useState();
-    const [gender,setGender]= useState();
+    const listFriend = useSelector(listFriendSelector);
+    const [listF, setListF] = useState();
+    const [name, setName] = useState();
+    const [birthDay, setBirthDay] = useState();
+    const [gender, setGender] = useState();
     const openProfile = props.openProfilee;
     const classes = useStyles();
+    // useEffect(() => {
+    //     if (listFriend) setListF(listFriend);
+    // }, [listFriend]);
     return (
         <Modal
             aria-labelledby="transition-modal-title"
@@ -50,7 +80,7 @@ const ModalProfileFriend = (props) => {
                             <div>
                                 <button className="btn-close" onClick={props.closeProfile}></button>
                             </div>
-                            
+
                         </div>
                         <div className='profile-cover'>
                             <img src='https://cover-talk.zadn.vn/default' alt="" />
@@ -63,7 +93,7 @@ const ModalProfileFriend = (props) => {
                             </Avatar>
                         </div>
                         <div className='profile-info-bao'>
-                            <h5 >{name? name: profileUser.name}</h5>
+                            <h5 >{name ? name : profileUser.name}</h5>
                             <h6 >Thông tin cá nhân</h6>
                             <div style={{ display: 'flex' }}>
                                 <div className='info-left'>
@@ -77,9 +107,9 @@ const ModalProfileFriend = (props) => {
                                     <p>***********</p>
                                     <p>
                                         {
-                                        
-                                        profileUser.gender ? "Nam" : "Nữ"
-                                        
+
+                                            profileUser.gender ? "Nam" : "Nữ"
+
                                         }</p>
                                     <p>
                                         **/**/****
@@ -88,16 +118,14 @@ const ModalProfileFriend = (props) => {
                             </div>
                         </div>
                         <div className="btn-go-update">
-                            <Button style={{ backgroundColor: '#f32c2c', color:'white' }} fullWidth={true} >
-                            <DeleteIcon/> Hủy kết bạn
-                            </Button>
+                            <ButtonAddOrDeleteFriend profile={profileUser} />
                             <Button style={{ backgroundColor: '#E5E7EB' }} fullWidth={true}>
                                 Nhắn tin
                             </Button>
 
                         </div>
                     </div>
-                    }
+                }
 
             </Fade>
         </Modal>
