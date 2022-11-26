@@ -303,8 +303,12 @@ const ChattingPage = ({ socket }) => {
                 option: 3,
                 id,
             });
-        }
-        else {
+        }else if ((id !== user._id && conversation.leaderId !== user._id) && !conversation.managerIds.includes(user._id)) {
+            setOption({
+                option: 4,
+                id,
+            })
+        }else {
             setOption({
                 option: 0,
                 id: '',
