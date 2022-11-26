@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import './selectStyle.css';
 import PropTypes from 'prop-types';
 
@@ -21,7 +21,8 @@ const useStyles = makeStyles((theme) => ({
 export default function SelectMyChat({ socket }) {
     const navIndex = useSelector(navSelector);
     const dispatch = useDispatch();
-
+    const [isChecked, setChecked] = useState()
+    console.log("iss", isChecked);
     const handleChange = (event, newValue) => {
         dispatch(setIndex(newValue + ''));
     };
@@ -31,12 +32,14 @@ export default function SelectMyChat({ socket }) {
     };
 
     return (
-        <TabsUnstyled defaultValue={0}>
-            <TabsListUnstyled className="selectorTabList">
-                <TabUnstyled className="selectorTab">Tất cả</TabUnstyled>
-                <TabUnstyled className="selectorTab">Bạn bè</TabUnstyled>
-                <TabUnstyled className="selectorTab">Lời mời</TabUnstyled>
-            </TabsListUnstyled>
+        <TabsUnstyled className='tab-bao' defaultValue={0}>
+            <div className='div-bao'>
+                <TabsListUnstyled className="selectorTabList">
+                    <TabUnstyled className="selectorTab tab-all">Tất cả</TabUnstyled>
+                    <TabUnstyled className="selectorTab tab-friend">Bạn bè</TabUnstyled>
+                    <TabUnstyled className="selectorTab tab-invit">Lời mời</TabUnstyled>
+                </TabsListUnstyled>
+            </div>
             <TabPanelUnstyled value={0}>
                 <ListConversation socket={socket} />
             </TabPanelUnstyled>
@@ -47,5 +50,7 @@ export default function SelectMyChat({ socket }) {
                 <ListInviteFriend />
             </TabPanelUnstyled>
         </TabsUnstyled>
+
+
     );
 }

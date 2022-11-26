@@ -129,7 +129,7 @@ const HeaderUser = ({ conversation, tabInfoRef, socket }) => {
                             <PhoneIcon />
                         </Button>
                     )}
-                    {conversation.type && (
+                    {(conversation.type && (myId === conversation.leaderId || conversation.managerIds.includes(myId))) &&(
                         <Button onClick={handleAdd}>
                             <PersonAddOutlinedIcon fontSize="small" />
                         </Button>
