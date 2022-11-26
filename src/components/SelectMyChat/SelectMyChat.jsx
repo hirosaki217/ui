@@ -21,8 +21,6 @@ const useStyles = makeStyles((theme) => ({
 export default function SelectMyChat({ socket }) {
     const navIndex = useSelector(navSelector);
     const dispatch = useDispatch();
-    const [isChecked, setChecked] = useState()
-    console.log("iss", isChecked);
     const handleChange = (event, newValue) => {
         dispatch(setIndex(newValue + ''));
     };

@@ -82,7 +82,7 @@ const ChattingPage = ({ socket }) => {
     const tabInfoRef = useRef();
     const currentConversation = useSelector(currentConversationSelector);
     const conversation = useSelector(currentAConverSelector);
-    
+
     const messages = useSelector(messagesSelector);
     const user = { _id: jwt.getUserId() };
     const friendProfile = useSelector(friendSelector);
@@ -134,11 +134,13 @@ const ChattingPage = ({ socket }) => {
     //     })
     // }, [currentConversation])
     const handleScroll = (event) => {
+        
         const scrollTop = event.target.scrollTop;
         let page = messages.page;
         const totalPages = messages.totalPages;
-
+        
         if (scrollTop === 0) {
+            
             if (page <= totalPages) {
 
                 page += 1;
@@ -155,11 +157,14 @@ const ChattingPage = ({ socket }) => {
     }, [friendProfile]);
     // members
     const membersRef = useRef();
-
+    const fileRef = useRef();
     const handleShowMember = () => {
         membersRef.current.classList.toggle('showMembers');
     };
+    const handleShowPic = () => {
+        fileRef.current.classList.toggle('showPics');
 
+    };
     useEffect(() => {
         setMembers(listMember);
     }, [listMember]);
@@ -506,11 +511,11 @@ const ChattingPage = ({ socket }) => {
                 <div ref={tabInfoRef} className="infoContainer hide scrollbar" id="style-scroll">
                     <h5 className="titleInfo">Thông tin {conversation.type ? 'nhóm' : 'hội thoại'}</h5>
 
-                    <div>
+                    <div >
                         <div className="wrapInfoAvatar">
                             {conversation.type ? (
-                                <AvatarGroup className="group" total={members.length>-1? members.length : conversation.totalMembers}>
-                                   
+                                <AvatarGroup className="group" total={members.length > -1 ? members.length : conversation.totalMembers}>
+
                                     <Avatar
                                         className="iconAvatar"
                                         alt="A"
@@ -567,14 +572,14 @@ const ChattingPage = ({ socket }) => {
                     </div>
                     <div className="infoGroupCommon">
                         {conversation.type === false ? (
-                            <p>
+                            <p style={{ paddingTop: '12px' }}>
                                 <GroupsOutlinedIcon style={{ margin: '0 5px' }} />{' '}
                                 {frProfile ? frProfile.numberCommonGroup : 0}nhóm chung
                             </p>
                         ) : (
-                            <p onClick={handleShowMember}>
+                            <p style={{ paddingTop: '12px' }} onClick={handleShowMember}>
                                 <PeopleOutlinedIcon style={{ margin: '0 5px' }} />
-                                {members.length>-1 ? members.length : 0} thành viên
+                                {members.length > -1 ? members.length : 0} thành viên
                             </p>
                         )}
                         <div ref={membersRef} className="containerMembers">
@@ -601,8 +606,72 @@ const ChattingPage = ({ socket }) => {
                             </List>
                         </div>
                     </div>
-                    <div className="infoMedia">
-                        <h5>Ảnh/Video</h5>
+                    <div className="infoMedia" >
+                        <h5 onClick={handleShowPic}>Ảnh/Video</h5>
+                        <div ref={fileRef} className='bao-info-pic scrollbar' id="style-scroll">
+
+                            {messages.data &&
+                                messages.data.map((msg) => {
+                                    if (msg.type === 'IMAGE')
+                                        return <div
+                                            key={msg.content}
+                                            style={{ width: '82px', height: '82px', padding: '10px'}}
+                                        >
+                                            <img
+                                                style={{width:'100%',height:'100%'}}
+                                                src={msg.content} alt=""
+                                            />
+                                        </div>
+                                    else if (msg.type === 'VIDEO')
+                                        return (<div
+                                            key={msg.content}
+                                            style={{ width: '82px', height: '82px', padding: '10px' }}
+                                        >
+                                            <video
+                                                style={{ width: '100%', height: '100%' }}
+                                                src={msg.content}>
+                                            </video>
+                                        </div>)
+                                    else if (msg.type === 'GROUP_IMAGE') {
+                                        const listImage = msg.content.split(';');
+                                        listImage.splice(listImage.length - 1, 1);
+                                        
+                                            
+                                        return listImage.map((file) => {
+                                                if (checkType(file) === 'VIDEO')
+                                                    return (
+                                                        <div
+                                                            key={file}
+                                                            style={{ width: '82px', height: '82px', padding: '10px' }}
+                                                        >
+                                                            <video
+                                                            style={{ width: '100%', height: '100%' }}
+                                                                controls
+                                                                key={file}
+                                                                src={file}
+                                                                alt={file}
+                                                                className="imageMessage"
+                                                            />
+                                                        </div>
+                                                    );
+                                                else
+                                                    return (
+                                                        <div
+                                                            key={file}
+                                                            style={{ width: '82px', height: '82px', padding: '10px'}}
+                                                        >
+                                                            <img
+                                                            style={{ width: '100%', height: '100%' }}
+                                                              key={file} src={file} alt={file} className="imageMessage" />
+                                                        </div>
+                                                    );
+
+                                                        
+                                            })
+                                        
+                                    }
+                                })}
+                        </div>
                     </div>
                     <div className="infoFile">
                         <h5>File</h5>

@@ -78,7 +78,8 @@ const messageSlice = createSlice({
             state.loading = false;
             state.error = false;
             const oldData = state.messages.data ? state.messages.data : [];
-
+            if(oldData.length > 0)
+                oldData.splice(0,1);
             state.messages = {
                 ...action.payload,
                 data: [...action.payload.data, ...oldData],

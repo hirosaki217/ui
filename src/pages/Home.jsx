@@ -91,7 +91,7 @@ const Home = () => {
 
     useEffect(() => {
         if (conversations.length === 0) return;
-        console.log('join join join');
+        // console.log('join join join');
         const conversationIds = conversations.map((conversation) => conversation._id);
         socket.emit('join-conversations', conversationIds);
     }, [conversations]);

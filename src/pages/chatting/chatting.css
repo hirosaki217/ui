@@ -1,6 +1,7 @@
 .wrapChatting {
     flex: 7;
     display: flex;
+    overflow: hidden;
 }
 
 .chatting {
@@ -8,15 +9,21 @@
     display: flex;
     flex-direction: column;
 }
+/* ::-webkit-scrollbar {
+    width: 10px;
+  } */
 /* info css */
 .infoConversation {
-    overflow: none;
+    
     border-left: 1px solid #ccc;
     background-color: #fff;
+    
+ 
 }
+
 .infoContainer.hide {
     width: 0px;
-    overflow: hidden;
+    
 }
 
 .titleInfo {
@@ -38,6 +45,7 @@
 
 .infoContainer {
     width: 350px;
+    max-height: 750px;
     -webkit-transition: width 0.3s ease-in-out;
     -moz-transition: width 0.3s ease-in-out;
     -o-transition: width 0.3s ease-in-out;
@@ -74,7 +82,7 @@
 }
 .infoMedia,
 .infoFile {
-    min-height: 100px;
+    min-height: 50px;
     background-color: #fff;
     margin-bottom: 10px;
 }
@@ -304,7 +312,7 @@
     align-self: flex-start;
 }
 
-.listMember {
+.listMember, .bao-info-pic {
     max-height: 350px;
 }
 
@@ -314,4 +322,13 @@
 
 .containerMembers.showMembers {
     display: block;
+}
+.bao-info-pic{
+    display:none;
+}
+.bao-info-pic.showPics{
+    display: flex;
+    justify-content:flex-start;
+    align-items:center;
+    flex-wrap:wrap-reverse
 }

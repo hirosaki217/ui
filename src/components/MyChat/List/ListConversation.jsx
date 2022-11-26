@@ -55,7 +55,7 @@ const ListConversation = ({ socket }) => {
         dispatch(getMessages({ id: conversation._id }));
         dispatch(getListMembers({ conversationId: conversation._id }));
         // if (!conversations.type) dispatch(findFriendById(conversation.userId));
-        console.log(conversation);
+
     };
     
     return (
