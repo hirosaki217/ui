@@ -5,8 +5,8 @@ import PhoneIcon from '@material-ui/icons/Phone';
 import VideoCallIcon from '@material-ui/icons/VideoCall';
 import VerticalSplitIcon from '@material-ui/icons/VerticalSplit';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { listMemberSelector } from '../../store/reducers/conversationReducer/conversationSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { getListMembers, listMemberSelector } from '../../store/reducers/conversationReducer/conversationSlice';
 import jwt from '../../utils/jwt';
 import { useEffect } from 'react';
 import PersonAddOutlinedIcon from '@material-ui/icons/PersonAddOutlined';
@@ -16,7 +16,9 @@ import SearchAddMember from '../SearchAddMember/SearchAddMember';
 import { listFriendSelector } from '../../store/reducers/friendReducer/friendReducer';
 
 const HeaderUser = ({ conversation, tabInfoRef, socket }) => {
+   const dispatch = useDispatch();
     const members = useSelector(listMemberSelector);
+    // const [members,setMember] = useState([]);
     const listFriend = useSelector(listFriendSelector);
     const myId = jwt.getUserId();
     const navigate = useNavigate();
@@ -27,6 +29,10 @@ const HeaderUser = ({ conversation, tabInfoRef, socket }) => {
         if (hasClass) tabInfoRef.current.classList.remove('hide');
         else tabInfoRef.current.classList.add('hide');
     };
+    // useEffect(() => {
+    //     if(membersSlec)
+    //         setMember(membersSlec);
+    // }, [members]);
     const handleCall = () => {
         if (members.length === 2) {
             const { _id: userId } = members.find((member) => member._id !== myId);
@@ -70,36 +76,41 @@ const HeaderUser = ({ conversation, tabInfoRef, socket }) => {
             </div>
             <div className="conversationInfor">
                 {conversation.type ? (
-                    <AvatarGroup className="group" total={conversation.totalMembers}>
+                    <AvatarGroup className="group" total={members.length>-1? members.length : 0}>
+                                   
+                    <Avatar
+                        className="iconAvatar"
+                        alt="A"
+                        src={`${members[0] ? members[0].avatar : ''}`}
+                    />
+                    {members.length > 1 && (
                         <Avatar
                             className="iconAvatar"
-                            alt="A"
-                            src={`${conversation.avatar[0].avatar ? conversation.avatar[0].avatar : '0'}`}
+                            alt="B"
+                            src={`${members[1] ? members[1].avatar : ''
+                                }`}
                         />
-                        {conversation.avatar.length > 1 && (
-                            <Avatar
-                                className="iconAvatar"
-                                alt="B"
-                                src={`${conversation.avatar[1].avatar ? conversation.avatar[1].avatar : '1'}`}
-                            />
-                        )}
+                    )}
 
-                        {conversation.avatar.length > 2 && (
-                            <Avatar
-                                className="iconAvatar"
-                                alt="C"
-                                src={`${conversation.avatar[2].avatar ? conversation.avatar[2].avatar : '2'}`}
-                            />
-                        )}
+                    {members.length > 2 && (
+                        <Avatar
+                            className="iconAvatar"
+                            alt="C"
+                            src={`${members[2] ? members[2].avatar : ''
+                                }`}
+                        />
+                    )}
 
-                        {/* {conversation.avatar.length > 3 && (
-                            <Avatar
-                                className="iconAvatar"
-                                alt="D"
-                                src={`${conversation.avatar[3].avatar ? conversation.avatar[3].avatar : '3'}`}
-                            />
-                        )} */}
-                    </AvatarGroup>
+                    {/* {conversation.avatar.length > 3 && (
+                        <Avatar
+                            className="iconAvatar"
+                            alt="D"
+                            src={`${
+                                conversation.avatar[3].avatar ? conversation.avatar[3].avatar : '3'
+                            }`}
+                        />
+                    )} */}
+                </AvatarGroup>
                 ) : (
                     <Avatar className="conversationAvatar" src={conversation.avatar ? conversation.avatar : ''} />
                 )}
@@ -109,8 +120,8 @@ const HeaderUser = ({ conversation, tabInfoRef, socket }) => {
                     <p className="isOnline">1 phút trước</p>
                 </div>
             </div>
-            <div style={{flex:'1'}}></div>
-            
+            <div style={{ flex: '1' }}></div>
+
             <div>
                 <div className="conversationOption">
                     {!conversation.type && (

@@ -48,8 +48,13 @@ const messageSlice = createSlice({
             state.loading = action.payload;
         },
         rerenderMessage(state, action) {
+            console.log("action",action.payload)
             state.messages.data = [...state.messages.data, action.payload];
         },
+        handleRenameGroup(state, action){
+            state.messages.data.splice(0,1);
+ 
+        }
     },
     extraReducers: {
         // [getMessages.pending]: (state, action) => {},
@@ -87,6 +92,6 @@ const messageReducer = reducer;
 
 export const messagesSelector = (state) => state.messageReducer.messages;
 
-export const { setChatting, messageLoading, rerenderMessage } = actions;
+export const { setChatting, messageLoading, rerenderMessage, handleRenameGroup } = actions;
 
 export default messageReducer;

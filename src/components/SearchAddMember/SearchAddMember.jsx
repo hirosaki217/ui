@@ -13,8 +13,9 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Checkbox from '@material-ui/core/Checkbox';
 import Avatar from '@material-ui/core/Avatar';
-import { addMember } from '../../store/reducers/conversationReducer/conversationSlice';
+import { addMember, updateAvatarWhenUpdateMember } from '../../store/reducers/conversationReducer/conversationSlice';
 import { useDispatch } from 'react-redux';
+import { apiConversations } from '../../api/apiConversation';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -90,8 +91,24 @@ export default function SearchAddMember({ conversation, listMem, isOpen, setIsOp
     };
     // end search
     // handl add mem
-    const handleAddMember = () => {
-        if (checked.length > 0) dispatch(addMember({ conversationId: conversation._id, userIds: checked }));
+    const handleAddMember = async() => {
+        console.log("LIST ADD", checked);
+        if (checked.length > 0) {
+            dispatch(addMember({ conversationId: conversation._id, userIds: checked }))
+            // const data = await apiConversations.getConversationById(conversation._id);
+            // const converById = data.data
+            // const avatar = converById.avatar;
+            // const totalMembers = converById.totalMembers;
+            // // const { avatar, totalMembers } = data.data;
+            // console.log("AVATAR", avatar);
+            // dispatch(
+            //     updateAvatarWhenUpdateMember({
+            //         conversationId: conversation._id,
+            //         avatar:avatar,
+            //         totalMembers:totalMembers,
+            //     }),
+            // );
+        };
         handleClose();
     };
     // end

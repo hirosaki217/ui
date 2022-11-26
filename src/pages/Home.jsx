@@ -12,10 +12,13 @@ import {
     addManager1,
     addNewConversation,
     conversationSelector,
+    currentConversationSelector,
     getConversationById,
     getList,
+    getListMembers,
     removeManager,
     removeManager1,
+    reNameGroup,
     setLastMessageInConversation,
     updateAvatarWhenUpdateMember,
 } from '../store/reducers/conversationReducer/conversationSlice';
@@ -58,6 +61,7 @@ const Home = () => {
     const dispatch = useDispatch();
     const { isLogin } = useSelector(loginSelector);
     const conversations = useSelector(conversationSelector);
+    const currentConver = useSelector(currentConversationSelector);
     const navigate = useNavigate();
     const answerBtnRef = useRef();
 
@@ -175,8 +179,9 @@ const Home = () => {
             dispatch(removeManager1({ conversationId, managerIds }));
         });
         socket.on('update-member', async (conversationId) => {
-            const data = await apiConversations.getConversationById(conversationId);
+            const {data} = await apiConversations.getConversationById(conversationId);
             const { avatar, totalMembers } = data;
+            
             dispatch(
                 updateAvatarWhenUpdateMember({
                     conversationId,
@@ -184,6 +189,7 @@ const Home = () => {
                     totalMembers,
                 }),
             );
+            
         });
         socket.on('notify-call', (myId) => {
             idCall = myId;
@@ -206,7 +212,20 @@ const Home = () => {
                 dispatch(addNewConversation(data));
             }
         });
+        
     }, []);
+
+    useEffect(()=> {
+        socket.on("rename-conversation", (id, name, message)=>{
+            dispatch(setLastMessageInConversation({conversationId: id, message}));
+            dispatch(reNameGroup({id, name}))
+            console.log("ABVC", id, currentConver);
+            if(currentConver === id){
+                dispatch(rerenderMessage(message));
+            }
+        })
+    },[currentConver])
+
     const handleAnswer = () => {
         if (idCall) {
             // navigate(`/call/accept`);

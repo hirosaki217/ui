@@ -22,12 +22,13 @@ export const apiConversations = {
         return await axios.get(`/conversations/${conversationId}/members`);
     },
     addMember: async ({ conversationId, userIds }) => {
-        return await axios.get(`/conversations/${conversationId}/members`, {
+        return await axios.post(`/conversations/${conversationId}/members`, {
             userIds,
         });
     },
     removeMember: async ({ conversationId, userId }) => {
         return await axios.delete(`/conversations/${conversationId}/members/${userId}`);
+       
     },
     leaveGroup: async (conversationId) => {
         return await axios.delete(`/conversations/${conversationId}/members/leave`);
@@ -44,4 +45,10 @@ export const apiConversations = {
             },
         });
     },
+    reNameConversation: async({conversationId,name})=>{
+          await axios.patch(`/conversations/${conversationId}/name`,{name})
+         return await axios.get(`/conversations/${conversationId}`);
+    },
+    
+  
 };

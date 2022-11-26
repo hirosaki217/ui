@@ -17,10 +17,12 @@ import {
     currentAConverSelector,
     currentConversationSelector,
     getLastViewOfMembers,
+    getListMembers,
     leaveGroup,
     listMemberSelector,
     removeManager,
     removeMember,
+    updateAvatarWhenUpdateMember,
     updateMemberInconver,
     // updateLastViewOfMembers,
 } from '../../store/reducers/conversationReducer/conversationSlice';
@@ -51,6 +53,7 @@ import ModalProfileFriend from '../../components/MyChat/ListFriend/ModalProfileF
 import ModalProfile from '../../components/SideNavbar/ModalProfile/ModalProfile';
 import { apiUser } from '../../api/apiUser';
 import { apiFriend } from '../../api/apiFriend';
+import ModalRename from './ModalRename/ModalRename';
 
 const TYPE_MATCH_MEDIA = ['image/png', 'image/jpeg', 'image/gif', 'video/mp4'];
 
@@ -79,6 +82,7 @@ const ChattingPage = ({ socket }) => {
     const tabInfoRef = useRef();
     const currentConversation = useSelector(currentConversationSelector);
     const conversation = useSelector(currentAConverSelector);
+    
     const messages = useSelector(messagesSelector);
     const user = { _id: jwt.getUserId() };
     const friendProfile = useSelector(friendSelector);
@@ -94,21 +98,26 @@ const ChattingPage = ({ socket }) => {
     const [openProfile, setOpenProfile] = useState(false);
     const [friendProfilee, setFriendProfilee] = useState();
     const [openMyProfile, setOpenMyProfile] = useState(false);
-    const handleOpenProfile = () => {
-        setOpenProfile(true);
+    const [openModalRename, setOpenModalRename] = useState(false);
+    const [infoRoom, setInfoRoom] = useState();
+    const handleOpenModalRename = () => {
+        setOpenModalRename(true);
     };
+    const handleCloseModalRename = () => {
+        setOpenModalRename(false);
+    }
     const handleCloseProfile = () => {
         setOpenProfile(false);
         setOpenMyProfile(false);
     };
-    const getFriendIdOption = async(optionId)=>{
+    const getFriendIdOption = async (optionId) => {
         const temp = optionId
-        console.log("idoption",temp)
-        if(temp && temp !==user._id){
+        console.log("idoption", temp)
+        if (temp && temp !== user._id) {
             const fen = await apiFriend.findFriendById(temp)
-             setFriendProfilee(fen.data);
-             setOpenProfile(true);
-        }else if(temp && temp ===user._id)
+            setFriendProfilee(fen.data);
+            setOpenProfile(true);
+        } else if (temp && temp === user._id)
             setOpenMyProfile(true)
     }
     // useEffect(()=> {
@@ -198,8 +207,9 @@ const ChattingPage = ({ socket }) => {
         socket.on('update-member', async (conversationId) => {
             if (conversationId === conversation._id) {
                 await dispatch(getLastViewOfMembers({ conversationId }));
-                const newMember = await apiConversations.getMemberInConversation(conversation._id);
-                dispatch(updateMemberInconver({ conversationId, newMember }));
+                const { data } = await apiConversations.getListMember(conversation._id);
+                console.log("LIST MEMB", data);
+                dispatch(updateMemberInconver({ conversationId, newMember: data }));
             }
         });
 
@@ -281,7 +291,7 @@ const ChattingPage = ({ socket }) => {
         }, 1000);
         scroll.current.scrollIntoView({ behavior: 'smooth' });
 
-    });
+    }, [currentConversation]);
     // event group
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -303,12 +313,12 @@ const ChattingPage = ({ socket }) => {
                 option: 3,
                 id,
             });
-        }else if ((id !== user._id && conversation.leaderId !== user._id) && !conversation.managerIds.includes(user._id)) {
+        } else if ((id !== user._id && conversation.leaderId !== user._id) && !conversation.managerIds.includes(user._id)) {
             setOption({
                 option: 4,
                 id,
             })
-        }else {
+        } else {
             setOption({
                 option: 0,
                 id: '',
@@ -324,7 +334,7 @@ const ChattingPage = ({ socket }) => {
         setAnchorEl(null);
     };
 
-    const handleRemoveMember = () => {
+    const handleRemoveMember = async () => {
         dispatch(removeMember({ conversationId: conversation._id, userId: option.id }));
         setAnchorEl(null);
     };
@@ -354,11 +364,11 @@ const ChattingPage = ({ socket }) => {
                     MenuListProps={{
                         'aria-labelledby': 'basic-button',
                     }}
-                    
+
                 >
-                    <MenuItem 
-                        style={{ padding: '5px 5px' }} 
-                        onClick={getFriendIdOption.bind(this,option.id)}
+                    <MenuItem
+                        style={{ padding: '5px 5px' }}
+                        onClick={getFriendIdOption.bind(this, option.id)}
                     >
                         Xem thông tin
                     </MenuItem>
@@ -495,29 +505,31 @@ const ChattingPage = ({ socket }) => {
             <div className="infoConversation">
                 <div ref={tabInfoRef} className="infoContainer hide scrollbar" id="style-scroll">
                     <h5 className="titleInfo">Thông tin {conversation.type ? 'nhóm' : 'hội thoại'}</h5>
+
                     <div>
                         <div className="wrapInfoAvatar">
                             {conversation.type ? (
-                                <AvatarGroup className="group" total={conversation.totalMembers}>
+                                <AvatarGroup className="group" total={members.length>-1? members.length : conversation.totalMembers}>
+                                   
                                     <Avatar
                                         className="iconAvatar"
                                         alt="A"
-                                        src={`${conversation.avatar[0].avatar ? conversation.avatar[0].avatar : '0'}`}
+                                        src={`${members[0] ? members[0].avatar : ''}`}
                                     />
-                                    {conversation.avatar.length > 1 && (
+                                    {members.length > 1 && (
                                         <Avatar
                                             className="iconAvatar"
                                             alt="B"
-                                            src={`${conversation.avatar[1].avatar ? conversation.avatar[1].avatar : '1'
+                                            src={`${members[1] ? members[1].avatar : ''
                                                 }`}
                                         />
                                     )}
 
-                                    {conversation.avatar.length > 2 && (
+                                    {members.length > 2 && (
                                         <Avatar
                                             className="iconAvatar"
                                             alt="C"
-                                            src={`${conversation.avatar[2].avatar ? conversation.avatar[2].avatar : '2'
+                                            src={`${members[2] ? members[2].avatar : ''
                                                 }`}
                                         />
                                     )}
@@ -543,8 +555,14 @@ const ChattingPage = ({ socket }) => {
                         <h5>
                             {conversation.name ? conversation.name : 'name'}
                             <span className="btnEditName">
-                                <BorderColorOutlinedIcon />{' '}
+                                <BorderColorOutlinedIcon
+                                    onClick={() => {
+                                        setOpenModalRename(true);
+                                        setInfoRoom(conversation)
+                                    }
+                                    } />{' '}
                             </span>
+                            <ModalRename conversation={conversation} infoRoom={infoRoom} openModalRename={openModalRename} closeModalRename={handleCloseModalRename} />
                         </h5>
                     </div>
                     <div className="infoGroupCommon">
@@ -556,7 +574,7 @@ const ChattingPage = ({ socket }) => {
                         ) : (
                             <p onClick={handleShowMember}>
                                 <PeopleOutlinedIcon style={{ margin: '0 5px' }} />
-                                {conversation.totalMembers ? conversation.totalMembers : 0} thành viên
+                                {members.length>-1 ? members.length : 0} thành viên
                             </p>
                         )}
                         <div ref={membersRef} className="containerMembers">

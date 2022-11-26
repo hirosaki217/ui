@@ -63,11 +63,16 @@ export const leaveGroup = createAsyncThunk('conversation/leaveGroup', async (par
     return response.data;
 });
 
-export const getListMembers = createAsyncThunk('conversation/getListMember', async (params, _) => {
+export const getListMembers = createAsyncThunk('conversation/getListMember', async (params) => {
     const { conversationId } = params;
     const response = await apiConversations.getListMember(conversationId);
     return response.data;
 });
+export const reName = createAsyncThunk('conversation/reName', async(params)=>{
+    const { conversationId, name } = params;
+    const response = await apiConversations.reNameConversation({conversationId,name});
+    return response.data;
+})
 
 const conversationSlice = createSlice({
     name: 'conversation',
@@ -171,7 +176,7 @@ const conversationSlice = createSlice({
         },
         updateMemberInconver: (state, action) => {
             const { conversationId, newMember } = action.payload;
-            state.memberInConversation = newMember;
+            state.members = newMember;
             const index = state.conversations.findIndex((ele) => ele._id === conversationId);
             if (index > -1) {
                 state.conversations[index].totalMembers = newMember.length;
@@ -190,13 +195,25 @@ const conversationSlice = createSlice({
             const index = state.conversations.findIndex((ele) => ele._id === conversationId);
 
             state.conversations[index].totalMembers = totalMembers;
-            if (index > -1 && typeof state.conversations[index].avatar === 'object') {
-                state.conversations[index].avatar = avatar;
-            }
+            // if (index > -1 && typeof state.conversations[index].avatar === 'object') {
+            //     console.log("CHANGE AVATAR", avatar);
+            //     state.conversations[index].avatar = avatar;
+                
+            // }
         },
         addNewConversation: (state, action) => {
             state.conversations = [...state.conversations, action.payload];
         },
+        reNameGroup: (state, action) => {
+            const {id, name} = action.payload
+            if(state.conversation._id === id){
+                state.conversation.name = name;
+            }
+            const conversation = state.conversations.find((conversation)=> conversation._id === id);
+            conversation.name = name;
+            const conversations = state.conversations.filter((conversation) => conversation._id !== id);
+            state.conversations = [conversation, ...conversations];
+        }
     },
     extraReducers: {
         [getList.pending]: (state, action) => {},
@@ -249,6 +266,16 @@ const conversationSlice = createSlice({
         [removeMember.fulfilled]: (state, action) => {
             console.log('removeMember');
         },
+        [reName.fulfilled]:(state,action)=>{
+            let conversationId = action.payload._id;
+            let name = action.payload.name;
+            if(state.conversation._id === conversationId){
+                state.conversation.lastMessage = action.payload.lastMessage;
+                state.conversation.name = name;
+                const conversations = state.conversations.filter((conversation) => conversation._id !== conversationId);
+                state.conversations = [state.conversation, ...conversations];
+            }
+        }
     },
 });
 
@@ -272,5 +299,6 @@ export const {
     updateMemberInconver,
     updateAvatarWhenUpdateMember,
     addNewConversation,
+    reNameGroup
 } = actions;
 export default conversationReducer;

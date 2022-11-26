@@ -34,8 +34,8 @@ export default function SelectMyChat({ socket }) {
         <TabsUnstyled defaultValue={0}>
             <TabsListUnstyled className="selectorTabList">
                 <TabUnstyled className="selectorTab">Tất cả</TabUnstyled>
-                <TabUnstyled className="selectorTab">bạn bè</TabUnstyled>
-                <TabUnstyled className="selectorTab">lời mời</TabUnstyled>
+                <TabUnstyled className="selectorTab">Bạn bè</TabUnstyled>
+                <TabUnstyled className="selectorTab">Lời mời</TabUnstyled>
             </TabsListUnstyled>
             <TabPanelUnstyled value={0}>
                 <ListConversation socket={socket} />

@@ -55,9 +55,9 @@ const ListConversation = ({ socket }) => {
         dispatch(getMessages({ id: conversation._id }));
         dispatch(getListMembers({ conversationId: conversation._id }));
         // if (!conversations.type) dispatch(findFriendById(conversation.userId));
+        console.log(conversation);
     };
-    console.log(conversations[conversations.length - 1]);
-
+    
     return (
         <List className={classes.root}>
             
@@ -73,17 +73,18 @@ const ListConversation = ({ socket }) => {
                         >
                             <ListItemAvatar className="listAvatar">
                                 <AvatarGroup className="group" total={conversation.totalMembers}>
+                                    
                                     <Avatar
                                         className="iconAvatar"
                                         alt="A"
-                                        src={`${conversation.avatar[0].avatar ? conversation.avatar[0].avatar : '0'}`}
+                                        src={`${conversation.avatar ? conversation.avatar[0].avatar : ''}`}
                                     />
                                     {conversation.avatar.length > 1 && (
                                         <Avatar
                                             className="iconAvatar"
                                             alt="B"
                                             src={`${
-                                                conversation.avatar[1].avatar ? conversation.avatar[1].avatar : '1'
+                                                conversation.avatar ? conversation.avatar[1].avatar : ''
                                             }`}
                                         />
                                     )}
@@ -93,7 +94,7 @@ const ListConversation = ({ socket }) => {
                                             className="iconAvatar"
                                             alt="C"
                                             src={`${
-                                                conversation.avatar[2].avatar ? conversation.avatar[2].avatar : '2'
+                                                conversation.avatar ? conversation.avatar[2].avatar : ''
                                             }`}
                                         />
                                     )}
