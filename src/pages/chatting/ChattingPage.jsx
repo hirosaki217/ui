@@ -28,6 +28,7 @@ import {
 } from '../../store/reducers/conversationReducer/conversationSlice';
 import {
     getMessagesByPage,
+    handleRenameGroup,
     messagesSelector,
     sendImage,
     sendImages,
@@ -341,16 +342,20 @@ const ChattingPage = ({ socket }) => {
 
     const handleRemoveMember = async () => {
         dispatch(removeMember({ conversationId: conversation._id, userId: option.id }));
+        
+        
         setAnchorEl(null);
     };
 
     const handleAddManager = () => {
         dispatch(addManager({ conversationId: conversation._id, managerIds: [option.id] }));
+        dispatch(handleRenameGroup())
         setAnchorEl(null);
     };
 
     const handleRemoveManager = () => {
         console.log('Removing ', [option.id]);
+        dispatch(handleRenameGroup())
         dispatch(removeManager({ conversationId: conversation._id, managerIds: [option.id] }));
         setAnchorEl(null);
     };

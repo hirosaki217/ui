@@ -60,7 +60,7 @@ export const leaveGroup = createAsyncThunk('conversation/leaveGroup', async (par
     const { conversationId } = params;
 
     const response = await apiConversations.leaveGroup(conversationId);
-    return response.data;
+    return conversationId;
 });
 
 export const getListMembers = createAsyncThunk('conversation/getListMember', async (params) => {
@@ -189,20 +189,26 @@ const conversationSlice = createSlice({
                 state.conversations[index].totalMembers = state.conversations[index].totalMembers - 1;
             }
         },
-        updateAvatarWhenUpdateMember: (state, action) => {
-            const { conversationId, avatar, totalMembers } = action.payload;
-
-            const index = state.conversations.findIndex((ele) => ele._id === conversationId);
-
-            state.conversations[index].totalMembers = totalMembers;
-            // if (index > -1 && typeof state.conversations[index].avatar === 'object') {
-            //     console.log("CHANGE AVATAR", avatar);
-            //     state.conversations[index].avatar = avatar;
+        removeGroupWhenBeKick: (state, action) => {
+            
+            
+                const convers = state.conversations.filter((ele) => ele._id !== action.payload);
                 
-            // }
+           state.conversations = [...convers];
+           if(action.payload === state.currentConversation){
+                state.currentConversation ="";
+           }
+        },
+        updateAvatarWhenUpdateMember: (state, action) => {
+            const {conver} = action.payload;
+            const index = state.conversations.findIndex((ele) => ele._id === conver._id);
+            if (index>-1 && state.conversation._id === conver._id) {
+                 state.conversations[index] = conver
+            }else
+                console.log("abccc")
         },
         addNewConversation: (state, action) => {
-            state.conversations = [...state.conversations, action.payload];
+            state.conversations = [action.payload,...state.conversations];
         },
         reNameGroup: (state, action) => {
             const {id, name} = action.payload
@@ -259,6 +265,11 @@ const conversationSlice = createSlice({
         },
         [leaveGroup.fulfilled]: (state, action) => {
             console.log('leaveGroup');
+            const conversations = state.conversations.filter(
+                (conversation) => conversation._id !== action.payload,
+            );
+            state.conversations = [...conversations];
+
         },
         [addMember.fulfilled]: (state, action) => {
             console.log('addMember');
@@ -299,6 +310,7 @@ export const {
     updateMemberInconver,
     updateAvatarWhenUpdateMember,
     addNewConversation,
-    reNameGroup
+    reNameGroup,
+    removeGroupWhenBeKick
 } = actions;
 export default conversationReducer;

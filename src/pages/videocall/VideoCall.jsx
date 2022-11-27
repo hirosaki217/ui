@@ -67,6 +67,7 @@ function VideoCall() {
     };
 
     const handleLeave = async () => {
+        
         if (peerInstance.current) peerInstance.current.disconnect();
     };
     useEffect(() => {
@@ -92,11 +93,22 @@ function VideoCall() {
                     });
                 });
             });
-
+            peer.on('disconnected', function() {
+                
+                socket.emit('end-call', userId)
+                    window.close();
+            })
             peerInstance.current = peer;
+            
         }
+        
     }, [myid]);
-
+    useEffect(()=> {
+        socket.on('end-call', (idCall)=>{
+            console.log("END CALL");
+            window.close();
+        })
+    }, [])
     const call = (remotePeerId) => {
         var getUserMedia =
             navigator.mediaDevices.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;

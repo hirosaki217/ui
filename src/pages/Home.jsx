@@ -16,13 +16,14 @@ import {
     getConversationById,
     getList,
     getListMembers,
+    removeGroupWhenBeKick,
     removeManager,
     removeManager1,
     reNameGroup,
     setLastMessageInConversation,
     updateAvatarWhenUpdateMember,
 } from '../store/reducers/conversationReducer/conversationSlice';
-import { rerenderMessage } from '../store/reducers/messageReducer/messageSlice';
+import { handleRenameGroup, rerenderMessage } from '../store/reducers/messageReducer/messageSlice';
 import useWindowUnloadEffect from '../hooks/useWindowUnloadEffect';
 import { useAuthContext } from '../contexts/AuthContext';
 import jwt from '../utils/jwt';
@@ -184,15 +185,22 @@ const Home = () => {
         socket.on('delete-managers', ({ conversationId, managerIds }) => {
             dispatch(removeManager1({ conversationId, managerIds }));
         });
+        socket.on('deleted-group', async (id) => {
+            // const data = await apiConversations.getConversationById(id);
+            // const conver = data.data
+            socket.emit('member-leave-group', id);
+             dispatch(removeGroupWhenBeKick(id))
+             
+             
+        });
         socket.on('update-member', async (conversationId) => {
-            const {data} = await apiConversations.getConversationById(conversationId);
-            const { avatar, totalMembers } = data;
-            
+            dispatch(handleRenameGroup())
+            const data = await apiConversations.getConversationById(conversationId);
+            const conver = data.data
+            console.log("azzz",conver)
             dispatch(
                 updateAvatarWhenUpdateMember({
-                    conversationId,
-                    avatar,
-                    totalMembers,
+                    conver
                 }),
             );
             
@@ -213,7 +221,7 @@ const Home = () => {
         });
         socket.on('added-group', async (id) => {
             console.log('added group');
-            const data = await apiConversations.getConversationById(id);
+            const {data} = await apiConversations.getConversationById(id);
             if (data) {
                 dispatch(addNewConversation(data));
             }
@@ -239,6 +247,7 @@ const Home = () => {
             socket.emit('answer-call', idCall);
 
             window.open('/call/accept', '_blank');
+            setOpenModal(false);
         }
     };
     const handleOpenModalCall = () => {
