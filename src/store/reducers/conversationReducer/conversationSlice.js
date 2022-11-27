@@ -151,11 +151,14 @@ const conversationSlice = createSlice({
                 const index = state.conversations.findIndex((ele) => ele._id === conversationId);
 
                 const tempManagerIds = state.conversations[index].managerIds.concat(managerIds);
+
                 if (index > -1) {
                     state.conversations[index] = {
                         ...state.conversations[index],
                         managerIds: tempManagerIds,
                     };
+                    if(state.conversation._id === conversationId)
+                        state.conversation = state.conversations[index];
                 }
             }
         },
@@ -170,6 +173,8 @@ const conversationSlice = createSlice({
                         ...state.conversations[index],
                         managerIds: tempManagerIds,
                     };
+                    if(state.conversation._id === conversationId)
+                        state.conversation = state.conversations[index];
                 }
             }
         },
@@ -257,9 +262,12 @@ const conversationSlice = createSlice({
         [addManager.fulfilled]: (state, action) => {
             let { conversationId, managerIds } = action.payload;
             const conver = state.conversations.find((conversation) => conversation._id === conversationId);
+            
             if (conver) {
+                
                 conver.managerIds = managerIds;
-
+                if(state.conversation._id === conversationId)
+                    state.conversation = conver;
                 const conversations = state.conversations.filter((conversation) => conversation._id !== conversationId);
                 state.conversations = [conver, ...conversations];
             }
@@ -274,7 +282,8 @@ const conversationSlice = createSlice({
                         conver.managerIds.splice(index, 1);
                     }
                 });
-
+                if(state.conversation._id === conversationId)
+                    state.conversation = conver;
                 const conversations = state.conversations.filter((conversation) => conversation._id !== conversationId);
                 state.conversations = [conver, ...conversations];
             }

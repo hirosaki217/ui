@@ -86,7 +86,9 @@ export default function SearchInput() {
     const handleChange = (event) => {
         setSelectedValue(event.target.value);
     };
-
+    React.useEffect(()=> {
+        listIndex.current = Array.from({ length: lsFr.length }, (_, i) => i);
+    }, [lsFr])
     React.useEffect(() => {
         setLeft(listIndex.current);
     }, [listIndex.current]);
@@ -279,14 +281,14 @@ export default function SearchInput() {
                                         inputProps={{ 'aria-label': 'A' }}
                                     />
                                     <span>Tìm theo tên</span>
-                                    <Radio
+                                    {/* <Radio
                                         checked={selectedValue === 'b'}
                                         onChange={handleChange}
                                         value="b"
                                         name="radio-button-demo"
                                         inputProps={{ 'aria-label': 'B' }}
                                     />
-                                    <span>Tìm theo số điện thoại</span>
+                                    <span>Tìm theo số điện thoại</span> */}
                                 </div>
                                 <div style={{ display: 'flex' }}>
                                     <input

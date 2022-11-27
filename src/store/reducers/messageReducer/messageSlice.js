@@ -35,7 +35,7 @@ const messageSlice = createSlice({
     name: 'message',
     initialState: {
         chatting: {},
-        messages: [],
+        messages: {},
         loading: false,
         error: false,
         members: [],

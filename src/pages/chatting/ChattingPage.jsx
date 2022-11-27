@@ -75,7 +75,7 @@ const TYPE_MATCH = [
 ];
 
 let currentId = "";
-
+let oldSize = 0;
 const ChattingPage = ({ socket }) => {
     const dispatch = useDispatch();
     const me = useSelector(meSelector);
@@ -84,7 +84,6 @@ const ChattingPage = ({ socket }) => {
     const tabInfoRef = useRef();
     const currentConversation = useSelector(currentConversationSelector);
     const conversation = useSelector(currentAConverSelector);
-
     const messages = useSelector(messagesSelector);
     const user = { _id: jwt.getUserId() };
     const friendProfile = useSelector(friendSelector);
@@ -173,7 +172,8 @@ const ChattingPage = ({ socket }) => {
     // end members
 
     useEffect(() => {
-
+        if (messages.data)
+            oldSize = messages.data.length;
         socket.on('typing', (conversationId, user) => {
             console.log('typing....', currentId);
             currentId = conversationId;
@@ -288,15 +288,33 @@ const ChattingPage = ({ socket }) => {
     // end file
 
     useEffect(() => {
+        if (messages.data) {
+            if (messages.data.length - oldSize <= 1) {
+                const scrollToBottom = (node) => {
+                    node.scrollTop = node.scrollHeight;
+                };
+                scrollToBottom(scroll.current);
+
+                setTimeout(() => {
+                    scrollToBottom(scroll.current);
+                }, 1000);
+                scroll.current.scrollIntoView({ behavior: 'smooth' });
+            }
+            oldSize = messages.data.length;
+        }
+    }, [messages])
+    useEffect(() => {
 
         const scrollToBottom = (node) => {
             node.scrollTop = node.scrollHeight;
         };
         scrollToBottom(scroll.current);
+
         setTimeout(() => {
             scrollToBottom(scroll.current);
         }, 1000);
         scroll.current.scrollIntoView({ behavior: 'smooth' });
+
 
     }, [currentConversation]);
     // event group
@@ -340,7 +358,7 @@ const ChattingPage = ({ socket }) => {
         dispatch(leaveGroup({ conversationId: conversation._id }));
         setAnchorEl(null);
     };
-    const handleDeleteGroup= async() => {
+    const handleDeleteGroup = async () => {
         await apiConversations.deleteAllChatInConversation({ conversationId: conversation._id })
         dispatch(deleteConversationAsync({ conversationId: conversation._id }));
         setAnchorEl(null);
