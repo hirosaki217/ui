@@ -49,6 +49,12 @@ export const apiConversations = {
           await axios.patch(`/conversations/${conversationId}/name`,{name})
          return await axios.get(`/conversations/${conversationId}`);
     },
+    deleteConversation: async({conversationId})=>{
+       return await axios.delete(`/conversations/${conversationId}`) 
+    },
+    deleteAllChatInConversation: async({conversationId})=>{
+        return await axios.delete(`/conversations/${conversationId}/messages`) 
+     },
     
   
 };

@@ -13,6 +13,7 @@ import {
     addNewConversation,
     conversationSelector,
     currentConversationSelector,
+    deleteGroup,
     getConversationById,
     getList,
     getListMembers,
@@ -192,6 +193,12 @@ const Home = () => {
              dispatch(removeGroupWhenBeKick(id))
              
              
+        });
+        socket.on('delete-conversation', async (id) => {
+            // const data = await apiConversations.getConversationById(id);
+            // const conver = data.data
+            // socket.emit('member-leave-group', id);
+             dispatch(deleteGroup(id))
         });
         socket.on('update-member', async (conversationId) => {
             dispatch(handleRenameGroup())

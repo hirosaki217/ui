@@ -16,6 +16,7 @@ import {
     addManager,
     currentAConverSelector,
     currentConversationSelector,
+    deleteConversationAsync,
     getLastViewOfMembers,
     getListMembers,
     leaveGroup,
@@ -135,13 +136,13 @@ const ChattingPage = ({ socket }) => {
     //     })
     // }, [currentConversation])
     const handleScroll = (event) => {
-        
+
         const scrollTop = event.target.scrollTop;
         let page = messages.page;
         const totalPages = messages.totalPages;
-        
+
         if (scrollTop === 0) {
-            
+
             if (page <= totalPages) {
 
                 page += 1;
@@ -339,11 +340,16 @@ const ChattingPage = ({ socket }) => {
         dispatch(leaveGroup({ conversationId: conversation._id }));
         setAnchorEl(null);
     };
+    const handleDeleteGroup= async() => {
+        await apiConversations.deleteAllChatInConversation({ conversationId: conversation._id })
+        dispatch(deleteConversationAsync({ conversationId: conversation._id }));
+        setAnchorEl(null);
+    };
 
     const handleRemoveMember = async () => {
         dispatch(removeMember({ conversationId: conversation._id, userId: option.id }));
-        
-        
+
+
         setAnchorEl(null);
     };
 
@@ -388,7 +394,11 @@ const ChattingPage = ({ socket }) => {
                             Rời khỏi nhóm
                         </MenuItem>
                     }
-
+                    {(option.id === user._id && option.id === conversation.leaderId) &&
+                        <MenuItem style={{ padding: '5px 5px' }} onClick={handleDeleteGroup} >
+                            Xóa cuộc trò chuyện
+                        </MenuItem>
+                    }
                     {(option.option === 2 && conversation.managerIds.includes(option.id)) &&
                         <MenuItem style={{ padding: '5px 5px' }} onClick={handleRemoveManager}>
                             Xóa phó nhóm
@@ -619,12 +629,12 @@ const ChattingPage = ({ socket }) => {
                                 messages.data.map((msg) => {
                                     if (msg.type === 'IMAGE')
                                         return <div
-                                    
+
                                             key={msg.content}
-                                            style={{ width: '82px', height: '82px', padding: '10px'}}
+                                            style={{ width: '82px', height: '82px', padding: '10px' }}
                                         >
                                             <img
-                                                style={{width:'100%',height:'100%'}}
+                                                style={{ width: '100%', height: '100%' }}
                                                 src={msg.content} alt=""
                                             />
                                         </div>
@@ -641,40 +651,40 @@ const ChattingPage = ({ socket }) => {
                                     else if (msg.type === 'GROUP_IMAGE') {
                                         const listImage = msg.content.split(';');
                                         listImage.splice(listImage.length - 1, 1);
-                                        
-                                            
-                                        return listImage.map((file) => {
-                                                if (checkType(file) === 'VIDEO')
-                                                    return (
-                                                        <div
-                                                            key={file}
-                                                            style={{ width: '82px', height: '82px', padding: '10px' }}
-                                                        >
-                                                            <video
-                                                            style={{ width: '100%', height: '100%' }}
-                                                                controls
-                                                                key={file}
-                                                                src={file}
-                                                                alt={file}
-                                                                className="imageMessage"
-                                                            />
-                                                        </div>
-                                                    );
-                                                else
-                                                    return (
-                                                        <div
-                                                            key={file}
-                                                            style={{ width: '82px', height: '82px', padding: '10px'}}
-                                                        >
-                                                            <img
-                                                            style={{ width: '100%', height: '100%' }}
-                                                              key={file} src={file} alt={file} className="imageMessage" />
-                                                        </div>
-                                                    );
 
-                                                        
-                                            })
-                                        
+
+                                        return listImage.map((file) => {
+                                            if (checkType(file) === 'VIDEO')
+                                                return (
+                                                    <div
+                                                        key={file}
+                                                        style={{ width: '82px', height: '82px', padding: '10px' }}
+                                                    >
+                                                        <video
+                                                            style={{ width: '100%', height: '100%' }}
+                                                            controls
+                                                            key={file}
+                                                            src={file}
+                                                            alt={file}
+                                                            className="imageMessage"
+                                                        />
+                                                    </div>
+                                                );
+                                            else
+                                                return (
+                                                    <div
+                                                        key={file}
+                                                        style={{ width: '82px', height: '82px', padding: '10px' }}
+                                                    >
+                                                        <img
+                                                            style={{ width: '100%', height: '100%' }}
+                                                            key={file} src={file} alt={file} className="imageMessage" />
+                                                    </div>
+                                                );
+
+
+                                        })
+
                                     }
                                 })}
                         </div>

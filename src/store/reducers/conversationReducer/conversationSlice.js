@@ -73,6 +73,11 @@ export const reName = createAsyncThunk('conversation/reName', async(params)=>{
     const response = await apiConversations.reNameConversation({conversationId,name});
     return response.data;
 })
+export const deleteConversationAsync = createAsyncThunk('conversation/deleteConversation', async(params)=>{
+    const { conversationId } = params;
+    const response = await apiConversations.deleteConversation({conversationId});
+    return conversationId;
+})
 
 const conversationSlice = createSlice({
     name: 'conversation',
@@ -190,15 +195,26 @@ const conversationSlice = createSlice({
             }
         },
         removeGroupWhenBeKick: (state, action) => {
-            
-            
-                const convers = state.conversations.filter((ele) => ele._id !== action.payload);
-                
+            const convers = state.conversations.filter((ele) => ele._id !== action.payload);
            state.conversations = [...convers];
            if(action.payload === state.currentConversation){
                 state.currentConversation ="";
+                state.conversation ={};
+                state.members= []
            }
         },
+        deleteGroup:(state, action)=>{
+            const conversations = state.conversations.filter(
+                (conversation) => conversation._id !== action.payload,
+            );
+            state.conversations = [...conversations];
+            if(action.payload === state.currentConversation){
+                state.currentConversation ="";
+                state.conversation ={};
+                state.members= []
+           }
+        }
+        ,
         updateAvatarWhenUpdateMember: (state, action) => {
             const {conver} = action.payload;
             const index = state.conversations.findIndex((ele) => ele._id === conver._id);
@@ -269,6 +285,11 @@ const conversationSlice = createSlice({
                 (conversation) => conversation._id !== action.payload,
             );
             state.conversations = [...conversations];
+            if(action.payload === state.currentConversation){
+                state.currentConversation ="";
+                state.conversation ={};
+                state.members= []
+           }
 
         },
         [addMember.fulfilled]: (state, action) => {
@@ -286,6 +307,18 @@ const conversationSlice = createSlice({
                 const conversations = state.conversations.filter((conversation) => conversation._id !== conversationId);
                 state.conversations = [state.conversation, ...conversations];
             }
+        },
+        [deleteConversationAsync]: (state, action) => {
+            console.log('deleteted');
+            const conversations = state.conversations.filter(
+                (conversation) => conversation._id !== action.payload,
+            );
+            state.conversations = [...conversations];
+            if(action.payload === state.currentConversation){
+                state.currentConversation ="";
+                state.conversation ={};
+                state.members= []
+           }
         }
     },
 });
@@ -311,6 +344,7 @@ export const {
     updateAvatarWhenUpdateMember,
     addNewConversation,
     reNameGroup,
-    removeGroupWhenBeKick
+    removeGroupWhenBeKick,
+    deleteGroup
 } = actions;
 export default conversationReducer;
