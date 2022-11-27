@@ -35,6 +35,19 @@ export const getListMeInvite = createAsyncThunk('friend/listMeInvite', async () 
     const rs = await apiFriend.getListMeInvite();
     return rs.data;
 });
+export const deleteInviteAsync = createAsyncThunk('friend/deleteInvite', async (id) => {
+    const rs = await apiFriend.deleteInvive(id);
+    return id;
+});
+
+export const deleteMeInviteAsync = createAsyncThunk('friend/deleteMeInvite', async (id) => {
+    const rs = await apiFriend.deleteMeInvite(id);
+    return id;
+});
+export const deleteFriendAsync = createAsyncThunk('friend/deleteFriend', async (id) => {
+    const rs = await apiFriend.deleteFriend(id);
+    return id;
+});
 
 const friendSlice = createSlice({
     name: 'friend',
@@ -48,13 +61,17 @@ const friendSlice = createSlice({
         recieveInvite: (state, action) => {
             if (action.payload) state.friendInvites = [action.payload, ...state.friendInvites];
         },
-        deleteMeInvive: (state, action) => {
+        deleteMeInvite: (state, action) => {
             state.friendMeInvites = state.friendMeInvites.filter(
                 (friendMeInvite) => friendMeInvite._id !== action.payload,
             );
         },
         deleteInvite: (state, action) => {
             state.friendInvites = state.friendInvites.filter((friendInvite) => friendInvite._id !== action.payload);
+
+        },
+        deleteFriend: (state, action) => {
+            state.friends = state.friends.filter((friend) => friend._id !== action.payload);
         },
         setNewFriend: (state, action) => {
             const friend = state.friendMeInvites.find((friendMeInvite) => friendMeInvite._id === action.payload);
@@ -92,6 +109,18 @@ const friendSlice = createSlice({
         [getListMeInvite.fulfilled]: (state, action) => {
             state.friendMeInvites = action.payload;
         },
+        // xóa friend đã nhận
+        [deleteInviteAsync.fulfilled]: (state, action) => {
+            state.friendInvites = state.friendInvites.filter((friendInvite) => friendInvite._id !== action.payload);
+        },
+        // xóa friend đã gửi
+        [deleteMeInviteAsync.fulfilled]: (state, action) => {
+            state.friendMeInvites = state.friendMeInvites.filter((friendMeInvites) => friendMeInvites._id !== action.payload);
+        },
+        [deleteFriendAsync.fulfilled]: (state, action) => {
+            state.friends = state.friends.filter((friend) => friend._id !== action.payload);
+        },
+
     },
 });
 
@@ -102,5 +131,5 @@ export const listFriendSelector = (state) => state.friendReducer.friends;
 export const listFriendInviteSelector = (state) => state.friendReducer.friendInvites;
 export const listFriendMeInviteSelector = (state) => state.friendReducer.friendMeInvites;
 
-export const { recieveInvite, setNewFriend, setEmptyFriend } = friendSlice.actions;
+export const { recieveInvite, setNewFriend, setEmptyFriend, deleteInvite,  deleteMeInvite, deleteFriend} = friendSlice.actions;
 export default friendReducer;

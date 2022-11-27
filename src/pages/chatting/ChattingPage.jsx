@@ -614,6 +614,7 @@ const ChattingPage = ({ socket }) => {
                                 messages.data.map((msg) => {
                                     if (msg.type === 'IMAGE')
                                         return <div
+                                    
                                             key={msg.content}
                                             style={{ width: '82px', height: '82px', padding: '10px'}}
                                         >

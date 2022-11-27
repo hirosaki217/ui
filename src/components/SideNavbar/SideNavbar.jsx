@@ -36,10 +36,14 @@ const SideNavbar = () => {
         setAnchorEl(null);
     };
 
-    const handleLogout = () => {
+    const handleLogout = (e) => {
+        e.preventDefault()
         dispatch(logout());
-        window.location.reload();
+        setTimeout(() => {
+            window.location.reload();
+        }, 700);
         setAnchorEl(null);
+
     };
     let i;
     const handleNavClick = (index) => {
@@ -126,10 +130,10 @@ const SideNavbar = () => {
             </div>
 
             <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
-                <MenuItem onClick={handleOpenProfile}>Profile</MenuItem>
+                <MenuItem onClick={handleOpenProfile}>Cá nhân</MenuItem>
                 <ModalProfile openProfilee={openProfile} closeProfile ={handleCloseProfile}/>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
-                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                <MenuItem onClick={handleClose}>Cài đặt</MenuItem>
+                <MenuItem onClick={handleLogout}>Đăng xuất</MenuItem>
             </Menu>
         </div>
     );

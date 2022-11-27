@@ -10,8 +10,8 @@ import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { listFriendSelector } from '../../../store/reducers/friendReducer/friendReducer';
-import { useSelector } from 'react-redux';
+import { deleteFriendAsync, listFriendSelector } from '../../../store/reducers/friendReducer/friendReducer';
+import { useDispatch, useSelector } from 'react-redux';
 import ModalProfileFriend from './ModalProfileFriend';
 import { useState } from 'react';
 import { apiUser } from '../../../api/apiUser';
@@ -27,11 +27,14 @@ export default function ListFriend() {
     const open = Boolean(anchorEl);
     const [openProfile, setOpenProfile] = React.useState(false);
     const [friendProfile, setFriendProfile] = useState();
-    const handleOpenProfile = () => {
+    const dispatch = useDispatch()
+    const handleOpenProfile = (e) => {
+        e.preventDefault();
         setOpenProfile(true);
     };
     const handleCloseProfile = () => {
         setOpenProfile(false);
+        setAnchorEl(null);
     };
 
     const handleClick = (event) => {
@@ -39,6 +42,17 @@ export default function ListFriend() {
     }
     const handleClose = () => {
         setAnchorEl(null);
+    };
+    const handleDeleteFriend = (e) => {
+        e.preventDefault()
+        if(friendProfile){
+            setAnchorEl(null);
+            const id = friendProfile._id;
+            dispatch(deleteFriendAsync(id))
+            
+        }else
+            console.log("delete fail")
+        
     };
     React.useEffect(() => {
         if (listFriend) setList(listFriend);
@@ -100,7 +114,7 @@ export default function ListFriend() {
                 }}
             >
                 {options.map((option) => (
-                    <MenuItem onClick={option === 'trang cá nhân' ? handleOpenProfile : handleClose} className="optionItem" key={option} selected={option === 'Pyxis'}>
+                    <MenuItem onClick={option === 'trang cá nhân' ? handleOpenProfile : handleDeleteFriend} className="optionItem" key={option} selected={option === 'Pyxis'}>
                         {option}
                     </MenuItem>
 

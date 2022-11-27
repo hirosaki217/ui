@@ -49,7 +49,8 @@ const messageSlice = createSlice({
         },
         rerenderMessage(state, action) {
             console.log("action",action.payload)
-            state.messages.data = [...state.messages.data, action.payload];
+            const mess = state.messages.filter((mess) => mess !== action.payload)
+            state.messages = [action.payload,mess];
         },
         handleRenameGroup(state, action){
             state.messages.data.splice(0,1);

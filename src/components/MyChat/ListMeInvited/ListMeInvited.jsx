@@ -1,4 +1,4 @@
-import './listInviteFriend.css';
+import '../ListInviteFriend/listInviteFriend.css';
 import * as React from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -10,17 +10,16 @@ import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { acceptFriend, deleteInviteAsync, listFriendInviteSelector } from '../../../store/reducers/friendReducer/friendReducer';
+import { acceptFriend, deleteMeInviteAsync, listFriendInviteSelector, listFriendMeInviteSelector } from '../../../store/reducers/friendReducer/friendReducer';
 import { useDispatch, useSelector } from 'react-redux';
 
 const ITEM_HEIGHT = 48;
 
-export default function ListInviteFriend() {
+export default function ListMeInvited() {
     const dispatch = useDispatch();
-    const listInvite = useSelector(listFriendInviteSelector);
+    const listInvite = useSelector(listFriendMeInviteSelector);
     const [list, setList] = React.useState([]);
     const [anchorEl, setAnchorEl] = React.useState(null);
-    const [idMe,setIdMe] =  React.useState();
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -34,12 +33,9 @@ export default function ListInviteFriend() {
         dispatch(acceptFriend(id));
     };
     const handleDeleteInvite = (id) => {
+        dispatch(deleteMeInviteAsync(id))
         handleClose();
-        // if(listInvite){
-        //     setIdMe(listInvite[0].receiverId);
-        //     dispatch(deleteInvive(id));
-        // }
-        dispatch(deleteInviteAsync(id));
+
     };
     React.useEffect(() => {
         setList(listInvite);
@@ -92,14 +88,7 @@ export default function ListInviteFriend() {
                                     },
                                 }}
                             >
-                                <MenuItem
-                                    className="optionItem"
-                                    key={1}
-                                    selected={1 === 'Pyxis'}
-                                    onClick={handleAccept.bind(this, friend._id)}
-                                >
-                                    chấp nhận
-                                </MenuItem>
+                            
                                 <MenuItem className="optionItem" key={2} selected={2 === 'Pyxis'} 
                                          onClick={handleDeleteInvite.bind(this,friend._id)}
                                         >

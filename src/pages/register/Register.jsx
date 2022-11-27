@@ -46,7 +46,7 @@ const Register = () => {
     const checkCountOtp = useRef();
     const checkPass = /^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).{8,16}$/;
     let conditional = false;
-
+    const [waitResetOtp,setWaitRestOtp] = useState(false);
     // useEffect(() => {
     //     if (jwt.getUserId()) navigate('..');
     // }, [jwt.getUserId()]);
@@ -148,17 +148,17 @@ const Register = () => {
         if (step === 'FORM_OTP') {
             checkOtp.current.className = 'catchError hide';
             try {
-                const confirm = await apiRegister.confirm({ username, otp });
+                const confirm = await apiRegister.confirm({ username, otp })
                 const account = await apiUser.getUserByUserName({ username });
                 if (account.data.isActived === true) {
                     dispatch(login({ username, password }));
+                    setDis(true)
                     setTimeout(async () => {
-                        const user = await apiUser.getProfile();
+                        // const user = await apiUser.getProfile();
                         setStep('FORM_INFO');
+                        setDis(false)
                     }, 1500);
                 }
-
-
             } catch (error) {
                 // apiRegister.resetOtp({ username });
                 setCountOtp(countOtp + 1);
@@ -210,6 +210,10 @@ const Register = () => {
         setTimeLeft(60);
         await apiRegister.resetOtp({ username });
         alert(`Mã OTP đã được gửi lại vào số ${username}`)
+        setWaitRestOtp(true);
+        setTimeout(() => {
+            setWaitRestOtp(false);
+        }, 70000);
     }
 
     const clickToFormLogin = (e) => {
@@ -325,7 +329,7 @@ const Register = () => {
                                     className="form-control mt-1"
                                     placeholder="OTP gồm 6 chữ số"
                                 />
-                                <button onClick={handleResentOTP} style={{ height: '38px', marginTop: '4px' }} className="btn btn-primary">
+                                <button disabled={waitResetOtp} onClick={handleResentOTP} style={{ height: '38px', marginTop: '4px' }} className="btn btn-primary">
                                     <RestartAltIcon fontSize='medium' />
                                 </button>
                             </div>

@@ -1,8 +1,8 @@
 import { Avatar, Backdrop, Button, Fade, makeStyles, Modal } from "@material-ui/core";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { listFriendSelector } from "../../../store/reducers/friendReducer/friendReducer";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteFriendAsync, listFriendSelector } from "../../../store/reducers/friendReducer/friendReducer";
 
 import { meSelector } from "../../../store/reducers/userReducer/meReducer"
 import '../../SideNavbar/ModalProfile/modalProfile.css';
@@ -20,8 +20,18 @@ const useStyles = makeStyles((theme) => ({
 const ButtonAddOrDeleteFriend = (props) => {
     const listFriend = useSelector(listFriendSelector);
     const profile = props.profile
+    const dispatch = useDispatch();
     console.log(listFriend.length)
-
+    const handleDeleteFriend = (e) => {
+        e.preventDefault()
+        if(profile){
+            const id = profile._id;
+            dispatch(deleteFriendAsync(id))
+            
+        }else
+            console.log("delete fail")
+        
+    };
     const check = listFriend.some((friend) => {
         console.log("profile", profile.username)
         console.log("friend", friend.username)
@@ -31,7 +41,7 @@ const ButtonAddOrDeleteFriend = (props) => {
     })
     if (check)
         return (
-            <Button style={{ backgroundColor: '#f32c2c', color: 'white' }} fullWidth={true} >
+            <Button onClick={handleDeleteFriend} style={{ backgroundColor: '#f32c2c', color: 'white' }} fullWidth={true} >
                 <DeleteIcon /> Hủy kết bạn
             </Button>
         )

@@ -7,6 +7,7 @@ import SelectMyChat from '../SelectMyChat/SelectMyChat';
 import ListConversation from './List/ListConversation';
 import ListFriend from './ListFriend/ListFriend';
 import ListInviteFriend from './ListInviteFriend/ListInviteFriend';
+import ListMeInvited from './ListMeInvited/ListMeInvited';
 import './myChat.css';
 
 const MyChat = ({ socket }) => {
@@ -25,6 +26,10 @@ const MyChat = ({ socket }) => {
                 {tab === 0 && <SelectMyChat socket={socket} />}
                 {tab === 1 && (
                     <div>
+                        <p style={{ textAlign: 'start', paddingLeft: '10px', fontWeight: '500' }}>
+                            Danh sách đã gửi lời mời kết bạn
+                        </p>
+                        <ListMeInvited/>  <Divider />
                         <p style={{ textAlign: 'start', paddingLeft: '10px', fontWeight: '500' }}>
                             Danh sách lời mời kết bạn
                         </p>

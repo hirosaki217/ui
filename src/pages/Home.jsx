@@ -29,11 +29,15 @@ import jwt from '../utils/jwt';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { getProfile, meSelector } from '../store/reducers/userReducer/meReducer';
 import {
+    deleteFriend,
+    deleteInvite,
+    deleteMeInvite,
     findFriend,
     getFriends,
     getListInvite,
     getListMeInvite,
     recieveInvite,
+
     setNewFriend,
 } from '../store/reducers/friendReducer/friendReducer';
 import { apiConversations } from '../api/apiConversation';
@@ -146,6 +150,7 @@ const Home = () => {
     useEffect(() => {
         socket.on('accept-friend', (value) => {
             dispatch(setNewFriend(value._id));
+            dispatch(deleteMeInvite(value._id))
             // dispatch(setMyRequestFriend(value._id));
         });
 
@@ -157,17 +162,18 @@ const Home = () => {
 
         // xóa lời mời kết bạn
         socket.on('deleted-friend-invite', (_id) => {
-            // dispatch(updateMyRequestFriend(_id));
+            dispatch(deleteMeInvite(_id))
         });
 
         //  xóa gởi lời mời kết bạn cho người khác
         socket.on('deleted-invite-was-send', (_id) => {
-            // dispatch(updateRequestFriends(_id));
+            dispatch(deleteInvite(_id));
         });
 
         // xóa kết bạn
         socket.on('deleted-friend', (_id) => {
-            // dispatch(updateFriend(_id));
+             dispatch(deleteFriend(_id));
+    
             // dispatch(updateFriendChat(_id));
         });
         // thêm phó nhóm

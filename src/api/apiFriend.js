@@ -18,8 +18,8 @@ export const apiFriend = {
     deleteInvive: async (friendId) => {
         return await axios.delete(`/friends/invites/${friendId}`);
     },
-    deleteMeInvive: async (friendId) => {
-        return await axios.delete(`/friends/me/invites/${friendId}`);
+    deleteMeInvite: async (friendId) => {
+        return await axios.delete(`/friends/invites/me/${friendId}`);
     },
     deleteFriend: async (friendId) => {
         return await axios.delete(`/friends/${friendId}`);
