@@ -62,12 +62,16 @@ const friendSlice = createSlice({
             if (action.payload) state.friendInvites = [action.payload, ...state.friendInvites];
         },
         deleteMeInvite: (state, action) => {
-            state.friendMeInvites = state.friendMeInvites.filter(
-                (friendMeInvite) => friendMeInvite._id !== action.payload,
-            );
+            // state.friendMeInvites = state.friendMeInvites.filter(
+            //     (friendMeInvite) => friendMeInvite._id !== action.payload,
+            // );
+            const list = state.friendMeInvites.filter((friendMeInvites) => friendMeInvites._id !== action.payload);
+            state.friendMeInvites = list
         },
         deleteInvite: (state, action) => {
-            state.friendInvites = state.friendInvites.filter((friendInvite) => friendInvite._id !== action.payload);
+            // state.friendInvites = state.friendInvites.filter((friendInvite) => friendInvite._id !== action.payload);
+            const list = state.friendInvites.filter((friendInvite) => friendInvite._id !== action.payload);
+            state.friendInvites = list
 
         },
         deleteFriend: (state, action) => {
@@ -111,11 +115,13 @@ const friendSlice = createSlice({
         },
         // xóa friend đã nhận
         [deleteInviteAsync.fulfilled]: (state, action) => {
-            state.friendInvites = state.friendInvites.filter((friendInvite) => friendInvite._id !== action.payload);
+            const list = state.friendInvites.filter((friendInvite) => friendInvite._id !== action.payload);
+            state.friendInvites = list
         },
         // xóa friend đã gửi
         [deleteMeInviteAsync.fulfilled]: (state, action) => {
-            state.friendMeInvites = state.friendMeInvites.filter((friendMeInvites) => friendMeInvites._id !== action.payload);
+           const list = state.friendMeInvites.filter((friendMeInvites) => friendMeInvites._id !== action.payload);
+            state.friendMeInvites = list
         },
         [deleteFriendAsync.fulfilled]: (state, action) => {
             state.friends = state.friends.filter((friend) => friend._id !== action.payload);

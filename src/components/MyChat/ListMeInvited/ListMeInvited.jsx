@@ -21,6 +21,17 @@ export default function ListMeInvited() {
     const [list, setList] = React.useState([]);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
+    const [option, setOption] = React.useState({
+        isEmpty: true,
+        idRequest: ''
+    })
+    const handleChoose = (id) => {
+        setOption({
+            isEmpty: false,
+            idRequest: id
+        })
+
+    }
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -40,6 +51,36 @@ export default function ListMeInvited() {
     React.useEffect(() => {
         setList(listInvite);
     }, [listInvite]);
+    const MenuOption = ({ option }) => {
+        if (!option.isEmpty)
+            return (
+                <Menu
+                    id="long-menu"
+                    MenuListProps={{
+                        'aria-labelledby': 'long-button',
+                    }}
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    PaperProps={{
+                        style: {
+                            maxHeight: ITEM_HEIGHT * 4.5,
+                            width: '20ch',
+                        },
+                    }}
+                >
+
+                    <MenuItem className="optionItem" key={2} selected={2 === 'Pyxis'}
+                        onClick={handleDeleteInvite.bind(this, option.idRequest)}
+                    >
+                        xóa yêu cầu
+                    </MenuItem>
+                </Menu>
+            )
+
+    }
+
+
     return (
         <List dense sx={{ width: '100%', bgcolor: 'background.paper' }}>
             {list &&
@@ -56,7 +97,7 @@ export default function ListMeInvited() {
                                         aria-controls={open ? 'long-menu' : undefined}
                                         aria-expanded={open ? 'true' : undefined}
                                         aria-haspopup="true"
-                                        onClick={handleClick}
+                                        onClick={e => { handleClick(e); handleChoose(friend._id) }}
                                     >
                                         <MoreVertIcon />
                                     </IconButton>
@@ -73,31 +114,11 @@ export default function ListMeInvited() {
                                     <ListItemText id={labelId} primary={friend.name} />
                                 </ListItemButton>
                             </ListItem>
-                            <Menu
-                                id="long-menu"
-                                MenuListProps={{
-                                    'aria-labelledby': 'long-button',
-                                }}
-                                anchorEl={anchorEl}
-                                open={open}
-                                onClose={handleClose}
-                                PaperProps={{
-                                    style: {
-                                        maxHeight: ITEM_HEIGHT * 4.5,
-                                        width: '20ch',
-                                    },
-                                }}
-                            >
-                            
-                                <MenuItem className="optionItem" key={2} selected={2 === 'Pyxis'} 
-                                         onClick={handleDeleteInvite.bind(this,friend._id)}
-                                        >
-                                    xóa yêu cầu
-                                </MenuItem>
-                            </Menu>
+
                         </div>
                     );
                 })}
+                <MenuOption option={option}/>
             {list.length === 0 && <p>chưa có lời mời nào</p>}
         </List>
     );
